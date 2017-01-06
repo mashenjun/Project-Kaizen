@@ -12,7 +12,6 @@ settings.py
 .Python
 env/
 build/
-dist/
 eggs/
 .eggs/
 lib64/
@@ -53,7 +52,5 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
-# PyBuilder
-target/
 
 .idea/
