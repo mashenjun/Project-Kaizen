@@ -41,3 +41,5 @@ coverage.xml
 # Django stuff:
 *.log
 .idea/
+
+node_modules/
