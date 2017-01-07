@@ -1,5 +1,26 @@
 # Project-Kaizen
-Front end debug tool
+CMS system as service.
+
+------
+
+## Getting Started
+
+The quickest way to get started is to use `create-react-project`.
+
+```sh
+### Django setting
+pip install virtualenv
+virtualenv env
+source env/bin/activate
+pip install -r requirements.txt
+```
+
+```sh
+### Webpack setting
+cd kaizen-front
+npm install
+npm run dev
+```
 
 ------
 ### TODO list
