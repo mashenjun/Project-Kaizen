@@ -5,7 +5,7 @@ CMS system as service.
 
 ## Getting Started
 
-The quickest way to get started is to use `create-react-project`.
+This project uses Django in server side to provide restful-api, use React in front-end to provide Web applications.
 
 ```sh
 ### Django setting
@@ -17,7 +17,7 @@ pip install -r requirements.txt
 
 ```sh
 ### Webpack setting
-cd kaizen-front
+cd kaizen/kaizen-front
 npm install
 npm run dev
 ```
