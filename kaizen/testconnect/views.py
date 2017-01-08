@@ -10,8 +10,6 @@ connection = MongoClient('localhost', 27017)
 db = connection[databaseName]
 employees = db['employees']
 
-
-
 def index(request):
     result = "DATABASE CONTENT -> "
     print "searching"
