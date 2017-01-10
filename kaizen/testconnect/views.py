@@ -15,4 +15,4 @@ def index(request):
     print "searching"
     for e in employees.find():
         result = result+"name: "+e["name"]+"  age: "+str(e["age"]);
-        return HttpResponse(result);
+    return HttpResponse(result);
