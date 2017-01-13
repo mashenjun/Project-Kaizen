@@ -12,7 +12,7 @@ employees = db['employees']
 
 def index(request):
     result = "DATABASE CONTENT -> "
-    print "searching"
+    print("searching")
     for e in employees.find():
         result = result+"name: "+e["name"]+"  age: "+str(e["age"]);
     return HttpResponse(result);
