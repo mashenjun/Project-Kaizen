@@ -3,7 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.http import HttpResponse
 from pymongo import MongoClient
-from models import Employee
+from testconnect.models import Employee
 
 # databaseName = "smaple_database"
 # connection = MongoClient('localhost', 27017)
