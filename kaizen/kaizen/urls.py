@@ -17,6 +17,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from rest_framework import routers
 from testrestful import views
+from rest_framework_jwt.views import obtain_jwt_token
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -30,4 +31,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^testconnect/', include('testconnect.urls')),
     url(r'^testindex/', include('testindex.urls')),
+    url(r'^api-token-auth/', obtain_jwt_token),
 ]
