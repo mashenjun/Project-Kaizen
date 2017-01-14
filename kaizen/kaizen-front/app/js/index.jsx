@@ -1,15 +1,27 @@
 import React from 'react';
 import {render} from 'react-dom';
-import AwesomeComponent from './components/AwesomeComponent';
+import { Router, Route, hashHistory, IndexRedirect } from 'react-router';
+import { Provider } from 'react-redux'
+import DevTools from './containers/DevTools';
+import configureStore from './store/configureStore'
+// import AwesomeComponent from './components/AwesomeComponent';
+import AppContainer from './containers/appContainer'
+import loginContainer from './containers/loginContainer'
 
-class App extends React.Component {
-  render () {
-    return (
-       <div>
-        <p> Hello React 202asdasd!</p>
-        <AwesomeComponent />
-      </div>);
-  }
-}
+let store = configureStore();
 
-render(<App/>, document.getElementById('app'));
+render(
+  <Provider store={store}>
+    <div>
+	    <Router history={hashHistory} >
+		  	<Route path="/" component={AppContainer}>
+		        <IndexRedirect to="login" />
+		    		<Route path="   login" component={loginContainer} />
+		       {/* <Route path="/mainPage" component={AwesomeComponent} /> */}
+		 			</Route>
+	    </Router>
+	    <DevTools/>
+    </div>
+  </Provider>,
+  document.getElementById('app')
+);
