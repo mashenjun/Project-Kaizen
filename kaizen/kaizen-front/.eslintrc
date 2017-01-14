@@ -1,0 +1,21 @@
+{
+  "parser": "babel-eslint",
+  ,
+  "plugins": [
+        "react",
+        "jsx-a11y",
+        "import"
+  ],
+   "ecmaFeatures": {
+    "jsx": true
+  },
+  "globals": {
+    "document": true,
+    "window": true
+  },
+  "rules": {
+    "react/prefer-stateless-function":"off",
+    "react/require-default-props":"off",
+  	"prefer-stateless-function": [0, { "ignorePureComponents":  true }]
+  }
+}
