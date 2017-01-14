@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'testrestful',
     'testindex',
+    'testconnect',
     'pages',
 ]
 
@@ -91,8 +93,8 @@ WSGI_APPLICATION = 'kaizen.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': '',
-        'NAME': '',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
