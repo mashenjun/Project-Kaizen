@@ -1,9 +1,26 @@
 import React, {Component} from "react";
+import { connect } from 'react-redux'
 import '../../less/loginContainer.less';
+import {userLoginRequest} from '../actions/authActions'
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 
 class loginContainer extends Component {
+    constructor(props) {
+        super(props);
+    }
+    componentWillReceiveProps(nextProps) {
+        const {
+            isAuthenticated
+        } = nextProps;
+        console.log('before',this.props.isAuthenticated, 'after',isAuthenticated)
+    }
+
+    onLoginButtonClick = (event)=>{
+      console.log('click');
+      this.props.onLoginButtonClick('admin','1234')
+    };
+
     render() {
         return (
             <div className="loginContainer">
@@ -11,17 +28,18 @@ class loginContainer extends Component {
                     <h1 className="header">Kaizen CMS system</h1>
                     <div className="content">
                         <TextField
-                            fullWidth = {true}
+                            fullWidth={true}
                             hintText="Username"
-                            floatingLabelText="Enter Your User Name"
+                            floatingLabelText="Username"
                         />
                         <TextField
-                            fullWidth = {true}
+                            fullWidth={true}
+                            type="password"
                             className="input-field"
                             hintText="Password"
-                            floatingLabelText="Enter Your Password"
+                            floatingLabelText="Password"
                         />
-                        <RaisedButton className="loginButton" primary={true} label="Let me in"
+                        <RaisedButton onClick={this.onLoginButtonClick} className="loginButton" primary={true} label="Let me in"
                                       fullWidth={true}/>
                     </div>
                 </div>
@@ -30,4 +48,28 @@ class loginContainer extends Component {
     }
 }
 
-export default loginContainer;
+function mapStateToProps(state, ownProps) {
+    const auth = state.auth;
+    const {token, username, isAuthenticated, errorMesage} = auth;
+    return {
+        token,
+        username,
+        isAuthenticated,
+        errorMesage
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        onLoginButtonClick(username,password) {
+            dispatch(userLoginRequest(
+                username,
+                password
+            ))
+        }
+    }
+}
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(loginContainer);

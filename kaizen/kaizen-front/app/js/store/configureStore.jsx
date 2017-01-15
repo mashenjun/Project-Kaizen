@@ -1,19 +1,25 @@
-import { createStore, applyMiddleware, compose} from 'redux'
+import {createStore, applyMiddleware, compose} from 'redux'
 import createLogger from 'redux-logger'
+import createSagaMiddleware from 'redux-saga';
+import rootSaga from '../sagas/rootSaga';
 import rootReducer from '../reducers/rootReducer'
 import DevTools from '../containers/DevTools';
 
-const loggerMiddleware = createLogger()
+const loggerMiddleware = createLogger();
+const sagaMiddleware = createSagaMiddleware();
 
+const middleWares = [loggerMiddleware,sagaMiddleware];
 const enhancer = compose(
-  applyMiddleware(loggerMiddleware),
-  DevTools.instrument()
+    applyMiddleware(...middleWares),
+    DevTools.instrument()
 );
 
 export default function configureStore(preloadedState) {
-  return createStore(
-    rootReducer,
-    preloadedState,
-    enhancer
-  )
+    const store = createStore(
+        rootReducer,
+        preloadedState,
+        enhancer
+    );
+    sagaMiddleware.run(rootSaga);
+    return store;
 }
