@@ -16,7 +16,7 @@ render(
 	    <Router history={hashHistory} >
 		  	<Route path="/" component={AppContainer}>
 		        <IndexRedirect to="login" />
-		    		<Route path="   login" component={loginContainer} />
+		    		<Route path="login" component={loginContainer} />
 		       {/* <Route path="/mainPage" component={AwesomeComponent} /> */}
 		 			</Route>
 	    </Router>

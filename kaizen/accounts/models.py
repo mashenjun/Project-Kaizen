@@ -1,4 +1,3 @@
-from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from mongoengine import *
 from datetime import datetime
@@ -21,9 +20,8 @@ from datetime import datetime
 
 
 class User(Document):
-    email = EmailField('email address', unique=True, db_index=True)
-    password1 = StringField()
-    password2 = StringField()
-    joined = DateTimeField(default=datetime.now)
+    # email = EmailField('email address', unique=True, db_index=True)
+    username = StringField('username', unique=True, db_index=True)
+    password = StringField()
     is_active = BooleanField(default=True)
     is_admin = BooleanField(default=False)

@@ -112,8 +112,13 @@ _MONGODB_DATABASE_HOST = \
 mongoengine.connect(_MONGODB_NAME, host='localhost',port=27017)
 
 AUTHENTICATION_BACKENDS = (
-    'mongoengine.django.auth.MongoEngineBackend',
+    'django.contrib.auth.backends.ModelBackend'
+    # 'mongoengine.django.auth.MongoEngineBackend',
 )
+# SESSION_ENGINE = 'mongoengine.django.sessions'
+# SESSION_SERIALIZER = 'mongoengine.django.sessions.BSONSerializer'
+# AUTH_USER_MODEL = 'mongo_auth.MongoUser'
+# MONGOENGINE_USER_DOCUMENT = 'mongoengine.django.auth.User'
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
