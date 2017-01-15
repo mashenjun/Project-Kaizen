@@ -40,5 +40,5 @@ coverage.xml
 # Django stuff:
 *.log
 .idea/
-
+.DS_Store
 node_modules/
