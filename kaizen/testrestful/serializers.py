@@ -1,14 +1,17 @@
-from django.contrib.auth.models import User, Group
-from rest_framework import serializers
 
-
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+from rest_framework_mongoengine import serializers
+from testconnect.models import Employee
+"""
+Serializing all the Authors
+"""
+class EmployeeSerilizer(serializers.DocumentSerializer):
+    email = serializers.serializers.CharField(allow_blank=True, read_only=True)
+    first_name = serializers.serializers.CharField(allow_blank=True, read_only=True)
+    last_name = serializers.serializers.CharField(allow_blank=True, read_only=True)
     class Meta:
-        model = User
-        fields = ('url', 'username', 'email', 'groups')
-
-
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Group
-        fields = ('url', 'name')
+        model = Employee
+        fields = [
+            'email',
+            'first_name',
+            'last_name',
+        ]

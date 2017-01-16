@@ -16,12 +16,11 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from rest_framework import routers
-from testrestful import views
 from rest_framework_jwt.views import obtain_jwt_token
 
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
+# router.register(r'users', views.UserViewSet)
+# router.register(r'groups', views.GroupViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
@@ -31,6 +30,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^testconnect/', include('testconnect.urls')),
     url(r'^testindex/', include('testindex.urls')),
-    url(r'^api-token-auth/', obtain_jwt_token),
+    url(r'^testrestful/', include('testrestful.urls')),
+    # url(r'^api-token-auth/', obtain_jwt_token),
     url(r'^accounts/', include('accounts.urls')),
 ]

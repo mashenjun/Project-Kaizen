@@ -1,19 +1,32 @@
 # Create your views here.
-from django.contrib.auth.models import User, Group
-from rest_framework import viewsets
-from testrestful.serializers import UserSerializer,GroupSerializer
+from rest_framework import generics
+from .serializers import EmployeeSerilizer
+from testconnect.models import Employee
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticated,
+    IsAdminUser,
+    IsAuthenticatedOrReadOnly
+)
 
-class UserViewSet(viewsets.ModelViewSet):
+class EmployeeView(generics.ListAPIView):
     """
-    API endpoint that allows users to be viewed or edited.
+    Returns a list of all authors.
     """
-    queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
+    serializer_class = EmployeeSerilizer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset_list = Employee.objects
+        print(queryset_list)
+        return queryset_list
 
 
-class GroupViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
+
+
+
+
+
+
+
+
