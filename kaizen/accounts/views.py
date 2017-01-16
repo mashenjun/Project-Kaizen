@@ -1,5 +1,7 @@
 from django.shortcuts import render
 
+from rest_framework_jwt.settings import api_settings
+
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK,HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
@@ -31,6 +33,8 @@ from .serializers import (
     UserLoginSerilizer,
 )
 
+jwt_response_payload_handler = api_settings.JWT_RESPONSE_PAYLOAD_HANDLER
+
 # Create your views here.
 def login_view(request):
     form = UserLoginForm(request.POST or None)
@@ -54,9 +58,12 @@ class UserLoginAPIView(APIView):
         data = request.data #request.POST
         serializer = UserLoginSerilizer(data=data)
         if serializer.is_valid(raise_exception=True):
-            print(serializer.is_valid(raise_exception=True))
-            new_data = serializer.data
-            return Response(new_data, status=HTTP_200_OK)
+            user = serializer.data.get('username') or request.user
+            token = serializer.data.get('token')
+            response_data = {
+                                'token': token
+                            }
+            return Response(response_data, status=HTTP_200_OK)
         return Response(serializer.errors,status=HTTP_400_BAD_REQUEST)
 
 
