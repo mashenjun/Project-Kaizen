@@ -7,7 +7,7 @@ var BUILD_DIR = path.resolve(__dirname, 'dist');
 var APP_DIR = path.resolve(__dirname, 'app');
 
 var config = {
-    entry: APP_DIR + '/js/index.jsx',
+    entry: ['babel-polyfill', APP_DIR + '/js/index.jsx'],
     debug: true,
     output: {
         path: BUILD_DIR,
@@ -18,7 +18,7 @@ var config = {
     },
     module: {
         loaders: [{
-            test: /\.jsx?$/,
+            test: /\.(js|jsx)$/,
             include: APP_DIR,
             exclude: /(node_modules|bower_components|dist)/,
             loader: "babel"

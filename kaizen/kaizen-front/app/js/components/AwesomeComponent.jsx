@@ -1,4 +1,5 @@
 import React from 'react';
+import { hashHistory} from 'react-router';
 
 class AwesomeComponent extends React.Component {
 
@@ -11,6 +12,7 @@ class AwesomeComponent extends React.Component {
   onLike () {
     let newLikesCount = this.state.likesCount + 1;
     this.setState({likesCount: newLikesCount});
+    hashHistory.push('/login')//testing
   }
 
   render() {
