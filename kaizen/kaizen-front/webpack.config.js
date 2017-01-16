@@ -3,7 +3,7 @@ var webpack = require('webpack');
 var path = require('path');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
-var BUILD_DIR = path.resolve(__dirname, 'dist');
+var BUILD_DIR = path.resolve(__dirname, '../pages/static/dist');
 var APP_DIR = path.resolve(__dirname, 'app');
 
 var config = {
@@ -23,9 +23,8 @@ var config = {
             exclude: /(node_modules|bower_components|dist)/,
             loader: "babel"
         },
-            {test: /\.less$/, loader: "style-loader!css-loader!less-loader"},
-            // {  test: /\.less$|\.css$/,
-            //     loader: ExtractTextPlugin.extract("style-loader", "css-loader!less-loader")},
+            {  test: /\.less$|\.css$/,
+                loader: ExtractTextPlugin.extract("style-loader", "css-loader!less-loader")},
         ]
     },
     plugins: [

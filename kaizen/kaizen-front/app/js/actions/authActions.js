@@ -11,6 +11,15 @@ export const userLoginRequest = (username, password) => {
 };
 
 
+export const userLoginFailure= (payload) => {
+    return {
+        type: types.USER_LOGIN_FAILURE,
+        payload:{
+            ...payload
+        }
+    }
+};
+
 export const userLoginSuccess = (payload) => {
     return {
         type: types.USER_LOGIN_SUCCESS,

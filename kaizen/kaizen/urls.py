@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^testconnect/', include('testconnect.urls')),
     url(r'^testindex/', include('testindex.urls')),
     url(r'^testrestful/', include('testrestful.urls')),
+    url(r'^pages/', include('pages.urls')),
     # url(r'^api-token-auth/', obtain_jwt_token),
     url(r'^accounts/', include('accounts.urls')),
 ]

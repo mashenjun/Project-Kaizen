@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import { connect } from 'react-redux'
+import {connect} from 'react-redux'
 import '../../less/loginContainer.less';
 import {userLoginRequest} from '../actions/authActions'
 import RaisedButton from 'material-ui/RaisedButton';
@@ -9,19 +9,35 @@ class loginContainer extends Component {
     constructor(props) {
         super(props);
     }
+
     componentWillReceiveProps(nextProps) {
         const {
-            isAuthenticated
+            isAuthenticated,
+            errorMessage
         } = nextProps;
-        console.log('before',this.props.isAuthenticated, 'after',isAuthenticated)
+        this.userNameInput.setState({errorText: errorMessage.username ? errorMessage.username : ""});
+        this.passwordInput.setState({errorText: errorMessage.password ? errorMessage.password : ""})
+        console.log('before', this.props.isAuthenticated, 'after', isAuthenticated)
     }
 
-    onLoginButtonClick = (event)=>{
-      console.log('click');
-      this.props.onLoginButtonClick('admin','1234')
+    onLoginButtonClick = (event) => {
+        const username = this.userNameInput.input.value;
+        const password = this.passwordInput.input.value;
+        if (!username || !password) {
+            if (!username) {
+                this.userNameInput.setState({errorText: "The username can not be empty"})
+            }
+            if (!password) {
+                this.passwordInput.setState({errorText: "The password can not be empty"})
+            }
+        } else {
+            this.props.onLoginButtonClick(username, password);
+        }
     };
 
     render() {
+        console.log('new render');
+        const {errorMessage} = this.props;
         return (
             <div className="loginContainer">
                 <div className="loginContainer-loginblock">
@@ -31,6 +47,12 @@ class loginContainer extends Component {
                             fullWidth={true}
                             hintText="Username"
                             floatingLabelText="Username"
+                            onChange={() => {
+                                this.userNameInput.setState({errorText: ""})
+                            }}
+                            ref={(input) => {
+                                this.userNameInput = input;
+                            }}
                         />
                         <TextField
                             fullWidth={true}
@@ -38,8 +60,15 @@ class loginContainer extends Component {
                             className="input-field"
                             hintText="Password"
                             floatingLabelText="Password"
+                            onChange={() => {
+                                this.passwordInput.setState({errorText: ""})
+                            }}
+                            ref={(input) => {
+                                this.passwordInput = input;
+                            }}
                         />
-                        <RaisedButton onClick={this.onLoginButtonClick} className="loginButton" primary={true} label="Let me in"
+                        <RaisedButton onClick={this.onLoginButtonClick} className="loginButton" primary={true}
+                                      label="Let me in"
                                       fullWidth={true}/>
                     </div>
                 </div>
@@ -50,18 +79,18 @@ class loginContainer extends Component {
 
 function mapStateToProps(state, ownProps) {
     const auth = state.auth;
-    const {token, username, isAuthenticated, errorMesage} = auth;
+    const {token, username, isAuthenticated, errorMessage} = auth;
     return {
         token,
         username,
         isAuthenticated,
-        errorMesage
+        errorMessage
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        onLoginButtonClick(username,password) {
+        onLoginButtonClick(username, password) {
             dispatch(userLoginRequest(
                 username,
                 password
