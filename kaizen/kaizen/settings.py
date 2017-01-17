@@ -50,7 +50,7 @@ INSTALLED_APPS = [
 # AUTH_USER_MODEL = ['accounts.User']
 # MONGOENGINE_USER_DOCUMENT = 'accounts.models.User'
 # JWT_ENCOD = 'account.utils.JSONEncoder'
-
+# AUTH_USER_MODEL = 'accounts.User'
 JWT_AUTH ={
     'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=3000),
     'JWT_PAYLOAD_HANDLER':'accounts.utils.my_jwt_payload_handler',
