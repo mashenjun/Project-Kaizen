@@ -70,6 +70,10 @@ class loginContainer extends Component {
                         <RaisedButton onClick={this.onLoginButtonClick} className="loginButton" primary={true}
                                       label="Let me in"
                                       fullWidth={true}/>
+                        <RaisedButton onClick={this.onLoginButtonClick} className="loginButton"
+                                      label="Sign up"
+                                      secondary = {true}
+                                      fullWidth={true}/>
                     </div>
                 </div>
             </div>
