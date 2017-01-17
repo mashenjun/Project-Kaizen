@@ -5,7 +5,7 @@ from datetime import datetime
 from calendar import timegm
 
 from django.contrib.auth.hashers import make_password
-
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework_mongoengine import serializers
 from rest_framework.exceptions import ValidationError
@@ -20,7 +20,7 @@ jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 class UserLoginSerializer(serializers.DocumentSerializer):
     token = serializers.serializers.CharField(allow_blank=True, read_only=True)
     username = serializers.serializers.CharField(required=True)
-    password = serializers.serializers.CharField(required=True)
+    password = serializers.serializers.CharField(required=False, write_only=True)
 
     class Meta:
         model = User
@@ -33,6 +33,8 @@ class UserLoginSerializer(serializers.DocumentSerializer):
                             {"write_only": True}
                         }
 
+    # msg.format(**kwargs)
+    # _("TIncorrect password").format()
     def validate(self, data):
         username = data.get("username", None)
         # password = make_password(data.get("password", None)) # hash password

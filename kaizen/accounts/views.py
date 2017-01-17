@@ -72,10 +72,17 @@ class UserLoginAPIView(APIView):
                             }
             return Response(response_data_success, status=HTTP_200_OK)
         else:
+            errors = serializer.errors
+            if 'non_field_errors' in errors:
+                if errors['non_field_errors'] == ["This user does not exist"]:
+                    errors['username'] = errors.pop('non_field_errors')
+                elif errors['non_field_errors'] == ["Incorrect password"]:
+                    errors['password'] = errors.pop('non_field_errors')
+
             response_data_fail = {
                 'username': data.get('username'),
                 'loginsuccess': False,
-                'errormessage': serializer.errors
+                'errormessage': errors
             }
             return Response(response_data_fail,status=HTTP_400_BAD_REQUEST)
 

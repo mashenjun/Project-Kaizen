@@ -7,6 +7,7 @@ from calendar import timegm
 from django.utils.translation import ugettext as _
 
 from rest_framework import exceptions
+from rest_framework.views import exception_handler
 
 from rest_framework_jwt.settings import api_settings
 from rest_framework_jwt.compat import get_username, get_username_field
@@ -49,6 +50,21 @@ def my_jwt_payload_handler(user):
 
 
 
+
+def custom_exception_handler(exc, context):
+    # Call REST framework's default exception handler first,
+    # to get the standard error response.
+    response = exception_handler(exc, context)
+
+    # Now add the HTTP status code to the response.
+    if response is not None:
+        response.data['status_code'] = response.status_code
+
+    return response
+
+
+
+
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, ObjectId):
@@ -85,3 +101,6 @@ class MYJSONWebTokenAuthentication(JSONWebTokenAuthentication):
             raise exceptions.AuthenticationFailed(msg)
 
         return user
+
+
+
