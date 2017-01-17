@@ -14,6 +14,7 @@ from rest_framework.mixins import (
     UpdateModelMixin,
 )
 from rest_framework.generics import (
+    ListCreateAPIView,
     CreateAPIView,
     DestroyAPIView,
     ListAPIView,
@@ -30,8 +31,11 @@ from rest_framework.permissions import (
 
 from .forms import UserLoginForm
 from .serializers import (
-    UserLoginSerilizer,
+    UserLoginSerializer,
+    UserRegisterSerializer,
 )
+
+from .models import User
 
 jwt_response_payload_handler = api_settings.JWT_RESPONSE_PAYLOAD_HANDLER
 
@@ -52,19 +56,34 @@ def logout_view(request):
 
 class UserLoginAPIView(APIView):
     permission_classes = [AllowAny]
-    serializer_class = UserLoginSerilizer
+    serializer_class = UserLoginSerializer
 
     def post(self, request):
         data = request.data #request.POST
-        serializer = UserLoginSerilizer(data=data)
-        if serializer.is_valid(raise_exception=True):
-            user = serializer.data.get('username') or request.user
+
+        serializer = UserLoginSerializer(data=data)
+        if serializer.is_valid(raise_exception=False):
+            username = serializer.data.get('username') or data.username
             token = serializer.data.get('token')
-            response_data = {
-                                'token': token
+            response_data_success = {
+                                'username':username,
+                                'loginsuccess': True,
+                                'token': token,
                             }
-            return Response(response_data, status=HTTP_200_OK)
-        return Response(serializer.errors,status=HTTP_400_BAD_REQUEST)
+            return Response(response_data_success, status=HTTP_200_OK)
+        else:
+            response_data_fail = {
+                'username': data.get('username'),
+                'loginsuccess': False,
+                'errormessage': serializer.errors
+            }
+            return Response(response_data_fail,status=HTTP_400_BAD_REQUEST)
+
+
+class UserRegisterAPIView(ListCreateAPIView):
+    queryset = User.objects
+    permission_classes = [AllowAny]
+    serializer_class = UserRegisterSerializer
 
 
 

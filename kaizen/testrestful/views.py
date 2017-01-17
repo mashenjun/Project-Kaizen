@@ -18,7 +18,6 @@ class EmployeeView(generics.ListAPIView):
 
     def get_queryset(self):
         queryset_list = Employee.objects
-        print(queryset_list)
         return queryset_list
 
 

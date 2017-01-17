@@ -1,6 +1,7 @@
 from mongoengine import *
 
 from django.utils.deprecation import CallableFalse, CallableTrue
+from django.contrib.auth.models import AbstractBaseUser
 # Create your models here.
 
 # class fakeUser(AbstractBaseUser):
@@ -17,8 +18,8 @@ from django.utils.deprecation import CallableFalse, CallableTrue
 
 
 class User(Document):
-    email = EmailField('email address')
-    username = StringField('username', unique=True, db_index=True)
+    email = EmailField()
+    username = StringField(unique=True,required=True)
     password = StringField()
     is_active = BooleanField(default=True)
     is_admin = BooleanField(default=False)
