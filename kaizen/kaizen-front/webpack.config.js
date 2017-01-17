@@ -25,6 +25,10 @@ var config = {
         },
             {  test: /\.less$|\.css$/,
                 loader: ExtractTextPlugin.extract("style-loader", "css-loader!less-loader")},
+            {
+                test: /\.(png|jpg|jpeg|gif)$/,
+                loader: 'url-loader?limit=10000&name=./images/[name].[ext]'
+            }
         ]
     },
     plugins: [

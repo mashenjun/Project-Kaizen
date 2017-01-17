@@ -13,7 +13,12 @@ function loginReducer(state = {'isAuthenticated': false, errorMessage:{}}, actio
             return Object.assign({}, state, {
                 username: payload['username'],
                 isAuthenticated: false,
-                errorMessage:payload['errorMessage']
+                errorMessage:payload['errormessage']
+            });
+        case actionTypes.INTERNAL_SERVER_ERROR:
+            return Object.assign({}, state, {
+                isAuthenticated: false,
+                serverError:payload['serverError']
             });
         default:
             return state;
