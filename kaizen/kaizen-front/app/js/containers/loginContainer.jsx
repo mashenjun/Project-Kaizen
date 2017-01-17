@@ -4,6 +4,7 @@ import '../../less/loginContainer.less';
 import {userLoginRequest} from '../actions/authActions'
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
+import { hashHistory } from 'react-router';
 
 class loginContainer extends Component {
     constructor(props) {
@@ -13,8 +14,12 @@ class loginContainer extends Component {
     componentWillReceiveProps(nextProps) {
         const {
             isAuthenticated,
-            errorMessage
+            errorMessage,
+            serverError,
         } = nextProps;
+        if( isAuthenticated){
+            hashHistory.push('/home');
+        }
         this.userNameInput.setState({errorText: errorMessage.username ? errorMessage.username : ""});
         this.passwordInput.setState({errorText: errorMessage.password ? errorMessage.password : ""})
         console.log('before', this.props.isAuthenticated, 'after', isAuthenticated)
@@ -72,7 +77,7 @@ class loginContainer extends Component {
                                       fullWidth={true}/>
                         <RaisedButton onClick={this.onLoginButtonClick} className="loginButton"
                                       label="Sign up"
-                                      secondary = {true}
+                                      secondary={true}
                                       fullWidth={true}/>
                     </div>
                 </div>
@@ -83,12 +88,14 @@ class loginContainer extends Component {
 
 function mapStateToProps(state, ownProps) {
     const auth = state.auth;
-    const {token, username, isAuthenticated, errorMessage} = auth;
+    const {token, username, isAuthenticated, errorMessage,serverError
+    } = auth;
     return {
         token,
         username,
         isAuthenticated,
-        errorMessage
+        errorMessage,
+        serverError
     }
 }
 

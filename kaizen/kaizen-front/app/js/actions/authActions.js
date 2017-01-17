@@ -28,3 +28,12 @@ export const userLoginSuccess = (payload) => {
         }
     }
 };
+
+export const ServerSideError = (payload) => {
+    return {
+        type: types.INTERNAL_SERVER_ERROR,
+        payload:{
+            ...payload
+        }
+    }
+};

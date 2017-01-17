@@ -1,27 +1,21 @@
 import { takeEvery } from 'redux-saga';
 import { select, take, takem, call, put } from 'redux-saga/effects';
 import types from '../actions/actionTypes'
-import {userLoginSuccess,userLoginFailure} from '../actions/authActions'
+import {userLoginSuccess,userLoginFailure,ServerSideError} from '../actions/authActions'
+import Api from './Api'
 import 'whatwg-fetch'
 
+
 export function* userLoginTask(action) {
-    const {username, password} = action.payload;
-    const a = ()=>(fetch('/accounts/api/login/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            username: username,
-            password: password,
-        })
-    }));
     try {
-        let payload = yield call(a);
-        console.log('success?', payload)
-    }  catch(err) {
-        console.log('What error it is ?',err);
-        yield put(userLoginFailure({username, errorMessage:{username:"There is no this username",password:"password is wrong"}}))
+        const {status,result} = yield call(Api.loginWithfetchToken,action.payload);
+        if(status===200){
+            yield put(userLoginSuccess(result))
+        }else{
+            yield put(userLoginFailure(result))
+        }
+    }catch(err){
+        yield put(ServerSideError({serverError:500}))
     }
 }
 
