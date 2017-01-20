@@ -24,14 +24,38 @@ npm run dev
 
 ------
 ### TODO list
+#### Funtions
 - [ ] React as Front FrameWork  
 - [ ] BootStrap and Matrial as CSS FrameWork
 - [ ] Django as End FrameWork. 
 - [x] MongoDB as database.  
 - [ ] DigitalOcean as cloud server. Setup a node
 - [ ] divio/django-cms for CMS
-- [x] Restful API
+- [x] Restful API 
 - [ ] Define Requirements
+#### API 
+- [ ] Login API
+- [ ] Register API 
+- [ ] Email validation
+- [ ] Image upload API
+- [ ] List uploaded content
+- [ ] Drop ping on map
+- [ ] Define geo data
+
+#### Pages
+- [ ] 主页
+- [ ] 浏览页(年后)
+- [ ] 关于本站页
+- [ ] 显示页
+- [x] 登陆页
+- [ ] 注册页
+- [ ] 注册成功页
+- [ ] 上传选择页
+- [ ] 新增记录者页
+- [ ] 记录页（即上传音、视频、图片、文字页）
+- [ ] 更新修改页
+
+
 
 ------
 ### Library
