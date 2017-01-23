@@ -34,8 +34,8 @@ class UploadView(views.APIView):
 
     def post(self,request, format = None):
         file_obj = request.data['file']
-        auth = oss2.Auth('LTAIqHS6em19NSgW','LaiwKwqWyT82dD0AMJSmOEA6lyBWrR')
-        bucket = oss2.Bucket(auth, 'oss-eu-central-1.aliyuncs.com','kaizen-test')
+        auth = oss2.Auth('','')
+        bucket = oss2.Bucket(auth, '','')
         result = bucket.put_object(str(file_obj.name), file_obj)
         print('http status: {0}'.format(result.status))
         print('request_id: {0}'.format(result.request_id))
