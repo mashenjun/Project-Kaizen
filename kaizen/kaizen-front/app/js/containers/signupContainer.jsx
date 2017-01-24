@@ -1,12 +1,11 @@
 import React, {Component} from "react";
 import {connect} from 'react-redux'
-import '../../less/loginContainer.less';
 import {userLoginRequest} from '../actions/authActions'
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
-import { hashHistory } from 'react-router';
+import {hashHistory} from 'react-router';
 
-class loginContainer extends Component {
+class signupContainer extends Component {
     constructor(props) {
         super(props);
     }
@@ -17,31 +16,14 @@ class loginContainer extends Component {
             errorMessage,
             serverError,
         } = nextProps;
-        if( isAuthenticated){
+        if (isAuthenticated) {
             hashHistory.push('/home');
         }
-        this.userNameInput.setState({errorText: errorMessage.username ? errorMessage.username : ""});
-        this.passwordInput.setState({errorText: errorMessage.password ? errorMessage.password : ""})
         console.log('before', this.props.isAuthenticated, 'after', isAuthenticated)
     }
 
-    onLoginButtonClick = (event) => {
-        const username = this.userNameInput.input.value;
-        const password = this.passwordInput.input.value;
-        if (!username || !password) {
-            if (!username) {
-                this.userNameInput.setState({errorText: "The username can not be empty"})
-            }
-            if (!password) {
-                this.passwordInput.setState({errorText: "The password can not be empty"})
-            }
-        } else {
-            this.props.onLoginButtonClick(username, password);
-        }
-    };
+    onconfirmButtonClick = (event) => {
 
-    onSignupButtonClick =(event) => {
-        hashHistory.push('/signup');
     };
 
     render() {
@@ -49,8 +31,8 @@ class loginContainer extends Component {
         const {errorMessage} = this.props;
         return (
             <div className="loginContainer">
-                <div className="loginContainer-loginblock">
-                    <h1 className="header">Kaizen CMS system</h1>
+                <div className="loginContainer-loginblock" style={{height: '400px'}}>
+                    <h1 className="header">Sign UP</h1>
                     <div className="content">
                         <TextField
                             fullWidth={true}
@@ -61,6 +43,19 @@ class loginContainer extends Component {
                             }}
                             ref={(input) => {
                                 this.userNameInput = input;
+                            }}
+                        />
+                        <TextField
+                            fullWidth={true}
+                            type="email"
+                            className="input-field"
+                            hintText="Email"
+                            floatingLabelText="Email"
+                            onChange={() => {
+                                this.emailInput.setState({errorText: ""})
+                            }}
+                            ref={(input) => {
+                                this.emailInput = input;
                             }}
                         />
                         <TextField
@@ -76,12 +71,24 @@ class loginContainer extends Component {
                                 this.passwordInput = input;
                             }}
                         />
-                        <RaisedButton onClick={this.onLoginButtonClick} className="loginButton" primary={true}
-                                      label="Let me in"
-                                      fullWidth={true}/>
-                        <RaisedButton onClick={this.onSignupButtonClick} className="signupButton"
-                                      label="Sign up"
-                                      secondary={true}
+
+                        <TextField
+                            fullWidth={true}
+                            type="password"
+                            className="input-field"
+                            hintText="ConfirmPassword"
+                            floatingLabelText="ConfirmPassword"
+                            onChange={() => {
+                                this.passwordInput.setState({errorText: ""})
+                            }}
+                            ref={(input) => {
+                                this.passwordInput = input;
+                            }}
+                        />
+
+                        <RaisedButton onClick={this.onconfirmButtonClick} className="confirmButton"
+                                      backgroundColor="rgb(164, 198, 57)"
+                                      label="Submit" labelColor="ffffff"
                                       fullWidth={true}/>
                     </div>
                 </div>
@@ -92,7 +99,8 @@ class loginContainer extends Component {
 
 function mapStateToProps(state, ownProps) {
     const auth = state.auth;
-    const {token, username, isAuthenticated, errorMessage,serverError
+    const {
+        token, username, isAuthenticated, errorMessage, serverError
     } = auth;
     return {
         token,
@@ -116,4 +124,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(loginContainer);
+)(signupContainer);
