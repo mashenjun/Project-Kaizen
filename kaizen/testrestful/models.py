@@ -6,6 +6,9 @@ class UploadFile(Document):
     file = FileField()
     # file = StringField()
 
+class UploadImage(Document):
+    image = ImageField()
+
 
 
 
