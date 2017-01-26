@@ -1,7 +1,7 @@
 from mongoengine import *
 
 from django.utils.deprecation import CallableFalse, CallableTrue
-from django.contrib.auth.models import AbstractBaseUser
+
 # Create your models here.
 
 # class fakeUser(AbstractBaseUser):
