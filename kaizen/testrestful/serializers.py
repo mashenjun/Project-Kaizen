@@ -2,7 +2,7 @@
 from rest_framework_mongoengine import serializers
 from testconnect.models import Employee
 # from rest_framework import serializers
-from .models import UploadFile
+from .models import UploadFile,UploadImage
 from accounts.models import User
 """
 Serializing all the Authors
@@ -26,4 +26,13 @@ class UploadFileSerilizer(serializers.DocumentSerializer):
         model = UploadFile
         fields = [
             'file',
+        ]
+
+class UploadImageSerilizer(serializers.DocumentSerializer):
+    image = serializers.serializers.ImageField(max_length=None,use_url=True)
+    # file = serializers.serializers.CharField(allow_blank=True, read_only=True)
+    class Meta:
+        model = UploadImage
+        fields = [
+            'image',
         ]

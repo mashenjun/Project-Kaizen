@@ -1,10 +1,11 @@
 from django.shortcuts import render
 
-from rest_framework_jwt.settings import api_settings
+from rest_framework_jwt.settings import api_settings as jwt_api_setting
 
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK,HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
+from rest_framework.settings import api_settings
 from rest_framework.filters import (
     SearchFilter,
     OrderingFilter,
@@ -37,7 +38,7 @@ from .serializers import (
 
 from .models import User
 
-jwt_response_payload_handler = api_settings.JWT_RESPONSE_PAYLOAD_HANDLER
+jwt_response_payload_handler = jwt_api_setting.JWT_RESPONSE_PAYLOAD_HANDLER
 
 # Create your views here.
 def login_view(request):
@@ -73,10 +74,11 @@ class UserLoginAPIView(APIView):
             return Response(response_data_success, status=HTTP_200_OK)
         else:
             errors = serializer.errors
-            if 'non_field_errors' in errors:
-                if errors['non_field_errors'] == ["This user does not exist"]:
+            custom_key =  api_settings.NON_FIELD_ERRORS_KEY
+            if custom_key in errors:
+                if errors[custom_key] == ["This user does not exist"]:
                     errors['username'] = errors.pop('non_field_errors')
-                elif errors['non_field_errors'] == ["Incorrect password"]:
+                elif errors[custom_key] == ["Incorrect password"]:
                     errors['password'] = errors.pop('non_field_errors')
 
             response_data_fail = {

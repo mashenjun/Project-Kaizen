@@ -42,9 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_gis',
     'testindex',
     'testconnect',
     'testrestful',
+    'upload',
     'pages',
 ]
 
@@ -169,4 +171,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static")]
+    os.path.join(BASE_DIR, "pages","static"),
+
+]
+
+
+
+
