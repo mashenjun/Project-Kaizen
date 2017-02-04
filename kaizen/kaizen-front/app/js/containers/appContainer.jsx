@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import '../../less/bulma.css';
 
 class appContainer extends Component{
   render(){

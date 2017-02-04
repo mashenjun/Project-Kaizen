@@ -8,6 +8,7 @@
   }
 }
 
+
 /*! minireset.css v0.0.2 | MIT License | github.com/jgthms/minireset.css */
 html,
 body,
@@ -1065,7 +1066,7 @@ a.box:active {
 }
 
 .button.is-success {
-  background-color: #23d160;
+  background-color: #2EB398;
   border-color: transparent;
   color: #fff;
 }

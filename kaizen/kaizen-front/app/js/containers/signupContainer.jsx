@@ -4,6 +4,7 @@ import {userLoginRequest} from '../actions/authActions'
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import {hashHistory} from 'react-router';
+import '../../less/loginContainer.less';
 
 class signupContainer extends Component {
     constructor(props) {
