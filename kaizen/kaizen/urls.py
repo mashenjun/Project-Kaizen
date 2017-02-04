@@ -37,5 +37,6 @@ urlpatterns = [
     url(r'^api-token-auth/', obtain_jwt_token),
     url(r'^registration/', include('registration.urls')),
     url(r'upload/', include('upload.urls')),
-
 ]
+
+
