@@ -17,7 +17,7 @@ class AwesomeComponent extends React.Component {
                     <div className="container">
                         <div className="nav-left">
                             <a className="nav-item" href="../index.html">
-                                <img src="./static/dist/images/bulma.png" alt="Description"/>
+                                <img src="/static/dist/images/bulma.png" alt="Description"/>
                             </a>
                         </div>
                         <span className="nav-toggle">

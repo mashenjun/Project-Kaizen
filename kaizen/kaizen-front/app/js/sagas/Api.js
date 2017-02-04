@@ -26,7 +26,7 @@ const callApi = (endpoint, request) => {
         .then(({ response, body }) => {
             return {
                 result: body,
-                status:response.status
+                status:response.ok
             }
         })
 
@@ -35,7 +35,14 @@ const callApi = (endpoint, request) => {
 
 export default {
     loginWithfetchToken(userinfo) {
-        let url = '/accounts/api/login/';
+        const url = '/accounts/api/login/';
+        return callApi(url, {
+            method: 'POST',
+            body: userinfo
+        })
+    },
+    signupWithfetchToken(userinfo) {
+        const url = '/accounts/api/register/';
         return callApi(url, {
             method: 'POST',
             body: userinfo

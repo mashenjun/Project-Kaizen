@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {connect} from 'react-redux'
-import {userLoginRequest} from '../actions/authActions'
+import {userSignupRequest} from '../actions/authActions'
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import {hashHistory} from 'react-router';
@@ -12,18 +12,40 @@ class signupContainer extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        const {
-            isAuthenticated,
-            errorMessage,
-            serverError,
-        } = nextProps;
-        if (isAuthenticated) {
-            hashHistory.push('/home');
-        }
-        console.log('before', this.props.isAuthenticated, 'after', isAuthenticated)
+
     }
 
+    validateEmail = (email) =>{
+        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    };
+
     onconfirmButtonClick = (event) => {
+        const username = this.userNameInput.input.value;
+        const password = this.passwordInput.input.value;
+        const email = this.emailInput.input.value;
+        const confirmpassword = this.confirmpasswordInput.input.value;
+
+        if (!username || !password || !email || !confirmpassword) {
+            if (!username) {
+                this.userNameInput.setState({errorText: "The username can not be empty"})
+            }
+            if (!password) {
+                this.passwordInput.setState({errorText: "The password can not be empty"})
+            }
+            if (!confirmpassword) {
+                this.confirmpasswordInput.setState({errorText: "The password can not be empty"})
+            }
+            if (!email) {
+                this.emailInput.setState({errorText: "The email can not be empty"})
+            }
+        } else if (!this.validateEmail(email)) {
+            this.emailInput.setState({errorText: "This is not a valid email"})
+        } else if (password != confirmpassword) {
+            this.confirmpasswordInput.setState({errorText: "The password must be same as the last one "})
+        } else {
+            this.props.onSignupButtonClick(username, email, password);
+        }
 
     };
 
@@ -77,13 +99,13 @@ class signupContainer extends Component {
                             fullWidth={true}
                             type="password"
                             className="input-field"
-                            hintText="ConfirmPassword"
-                            floatingLabelText="ConfirmPassword"
+                            hintText="Password Confirm"
+                            floatingLabelText="Password Confirm"
                             onChange={() => {
-                                this.passwordInput.setState({errorText: ""})
+                                this.confirmpasswordInput.setState({errorText: ""})
                             }}
                             ref={(input) => {
-                                this.passwordInput = input;
+                                this.confirmpasswordInput = input;
                             }}
                         />
 
@@ -114,9 +136,10 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        onLoginButtonClick(username, password) {
-            dispatch(userLoginRequest(
+        onSignupButtonClick(username, email, password) {
+            dispatch(userSignupRequest(
                 username,
+                email,
                 password
             ))
         }
