@@ -1,6 +1,8 @@
 from mongoengine import *
 
 from accounts.models import User
+
+
 # Create your models here.
 
 SEX = (('M', 'Male'),

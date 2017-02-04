@@ -1,9 +1,9 @@
 from django.shortcuts import render
-from rest_framework import generics,views
+from rest_framework import generics,views,status
 from rest_framework.parsers import FileUploadParser,MultiPartParser
 from rest_framework.response import Response
 from rest_framework.settings import api_settings
-from rest_framework.status import HTTP_200_OK,HTTP_400_BAD_REQUEST,HTTP_204_NO_CONTENT,HTTP_501_NOT_IMPLEMENTED
+
 from rest_framework.permissions import (
     AllowAny,
     IsAuthenticated,
@@ -26,6 +26,12 @@ class CreateUploaderView(generics.ListCreateAPIView):
 
     def post(self,request, format = None):
         # serializer = UploadImageSerilizer(data=request.data)
-        print('[DEBUG]{0}'.format(request.data))
+        # location = [float(x) for x in request.data.get('location').split(',')]
+        print("[DEBUG]{0}".format(str(request.data)))
+        serializer = UploaderCreateSerilizer(data=request.data)
+        # serializer.location = location
 
-        return Response({''},status=HTTP_501_NOT_IMPLEMENTED)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
