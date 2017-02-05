@@ -20,7 +20,7 @@ jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 class UserLoginSerializer(serializers.DocumentSerializer):
     token = serializers.serializers.CharField(allow_blank=True, read_only=True)
     username = serializers.serializers.CharField(required=True)
-    password = serializers.serializers.CharField(required=False, write_only=True)
+    password = serializers.serializers.CharField(required=False, write_only=True,style={'input_type': 'password'})
 
     class Meta:
         model = User
@@ -60,7 +60,7 @@ class UserLoginSerializer(serializers.DocumentSerializer):
         return data
 
 class UserRegisterSerializer(serializers.DocumentSerializer):
-    password = serializers.serializers.CharField(write_only=True)
+    password = serializers.serializers.CharField(write_only=True,style={'input_type': 'password'})
     # username = serializers.serializers.CharField(required=True)
     # email = serializers.serializers.EmailField(required=True)
 

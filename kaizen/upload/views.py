@@ -24,14 +24,23 @@ class CreateUploaderView(generics.ListCreateAPIView):
 
     queryset = Uploader.objects
 
-    def post(self,request, format = None):
+    def post(self, request, format = None,):
+
         # serializer = UploadImageSerilizer(data=request.data)
         # location = [float(x) for x in request.data.get('location').split(',')]
-        print("[DEBUG]{0}".format(str(request.data)))
-        serializer = UploaderCreateSerilizer(data=request.data)
-        # serializer.location = location
+        data = request.data.copy()
 
+
+        print("[DEBUG]{0}".format(type(data['location'])))
+
+        if isinstance(data.get('location'), list)==False:
+            data['location'] = [float(x) for x in request.data.get('location').split(',')]
+            # print("[DEBUG]{0}".format())
+        # serializer.location = location
+        print("[DEBUG]{0}".format(type(data['location'])))
+        serializer = UploaderCreateSerilizer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
