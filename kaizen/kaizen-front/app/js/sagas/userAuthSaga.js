@@ -1,7 +1,7 @@
-import { takeEvery } from 'redux-saga';
+import { takeEvery,takeLatest } from 'redux-saga';
 import { select, take, takem, call, put } from 'redux-saga/effects';
 import types from '../actions/actionTypes'
-import {userLoginSuccess,userLoginFailure,ServerSideError} from '../actions/authActions'
+import {userLoginSuccess,userLoginFailure,userSignupFailure,userSignupSuccess,ServerSideError} from '../actions/authActions'
 import Api from './Api'
 import 'whatwg-fetch'
 
@@ -9,7 +9,7 @@ import 'whatwg-fetch'
 export function* userLoginTask(action) {
     try {
         const {status,result} = yield call(Api.loginWithfetchToken,action.payload);
-        if(status===200){
+        if(status){
             yield put(userLoginSuccess(result))
         }else{
             yield put(userLoginFailure(result))
@@ -19,12 +19,32 @@ export function* userLoginTask(action) {
     }
 }
 
+export function* userSignupTask(action) {
+    try {
+        const {status,result} = yield call(Api.signupWithfetchToken,action.payload);
+        if(status){
+            yield put(userSignupSuccess(result))
+        }else{
+            yield put(userSignupFailure(result))
+        }
+    }catch(err){
+        yield put(ServerSideError({serverError:500}))
+    }
+}
+
 export function* watchFetchAuthToken() {
-    yield* takeEvery(types.USER_LOGIN_REQUEST, userLoginTask);
+    console.log('get login request');
+    yield* takeLatest(types.USER_LOGIN_REQUEST, userLoginTask);
+}
+
+export function* watchSignupTask() {
+    console.log('get signup request');
+    yield* takeLatest(types.USER_SIGNUP_REQUEST, userSignupTask);
 }
 
 export default function* userAuthSaga() {
     yield [
-        watchFetchAuthToken()
+        watchFetchAuthToken(),
+        watchSignupTask()
     ];
 }
