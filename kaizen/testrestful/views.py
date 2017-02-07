@@ -1,5 +1,6 @@
 # Create your views here.
 from rest_framework import generics,views
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.parsers import FileUploadParser,MultiPartParser
 from rest_framework.response import Response
 from rest_framework.settings import api_settings
@@ -65,7 +66,12 @@ class UploadImageView(views.APIView):
             custom_key =  api_settings.NON_FIELD_ERRORS_KEY
             return Response(errors,status=HTTP_400_BAD_REQUEST)
 
-
+@api_view(['GET', 'POST'])
+@permission_classes([AllowAny])
+def hello_world(request,name):
+    if request.method == 'POST':
+        return Response({"message": "Got some data!", "data": request.data})
+    return Response({"message": "Hello, world!"+str(name)})
 
 
 

@@ -28,14 +28,3 @@ class UploaderCreateSerilizer(serializers.DocumentSerializer):
             'user',
         ]
 
-    def create(self,validated_data):
-        print("[DEDUG] Called")
-        print("[DEDUG]%s" % str(validated_data))
-        # how to retrive user form validated_date
-
-        uploader = Uploader(
-
-        )
-
-        # uploader.save()
-        return uploader
