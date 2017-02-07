@@ -42,7 +42,7 @@ export const userSignupRequest = (username,email, password) => {
 
 export const userSignupFailure= (payload) => {
     return {
-        type: types.USER_LOGIN_FAILURE,
+        type: types.USER_SIGNUP_FAILURE,
         payload:{
             ...payload
         }
@@ -51,7 +51,7 @@ export const userSignupFailure= (payload) => {
 
 export const userSignupSuccess = (payload) => {
     return {
-        type: types.USER_LOGIN_SUCCESS,
+        type: types.USER_SIGNUP_SUCCESS,
         payload:{
             ...payload
         }

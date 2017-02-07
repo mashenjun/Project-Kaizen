@@ -17,11 +17,11 @@ class loginContainer extends Component {
             errorMessage,
             serverError,
         } = nextProps;
-        if( isAuthenticated){
+        if(isAuthenticated){
             hashHistory.push('/home');
         }
-        this.userNameInput.setState({errorText: errorMessage.username ? errorMessage.username : ""});
-        this.passwordInput.setState({errorText: errorMessage.password ? errorMessage.password : ""})
+        this.userNameInput.setState({errorText: errorMessage.username ? errorMessage.username[0] : ""});
+        this.passwordInput.setState({errorText: errorMessage.password ? errorMessage.password[0] : ""});
         console.log('before', this.props.isAuthenticated, 'after', isAuthenticated)
     }
 
@@ -45,7 +45,7 @@ class loginContainer extends Component {
     };
 
     render() {
-        console.log('new render');
+        console.log('new render for login');
         const {errorMessage} = this.props;
         return (
             <div className="loginContainer">

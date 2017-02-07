@@ -12,7 +12,12 @@ class signupContainer extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-
+        console.log('Sign up receive next props')
+       if(nextProps.signupSuccess){
+           hashHistory.push('/login');
+       }else if(nextProps.errorMessage){
+           this.userNameInput.setState({errorText: nextProps.errorMessage.username ? "The username must be unique" : ""});
+       }
     }
 
     validateEmail = (email) =>{
@@ -25,7 +30,6 @@ class signupContainer extends Component {
         const password = this.passwordInput.input.value;
         const email = this.emailInput.input.value;
         const confirmpassword = this.confirmpasswordInput.input.value;
-
         if (!username || !password || !email || !confirmpassword) {
             if (!username) {
                 this.userNameInput.setState({errorText: "The username can not be empty"})
@@ -50,7 +54,7 @@ class signupContainer extends Component {
     };
 
     render() {
-        console.log('new render');
+        console.log('new render for signup');
         const {errorMessage} = this.props;
         return (
             <div className="loginContainer">
@@ -121,16 +125,13 @@ class signupContainer extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-    const auth = state.auth;
     const {
-        token, username, isAuthenticated, errorMessage, serverError
-    } = auth;
+        signupSuccess, errorMessage, serverError
+    } =  state.signup;
     return {
-        token,
-        username,
-        isAuthenticated,
+        signupSuccess,
         errorMessage,
-        serverError
+        serverError,
     }
 }
 

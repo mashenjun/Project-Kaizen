@@ -33,12 +33,10 @@ export function* userSignupTask(action) {
 }
 
 export function* watchFetchAuthToken() {
-    console.log('get login request');
     yield* takeLatest(types.USER_LOGIN_REQUEST, userLoginTask);
 }
 
 export function* watchSignupTask() {
-    console.log('get signup request');
     yield* takeLatest(types.USER_SIGNUP_REQUEST, userSignupTask);
 }
 
