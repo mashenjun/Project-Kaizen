@@ -19,7 +19,7 @@ class Uploader(Document):
     name = StringField()
     birth_day = DateTimeField()
     sex = StringField(max_length=1, choices=SEX)
-    photo = ImageField()
+    photo = ImageField(content_type='image/png')
     # type = StringField(max_length=2, choices=TYPE)
     home_town = StringField()
     location = PointField()

@@ -105,19 +105,13 @@ class UserRegisterAPIView(ListCreateAPIView):
         if serializer.is_valid(raise_exception=False):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
+
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         else:
             errors = serializer.errors
-            custom_key =  api_settings.NON_FIELD_ERRORS_KEY
-            if custom_key in errors:
-                if errors[custom_key] == ["This user does not exist"]:
-                    errors['username'] = errors.pop('non_field_errors')
-                elif errors[custom_key] == ["Incorrect password"]:
-                    errors['password'] = errors.pop('non_field_errors')
-
             response_data_fail = {
                 'username': data.get('username'),
-                'loginsuccess': False,
+                'registersuccess': False,
                 'errormessage': errors
             }
             return Response(response_data_fail,status=status.HTTP_400_BAD_REQUEST)
