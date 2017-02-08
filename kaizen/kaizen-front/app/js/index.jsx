@@ -8,7 +8,7 @@ import AppContainer from './containers/appContainer';
 import loginContainer from './containers/loginContainer';
 import signupContainer from './containers/signupContainer'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import AwesomeComponent from './components/AwesomeComponent'
+import mainpageContainer from './containers/mainPageContainer'
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
 injectTapEventPlugin();
@@ -24,7 +24,7 @@ render(
                     <Route path="signup" component={signupContainer}/>
                     <Route path="/" component={AppContainer}>
                         <IndexRedirect to="home"/>
-                         <Route path="/home" component={AwesomeComponent} />
+                         <Route path="/home" component={mainpageContainer} />
                     </Route>
                 </Router>
                 <DevTools/>

@@ -22,7 +22,7 @@ function loginReducer(state = {'isAuthenticated': false, errorMessage:{}}, actio
                 serverError:payload['serverError']
             });
         default:
-            return state;
+            return state;1
     }
 }
 export default loginReducer;
