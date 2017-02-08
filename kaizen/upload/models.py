@@ -23,3 +23,5 @@ class Uploader(Document):
     # type = StringField(max_length=2, choices=TYPE)
     home_town = StringField()
     location = PointField()
+
+class 
