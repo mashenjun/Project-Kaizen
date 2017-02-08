@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-
 from mongoengine import *
-
 from accounts.models import User
+
 # Create your models here.
 
 SEX = (('M', 'Male'),
@@ -13,6 +12,7 @@ SEX = (('M', 'Male'),
 #         ('SO',"儿歌/童谣"),
 #         ('TO',"玩意/把式"),
 #         ('SP',"地方特色"),)
+
 
 class Uploader(Document):
     user = ReferenceField(User,required=True,dbref=False)
