@@ -18,8 +18,7 @@ from rest_framework_mongoengine import generics
 
 from .serializers import UploaderCreateSerilizer
 from .models import Uploader
-from rest_framework.test import APIClient,APIRequestFactory
-from time import gmtime, strftime
+from rest_framework.renderers import JSONRenderer
 
 # Create your views here.
 def debugfuntion():
@@ -33,8 +32,28 @@ class CreateUploaderView(generics.ListCreateAPIView):
 
     queryset = Uploader.objects()
 
+    def fillinlocation(self, queryset,datalist):
+        for data in datalist:
+            data['location'] = queryset['location']
+        return data
+
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = UploaderCreateSerilizer(page, many=True)
+            print('[DEBUGE-1]{0}'.format(type(queryset[0])))
+            print('[DEBUGE-2]{0}'.format(type(serializer.data[0].get('location'))))
+            # self.fillinlocation(queryset,serializer.data)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = UploaderCreateSerilizer(queryset, many=True)
+        # self.fillinlocation(queryset, serializer.data)
+        return Response(serializer.data)
+
     def post(self, request, format = None,):
-        debugfuntion()
         # serializer = UploadImageSerilizer(data=request.data)
         # location = [float(x) for x in request.data.get('location').split(',')]
         data = request.data.copy()
