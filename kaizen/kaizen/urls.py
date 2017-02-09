@@ -26,7 +26,7 @@ router = routers.DefaultRouter()
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     url(r'^', include(router.urls)),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    # url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^admin/', admin.site.urls),
     url(r'^testconnect/', include('testconnect.urls')),
     url(r'^testindex/', include('testindex.urls')),
@@ -34,9 +34,13 @@ urlpatterns = [
     url(r'^pages/', include('pages.urls')),
     # url(r'^api-token-auth/', obtain_jwt_token),
     url(r'^accounts/', include('accounts.urls')),
-    url(r'^api-token-auth/', obtain_jwt_token),
+    # url(r'^api-token-auth/', obtain_jwt_token),
     url(r'^registration/', include('registration.urls')),
     url(r'upload/', include('upload.urls')),
+]
+
+urlpatterns += [
+    url(r'^captcha/', include('captcha.urls')),
 ]
 
 

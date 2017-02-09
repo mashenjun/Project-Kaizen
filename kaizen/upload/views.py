@@ -1,8 +1,10 @@
 import re
 from django.http import HttpResponse
 from django.shortcuts import render
-from rest_framework import generics,views,status
+from rest_framework import views,status
+
 from rest_framework.parsers import FileUploadParser,MultiPartParser
+from rest_framework.settings import api_settings
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import (
@@ -12,13 +14,16 @@ from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly
 )
 
+from rest_framework_mongoengine import generics
+
 from .serializers import UploaderCreateSerilizer
 from .models import Uploader
 from rest_framework.test import APIClient,APIRequestFactory
 from time import gmtime, strftime
 
 # Create your views here.
-
+def debugfuntion():
+    print('[DEBUG-data-fromdb]{0}'.format(Uploader.objects()[1].location))
 
 
 class CreateUploaderView(generics.ListCreateAPIView):
@@ -26,15 +31,16 @@ class CreateUploaderView(generics.ListCreateAPIView):
     parser_classes = (MultiPartParser,)
     permission_classes = [AllowAny]
 
-    queryset = Uploader.objects
+    queryset = Uploader.objects()
 
     def post(self, request, format = None,):
-
+        debugfuntion()
         # serializer = UploadImageSerilizer(data=request.data)
         # location = [float(x) for x in request.data.get('location').split(',')]
         data = request.data.copy()
         date_regex = re.compile('^\d{4}-\d{2}-\d{2}$')
-        if isinstance(data.get('location'), list) == False:
+        location_regex = re.compile('^-?\d+,-?\d+$')
+        if location_regex.match(data.get('location')) is not None:
             data['location'] = [float(x) for x in request.data.get('location').split(',')]
         if date_regex.match(data.get('birth_day')) is not None:
             data['birth_day'] = data['birth_day']+'T00:00:00';

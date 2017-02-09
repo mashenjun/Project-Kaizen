@@ -80,6 +80,8 @@ REST_FRAMEWORK = {
         'accounts.utils.MYJSONWebTokenAuthentication',
         # 'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 20
 }
 
 ROOT_URLCONF = 'kaizen.urls'

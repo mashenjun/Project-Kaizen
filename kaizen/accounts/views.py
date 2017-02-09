@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.core.urlresolvers import reverse
 
 from rest_framework_jwt.settings import api_settings as jwt_api_setting
 
@@ -6,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.settings import api_settings
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.filters import (
     SearchFilter,
     OrderingFilter,
@@ -14,15 +16,6 @@ from rest_framework.mixins import (
     DestroyModelMixin,
     UpdateModelMixin,
 )
-from rest_framework.generics import (
-    ListCreateAPIView,
-    CreateAPIView,
-    DestroyAPIView,
-    ListAPIView,
-    UpdateAPIView,
-    RetrieveAPIView,
-    RetrieveUpdateAPIView
-)
 from rest_framework.permissions import (
     AllowAny,
     IsAuthenticated,
@@ -30,12 +23,25 @@ from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly
 )
 
+from rest_framework_mongoengine.generics import (
+    ListCreateAPIView,
+    CreateAPIView,
+    ListAPIView,
+    UpdateAPIView,
+    RetrieveAPIView,
+    RetrieveUpdateAPIView,
+    GenericAPIView)
+
+from captcha.models import CaptchaStore
+from captcha.conf import settings
+
 from .forms import UserLoginForm
 from .serializers import (
     UserLoginSerializer,
     UserRegisterSerializer,
+    RequiredSerializer,
+    NotRequiredSerializer,
 )
-
 from .models import User
 
 jwt_response_payload_handler = jwt_api_setting.JWT_RESPONSE_PAYLOAD_HANDLER
@@ -105,7 +111,6 @@ class UserRegisterAPIView(ListCreateAPIView):
         if serializer.is_valid(raise_exception=False):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
-
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         else:
             errors = serializer.errors
@@ -117,6 +122,36 @@ class UserRegisterAPIView(ListCreateAPIView):
             return Response(response_data_fail,status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def captcha(request):
+    key = CaptchaStore.generate_key()
+    data = {
+        'hashkey': key,
+        'image_url': reverse('captcha-image', kwargs={'key': key}),
+        'image2x_url': reverse('captcha-image-2x', kwargs={'key': key}),
+        'audio_url': None
+    }
+    if settings.CAPTCHA_FLITE_PATH:
+        data['audio_url'] = reverse('captcha-audio', kwargs={'key': key})
+    return Response(data,status=status.HTTP_200_OK)
+
+# test captcha
+class TestView(GenericAPIView):
+    permission_classes = [AllowAny]
+
+    def get_serializer_class(self):
+        if 'required' in self.request.query_params:
+            return RequiredSerializer
+        else:
+            return NotRequiredSerializer
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 

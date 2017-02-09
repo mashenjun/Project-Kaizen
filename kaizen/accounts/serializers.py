@@ -6,12 +6,15 @@ from calendar import timegm
 import rest_framework_jwt.utils
 from django.contrib.auth.hashers import make_password
 from django.utils.translation import ugettext_lazy as _
+from rest_framework import serializers as RDFserializers
 
 from rest_framework_mongoengine import serializers
+
 from rest_framework.exceptions import ValidationError
 from rest_framework_jwt.settings import api_settings
+
 from .models import User
-from .utils import my_jwt_payload_handler
+from .captcha_fields import CaptchaField
 
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
@@ -69,7 +72,6 @@ class UserRegisterSerializer(serializers.DocumentSerializer):
             'password',
             'email',
         ]
-
     def create(self,validated_data):
         user = User(
             username = validated_data['username'],
@@ -79,6 +81,17 @@ class UserRegisterSerializer(serializers.DocumentSerializer):
         user.password = validated_data['password']
         user.save()
         return user
+
+# test captcha
+class RequiredSerializer(RDFserializers.Serializer):
+    captcha = CaptchaField()
+
+
+class NotRequiredSerializer(RDFserializers.Serializer):
+    captcha = CaptchaField(required=False)
+
+
+
 
 
 

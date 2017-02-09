@@ -8,6 +8,7 @@ from os import SEEK_END
 from .models import Uploader,SEX
 from accounts.models import User
 from django.core.files.uploadedfile import InMemoryUploadedFile
+
 def get_default_image():
 
     width = 200
@@ -42,7 +43,7 @@ class UploaderCreateSerilizer(serializers.DocumentSerializer):
     birth_day = serializers.serializers.DateTimeField()
     sex = serializers.serializers.ChoiceField(choices=SEX)
 
-    photo = fields.ImageField(default=get_default_image())
+    photo = fields.ImageField(default=get_default_image(),use_url=True)
     home_town = serializers.serializers.CharField()
     location = fields.GeoPointField()
     user = fields.ReferenceField(model=User)
