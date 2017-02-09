@@ -33,8 +33,8 @@ class CreateUploaderView(generics.ListCreateAPIView):
     queryset = Uploader.objects()
 
     def fillinlocation(self, queryset,datalist):
-        for data in datalist:
-            data['location'] = queryset['location']
+        for data, item in datalist,queryset:
+            data['location'] = item['location']
         return data
 
 
@@ -44,8 +44,8 @@ class CreateUploaderView(generics.ListCreateAPIView):
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = UploaderCreateSerilizer(page, many=True)
-            print('[DEBUGE-1]{0}'.format(type(queryset[0])))
-            print('[DEBUGE-2]{0}'.format(type(serializer.data[0].get('location'))))
+            print('[DEBUGE-1]{0}'.format(queryset[0]['location']))
+            print('[DEBUGE-2]{0}'.format(serializer.data[0].get('location')))
             # self.fillinlocation(queryset,serializer.data)
             return self.get_paginated_response(serializer.data)
 
