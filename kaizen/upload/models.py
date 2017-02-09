@@ -24,4 +24,3 @@ class Uploader(Document):
     home_town = StringField()
     location = PointField()
 
-class 

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'testrestful',
     'upload',
     'pages',
+    'captcha',
 ]
 
 # AUTH_USER_MODEL = ['accounts.User']

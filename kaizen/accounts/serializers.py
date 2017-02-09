@@ -3,7 +3,7 @@ import uuid
 import warnings
 from datetime import datetime
 from calendar import timegm
-
+import rest_framework_jwt.utils
 from django.contrib.auth.hashers import make_password
 from django.utils.translation import ugettext_lazy as _
 
@@ -48,14 +48,12 @@ class UserLoginSerializer(serializers.DocumentSerializer):
             raise ValidationError("Incorrect password")
         # print(str(user))
         payload = jwt_payload_handler(user)
-        # to allow token refresh
-        if api_settings.JWT_ALLOW_REFRESH:
-            payload['orig_iat'] = timegm(
-                datetime.utcnow().utctimetuple()
-            )
-
+        # to allow token refresh already done in jwt_payload_handler
+        # if api_settings.JWT_ALLOW_REFRESH:
+        #     payload['orig_iat'] = timegm(
+        #         datetime.utcnow().utctimetuple()
+        #     )
         token = jwt_encode_handler(payload)
-
         data["token"] = str(token)
         return data
 

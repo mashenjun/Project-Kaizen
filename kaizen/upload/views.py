@@ -26,7 +26,7 @@ class CreateUploaderView(generics.ListCreateAPIView):
     parser_classes = (MultiPartParser,)
     permission_classes = [AllowAny]
 
-    queryset = Uploader.objects()
+    queryset = Uploader.objects
 
     def post(self, request, format = None,):
 
