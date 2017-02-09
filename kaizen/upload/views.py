@@ -32,10 +32,11 @@ class CreateUploaderView(generics.ListCreateAPIView):
 
     queryset = Uploader.objects()
 
-    def fillinlocation(self, queryset,datalist):
-        for data, item in datalist,queryset:
-            data['location'] = item['location']
-        return data
+    def fillinlocation(self, datalist_db,datalist_output):
+
+        for x in range(0, len(datalist_db)):
+            datalist_output[x]['location'] = datalist_db[x]['location']
+        return datalist_output
 
 
     def list(self, request, *args, **kwargs):
@@ -46,12 +47,12 @@ class CreateUploaderView(generics.ListCreateAPIView):
             serializer = UploaderCreateSerilizer(page, many=True)
             print('[DEBUGE-1]{0}'.format(queryset[0]['location']))
             print('[DEBUGE-2]{0}'.format(serializer.data[0].get('location')))
-            # self.fillinlocation(queryset,serializer.data)
-            return self.get_paginated_response(serializer.data)
+            restult = self.fillinlocation(queryset,serializer.data)
+            return self.get_paginated_response(restult)
 
         serializer = UploaderCreateSerilizer(queryset, many=True)
-        # self.fillinlocation(queryset, serializer.data)
-        return Response(serializer.data)
+        restult = self.fillinlocation(queryset, serializer.data)
+        return Response(restult)
 
     def post(self, request, format = None,):
         # serializer = UploadImageSerilizer(data=request.data)
