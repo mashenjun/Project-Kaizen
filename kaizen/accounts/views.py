@@ -141,6 +141,7 @@ class TestView(GenericAPIView):
     permission_classes = [AllowAny]
 
     def get_serializer_class(self):
+        print('[DEBUG-test-view]{0}'.format(self.request.query_params))
         if 'required' in self.request.query_params:
             return RequiredSerializer
         else:

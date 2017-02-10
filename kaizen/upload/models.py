@@ -1,17 +1,20 @@
 # -*- coding: utf-8 -*-
+
+import datetime
 from mongoengine import *
 from accounts.models import User
+
 
 # Create your models here.
 
 SEX = (('M', 'Male'),
         ('F', 'Female'),)
 
-# TYPE = (('GA',"民间游戏"),
-#         ('ST',"传说/故事"),
-#         ('SO',"儿歌/童谣"),
-#         ('TO',"玩意/把式"),
-#         ('SP',"地方特色"),)
+TYPE = (('GA',"民间游戏"),
+        ('ST',"传说/故事"),
+        ('SO',"儿歌/童谣"),
+        ('TO',"玩意/把式"),
+        ('SP',"地方特色"),)
 
 
 class Uploader(Document):
@@ -23,3 +26,11 @@ class Uploader(Document):
     # type = StringField(max_length=2, choices=TYPE)
     home_town = StringField()
     location = PointField()
+
+class Comment(Document):
+    content = StringField()
+    owner = ReferenceField(User,required=True,dbref=False)
+    created_datetime = DateTimeField(default=datetime.datetime.now())
+
+class UploadedContent(Document):
+    type = StringField(max_length=2, choices=TYPE)

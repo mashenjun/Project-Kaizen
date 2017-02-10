@@ -29,24 +29,27 @@ class CreateUploaderView(generics.ListCreateAPIView):
     serializer_class = UploaderCreateSerilizer
     parser_classes = (MultiPartParser,)
     permission_classes = [AllowAny]
-
+    # TODO:later change to IsAuthenticatedOrReadOnly
     queryset = Uploader.objects()
 
-    def fillinlocation(self, datalist_db,datalist_output):
 
+    def fillinlocation(self, datalist_db,datalist_output):
+        """
+        this function change the location field in serializer.data according to queryset result
+
+        :param datalist_db:
+        :param datalist_output:
+        :return: a new serializer.data
+        """
         for x in range(0, len(datalist_db)):
             datalist_output[x]['location'] = datalist_db[x]['location']
         return datalist_output
 
-
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = UploaderCreateSerilizer(page, many=True)
-            print('[DEBUGE-1]{0}'.format(queryset[0]['location']))
-            print('[DEBUGE-2]{0}'.format(serializer.data[0].get('location')))
             restult = self.fillinlocation(queryset,serializer.data)
             return self.get_paginated_response(restult)
 
@@ -91,7 +94,7 @@ def uploader_photo_view(request,  name,):
         # print("[DEBUG]{0}".format(content_type))
         resized_img = photo  # Handle resizing here
         return HttpResponse(resized_img, content_type=content_type)
-    except :
+    except:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
