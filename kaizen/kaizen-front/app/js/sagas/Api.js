@@ -47,5 +47,11 @@ export default {
             method: 'POST',
             body: userinfo
         })
+    },
+    getUsermapData() {
+        const url = '/upload/uploader';
+        return callApi(url, {
+            method: 'GET'
+        })
     }
 }

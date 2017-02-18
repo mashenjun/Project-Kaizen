@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import {connect} from 'react-redux'
 import NavbarComponent from '../components/navbar'
 import '../../less/bulma.css';
 
@@ -17,4 +18,18 @@ appContainer.propTypes = {
   children: React.PropTypes.node
 };
 
-export default appContainer;
+function mapStateToProps(state, ownProps) {
+    return {
+
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+
+        }
+}
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(appContainer);
