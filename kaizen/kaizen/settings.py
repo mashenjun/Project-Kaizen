@@ -89,7 +89,7 @@ ROOT_URLCONF = 'kaizen.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(PROJECT_ROOT, 'templates')],
+        'DIRS': [os.path.join(PROJECT_ROOT, 'templates'),os.path.join(PROJECT_ROOT, 'pages/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
