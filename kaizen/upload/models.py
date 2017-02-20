@@ -29,6 +29,7 @@ class Uploader(Document):
     home_town = StringField()
     location = PointField()
 
+# TODO: think the relationship between Uploaders, Posts and Comments.
 class Comment(EmbeddedDocument):
     content = StringField()
     owner = ReferenceField(User,required=True,dbref=False)

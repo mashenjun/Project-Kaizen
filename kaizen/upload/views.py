@@ -38,10 +38,12 @@ class CreateUploaderView(generics.ListCreateAPIView):
     def fillinlocation(self, datalist_db,datalist_output):
         """
         this function change the location field in serializer.data according to queryset result
+        @ShenjunMa
 
         :param datalist_db:
         :param datalist_output:
         :return: a new serializer.data
+
         """
         for x in range(0, len(datalist_db)):
             datalist_output[x]['location'] = datalist_db[x]['location']
@@ -83,6 +85,12 @@ class CreateUploaderView(generics.ListCreateAPIView):
                 'errormessage': errors
             }
             return Response(response_data_fail,status=status.HTTP_400_BAD_REQUEST)
+
+class RetrieveUploaderView(generics.RetrieveAPIView):
+    serializer_class = UploaderCreateSerilizer
+    permission_classes = [AllowAny]
+    queryset = Uploader.objects()
+    lookup_field = 'name'
 
 
 @api_view(['GET'])
