@@ -79,4 +79,4 @@ def get_token():
     #web.header('Content-Type', 'text/html; charset=UTF-8')
     result = json.dumps(token_dict)
     logger.debug(token_dict)
-    return Response(token_dict, content_type='application/json' ,status=status.HTTP_200_OK)
+    return Response(token_dict,status=status.HTTP_200_OK)

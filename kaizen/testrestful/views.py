@@ -119,7 +119,8 @@ def OSSgetsig(request):
     print(token)
     return token
 
-@api_view(['GET','POST'])
+@api_view(['POST'])
 @permission_classes([AllowAny])
 def checkrequest(request):
-    logger.debug(request.data)
+    print(request.method)
+    return Response(request.date,status=status.HTTP_200_OK)
