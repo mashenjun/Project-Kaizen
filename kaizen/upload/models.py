@@ -10,11 +10,13 @@ from accounts.models import User
 SEX = (('M', 'Male'),
         ('F', 'Female'),)
 
-TYPE = (('GA',"民间游戏"),
+CATALOGUE = (('GA',"民间游戏"),
         ('ST',"传说/故事"),
         ('SO',"儿歌/童谣"),
         ('TO',"玩意/把式"),
         ('SP',"地方特色"),)
+
+TYPR = ()
 
 
 class Uploader(Document):
@@ -27,10 +29,28 @@ class Uploader(Document):
     home_town = StringField()
     location = PointField()
 
-class Comment(Document):
+# TODO: think the relationship between Uploaders, Posts and Comments.
+class Comment(EmbeddedDocument):
     content = StringField()
     owner = ReferenceField(User,required=True,dbref=False)
     created_datetime = DateTimeField(default=datetime.datetime.now())
 
-class UploadedContent(Document):
-    type = StringField(max_length=2, choices=TYPE)
+class Post(Document):
+    title = StringField(max_length=200,required=True)
+    catalogue = StringField(max_length=10,)
+    type = StringField(max_length=10,)
+    author = ReferenceField(Uploader,required=True,dbref=False)
+    comment = EmbeddedDocumentListField(document_type=Comment)
+
+    meta = {'allow_inheritance': True}
+
+
+class TextPost(Post):
+    content = StringField()
+
+class ImagePost(Post):
+    link_url = URLField()
+
+class VideoPost(Post):
+    link_url = URLField()
+

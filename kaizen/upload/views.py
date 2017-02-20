@@ -13,11 +13,13 @@ from rest_framework.permissions import (
     IsAdminUser,
     IsAuthenticatedOrReadOnly
 )
+from .customize.custompermission import WhitelistPermission
 
 from rest_framework_mongoengine import generics
 
 from .serializers import UploaderCreateSerilizer
 from .models import Uploader
+from .customize.utils import get_token
 from rest_framework.renderers import JSONRenderer
 
 # Create your views here.
@@ -36,10 +38,12 @@ class CreateUploaderView(generics.ListCreateAPIView):
     def fillinlocation(self, datalist_db,datalist_output):
         """
         this function change the location field in serializer.data according to queryset result
+        @ShenjunMa
 
         :param datalist_db:
         :param datalist_output:
         :return: a new serializer.data
+
         """
         for x in range(0, len(datalist_db)):
             datalist_output[x]['location'] = datalist_db[x]['location']
@@ -82,11 +86,16 @@ class CreateUploaderView(generics.ListCreateAPIView):
             }
             return Response(response_data_fail,status=status.HTTP_400_BAD_REQUEST)
 
+class RetrieveUploaderView(generics.RetrieveAPIView):
+    serializer_class = UploaderCreateSerilizer
+    permission_classes = [AllowAny]
+    queryset = Uploader.objects()
+    lookup_field = 'name'
 
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def uploader_photo_view(request,  name,):
+def uploader_photo_view(request, name,):
     try:
         uploader = Uploader.objects.get(name=name)
         photo = uploader.photo.read()
@@ -98,3 +107,20 @@ def uploader_photo_view(request,  name,):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+# @permission_classes([IsAuthenticated])
+def OSS_signature():
+    token = get_token()
+    print(token)
+    return token
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+# @permission_classes([WhitelistPermission])
+def OSS_callback_handler(request):
+    # TODO:store data in to db.
+    # content is {"mimeType":"image/png","height":"256","size":"3251","url":"","filename":"user-dir/files.png","width":"256"}
+
+    return Response(request.data,status=status.HTTP_200_OK)

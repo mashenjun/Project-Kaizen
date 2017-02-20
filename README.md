@@ -76,3 +76,19 @@ npm run dev
 - setup database locally
 - add { "name" : "John Doe", "age" : 25} as employees
 - run server and check "http://127.0.0.1:8000/testconnect/"
+
+### kaizen/config.py
+the config file should contain the following contents:
+accessKeyId = '';
+accessKeySecret = '';
+host = '';
+expire_time = 30
+upload_dir = ''
+callback_url = "";
+
+whitelist = [
+    host,
+]
+
+
+
