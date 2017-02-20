@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^uploadfile/$', views.UploadFileView.as_view(), name='uploadfile'),
     url(r'^uploadimage/$', views.UploadImageView.as_view(), name='uploadimage'),
     url(r'^hello/(?P<name>.+)/$',views.hello_world, name='hello-world'),
-    url(r'^OSS/$',views.my_view, name='OSS'),
-    url(r'^OSSupload/$',views.OSS, name='OSS-upload')
+    url(r'^OSSpage/$',views.OSStestpage, name='OSS-page'),
+    url(r'^OSSgetsig/$',views.OSSgetsig, name='OSS-getsig'),
+    url('r^OSSprint/$',views.OSStestpage, name='OSS-test'),
 ]

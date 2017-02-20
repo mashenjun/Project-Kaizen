@@ -25,7 +25,7 @@ function send_request()
   
     if (xmlhttp!=null)
     {
-        serverUrl = '../OSSupload/'
+        serverUrl = '../OSSgetsig/'
         xmlhttp.open( "GET", serverUrl, false );
         xmlhttp.send( null );
         return xmlhttp.responseText
