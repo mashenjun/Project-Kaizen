@@ -10,5 +10,5 @@ urlpatterns = [
     url(r'^hello/(?P<name>.+)/$',views.hello_world, name='hello-world'),
     url(r'^OSSpage/$',views.OSStestpage, name='OSS-page'),
     url(r'^OSSgetsig/$',views.OSSgetsig, name='OSS-getsig'),
-    url('r^OSSprint/$',views.OSStestpage, name='OSS-test'),
+    url('r^OSSprint/$',views.checkrequest, name='OSS-test'),
 ]
