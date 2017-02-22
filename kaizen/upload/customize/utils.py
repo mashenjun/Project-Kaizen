@@ -17,22 +17,24 @@ from kaizen.config import (
     upload_dir,
     callback_url,
 )
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
-# create console handler and set level to debug
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
+def getlogger(name):
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)
 
-# create formatter
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    # create console handler and set level to debug
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
 
-# add formatter to ch
-ch.setFormatter(formatter)
+    # create formatter
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-# add ch to logger
-logger.addHandler(ch)
+    # add formatter to ch
+    ch.setFormatter(formatter)
 
+    # add ch to logger
+    logger.addHandler(ch)
+    return logger
 
 def get_iso_8601(expire):
     print(expire)

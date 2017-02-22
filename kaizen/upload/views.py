@@ -16,15 +16,17 @@ from rest_framework.permissions import (
 from .customize.custompermission import WhitelistPermission
 
 from rest_framework_mongoengine import generics
+from rest_framework_mongoengine.generics import get_object_or_404
 
-from .serializers import UploaderCreateSerilizer
-from .models import Uploader
+from .serializers import UploaderCreateSerilizer,PostCreateSerilizer,PostListSerilizer
+from .models import Uploader,Post
 from .customize.utils import get_token
+from .customize.utils import getlogger
 from rest_framework.renderers import JSONRenderer
 
 # Create your views here.
-def debugfuntion():
-    print('[DEBUG-data-fromdb]{0}'.format(Uploader.objects()[1].location))
+
+logger = getlogger(__name__)
 
 
 class CreateUploaderView(generics.ListCreateAPIView):
@@ -34,10 +36,10 @@ class CreateUploaderView(generics.ListCreateAPIView):
     # TODO:later change to IsAuthenticatedOrReadOnly
     queryset = Uploader.objects()
 
-
     def fillinlocation(self, datalist_db,datalist_output):
         """
         this function change the location field in serializer.data according to queryset result
+        because the format in the db doesn't match the view's format.
         @ShenjunMa
 
         :param datalist_db:
@@ -50,6 +52,7 @@ class CreateUploaderView(generics.ListCreateAPIView):
         return datalist_output
 
     def list(self, request, *args, **kwargs):
+        # the location field issue need to be fixed by overwrite the list method.
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -92,6 +95,106 @@ class RetrieveUploaderView(generics.RetrieveAPIView):
     queryset = Uploader.objects()
     lookup_field = 'name'
 
+class CreatePostView(generics.ListCreateAPIView):
+    serializer_class = PostCreateSerilizer
+    parser_classes = (MultiPartParser,)
+    permission_classes = [AllowAny]
+    # TODO:later change to IsAuthenticatedOrReadOnly
+    queryset = Post.objects()
+
+    def get_serializer_class(self):
+        """
+        Return the class to use for the serializer.
+        Defaults to using `self.serializer_class`.
+
+        You may want to override this if you need to provide different
+        serializations depending on the incoming request.
+
+        (Eg. admins get full serialization, others get basic serialization)
+        """
+        assert self.serializer_class is not None, (
+            "'%s' should either include a `serializer_class` attribute, "
+            "or override the `get_serializer_class()` method."
+            % self.__class__.__name__
+        )
+
+        if self.request.method == 'GET':
+            return PostListSerilizer
+        else:
+            return self.serializer_class
+
+class RetrievePostView(generics.RetrieveAPIView):
+    serializer_class = PostListSerilizer
+    permission_classes = [AllowAny]
+    queryset = Post.objects() # not necessary set the generate queryset here
+
+
+    def get_object(self):
+        ""
+        queryset = self.filter_queryset(self.get_queryset())
+
+        # Perform the lookup filtering.
+        # lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+
+        # assert lookup_url_kwarg in self.kwargs, (
+        #     'Expected view %s to be called with a URL keyword argument '
+        #     'named "%s". Fix your URL conf, or set the `.lookup_field` '
+        #     'attribute on the view correctly.' %
+        #     (self.__class__.__name__, lookup_url_kwarg)
+        # )
+
+        # filter_kwargs = {self.lookup_field: self.kwargs[lookup_url_kwarg]}
+
+        obj = get_object_or_404(queryset)
+
+        self.check_object_permissions(self.request, obj)
+
+        return obj
+
+    def get_queryset(self):
+        """
+        Get the list of items for this view.
+        This must be an iterable, and may be a queryset.
+        Defaults to using `self.queryset`.
+
+        This method should always be used rather than accessing `self.queryset`
+        directly, as `self.queryset` gets evaluated only once, and those results
+        are cached for all subsequent requests.
+
+        You may want to override this if you need to provide different
+        querysets depending on the incoming request.
+
+        (Eg. return a list of items that is specific to the user)
+        """
+        result = Post.objects()
+        assert self.queryset is not None, (
+            "'%s' should either include a `queryset` attribute, "
+            "or override the `get_queryset()` method."
+            % self.__class__.__name__
+        )
+        id = self.request.data.get('id',None)
+        logger.debug(self.request.query_params)
+        if id is not None:
+            result = Post.objects(id = id)
+
+        return result
+
+class ListPostVIew(generics.ListAPIView):
+    serializer_class = PostListSerilizer
+    permission_classes = [AllowAny]
+    # TODO:later change to IsAuthenticatedOrReadOnly
+    queryset = Post.objects()
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        queryset = Post.objects()
+        author = self.request.data.get('author', None)
+        if author is not None:
+            queryset = queryset.filter(author=author)
+        return queryset
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -116,11 +219,15 @@ def OSS_signature():
     return token
 
 
-@api_view(['POST'])
-@permission_classes([AllowAny])
-# @permission_classes([WhitelistPermission])
-def OSS_callback_handler(request):
-    # TODO:store data in to db.
-    # content is {"mimeType":"image/png","height":"256","size":"3251","url":"","filename":"user-dir/files.png","width":"256"}
+if __name__ == '__main__':
+    @api_view(['POST'])
+    @permission_classes([AllowAny])
+    # @permission_classes([WhitelistPermission])
+    def OSS_callback_handler(request):
+        # TODO:store data in to db.
+        # content is {"mimeType":"image/png","height":"256","size":"3251","url":"","filename":"user-dir/files.png","width":"256"}
 
-    return Response(request.data,status=status.HTTP_200_OK)
+        return Response(request.data,status=status.HTTP_200_OK)
+
+
+# TODO:insert comment into post.
