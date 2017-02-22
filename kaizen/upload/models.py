@@ -33,24 +33,29 @@ class Uploader(Document):
 class Comment(EmbeddedDocument):
     content = StringField()
     owner = ReferenceField(User,required=True,dbref=False)
-    created_datetime = DateTimeField(default=datetime.datetime.now())
+    created_datetime = DateTimeField(default=datetime.datetime.utcnow())
 
 class Post(Document):
     title = StringField(max_length=200,required=True)
-    catalogue = StringField(max_length=10,)
-    type = StringField(max_length=10,)
+    catalogue = StringField(max_length=10,choices=CATALOGUE)
+    # content_type = ListField()
+    #     # StringField(max_length=10,)
     author = ReferenceField(Uploader,required=True,dbref=False)
     comment = EmbeddedDocumentListField(document_type=Comment)
+    creadted_at = DateTimeField(default=datetime.datetime.utcnow())
+    text = StringField()
+    img_url = URLField()
+    video_url = URLField()
+    audio_url = URLField()
 
     meta = {'allow_inheritance': True}
 
-
-class TextPost(Post):
-    content = StringField()
-
-class ImagePost(Post):
-    link_url = URLField()
-
-class VideoPost(Post):
-    link_url = URLField()
+# class TextPost(Post):
+#     content = StringField()
+#
+# class ImagePost(Post):
+#     link_url = URLField()
+#
+# class VideoPost(Post):
+#     link_url = URLField()
 

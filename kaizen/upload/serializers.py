@@ -5,7 +5,7 @@ from time import gmtime, strftime
 from pydenticon import Generator
 import PIL
 from os import SEEK_END
-from .models import Uploader,SEX
+from .models import Uploader,SEX,Post
 from accounts.models import User
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
@@ -60,3 +60,22 @@ class UploaderCreateSerilizer(serializers.DocumentSerializer):
             'user',
         ]
 
+class PostCreateSerilizer(serializers.DocumentSerializer):
+
+    class Meta:
+        model = Post
+        fields = [
+            'title',
+            'catalogue',
+            'text',
+            'img_url',
+            'video_url',
+            'audio_url',
+            'author',
+        ]
+
+class PostListSerilizer(serializers.DocumentSerializer):
+
+    class Meta:
+        model = Post
+        exclude = ('_cls',)
