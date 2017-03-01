@@ -33,7 +33,7 @@ class Uploader(Document):
 class Comment(EmbeddedDocument):
     content = StringField()
     owner = ReferenceField(User,required=True,dbref=False)
-    created_datetime = DateTimeField(default=datetime.datetime.utcnow())
+    creadted_at = DateTimeField(default=datetime.datetime.utcnow())
 
 class Post(Document):
     title = StringField(max_length=200,required=True)
@@ -49,6 +49,11 @@ class Post(Document):
     audio_url = URLField()
 
     meta = {'allow_inheritance': True}
+
+    def add_comment(self,comment):
+        self.comment.append(comment)
+        self.save()
+
 
 # class TextPost(Post):
 #     content = StringField()

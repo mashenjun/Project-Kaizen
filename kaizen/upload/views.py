@@ -1,4 +1,4 @@
-import re
+import re, traceback, sys
 from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework import views,status
@@ -14,11 +14,16 @@ from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly
 )
 from .customize.custompermission import WhitelistPermission
-
 from rest_framework_mongoengine import generics
 from rest_framework_mongoengine.generics import get_object_or_404
 
-from .serializers import UploaderCreateSerilizer,PostCreateSerilizer,PostListSerilizer
+from .serializers import (
+    UploaderCreateSerializer,
+    PostCreateSerializer,
+    PostListSerializer,
+    CommentCreateSerializer,
+    PostUpdateSerializer,
+)
 from .models import Uploader,Post
 from .customize.utils import get_token
 from .customize.utils import getlogger
@@ -30,7 +35,7 @@ logger = getlogger(__name__)
 
 
 class CreateUploaderView(generics.ListCreateAPIView):
-    serializer_class = UploaderCreateSerilizer
+    serializer_class = UploaderCreateSerializer
     parser_classes = (MultiPartParser,)
     permission_classes = [AllowAny]
     # TODO:later change to IsAuthenticatedOrReadOnly
@@ -56,11 +61,11 @@ class CreateUploaderView(generics.ListCreateAPIView):
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = UploaderCreateSerilizer(page, many=True)
+            serializer = UploaderCreateSerializer(page, many=True)
             restult = self.fillinlocation(queryset,serializer.data)
             return self.get_paginated_response(restult)
 
-        serializer = UploaderCreateSerilizer(queryset, many=True)
+        serializer = UploaderCreateSerializer(queryset, many=True)
         restult = self.fillinlocation(queryset, serializer.data)
         return Response(restult)
 
@@ -76,7 +81,7 @@ class CreateUploaderView(generics.ListCreateAPIView):
             data['birth_day'] = data['birth_day']+'T00:00:00';
         # serializer.location = location
         # print('[DEBUGE]{0}'.format(type(data['photo'])))
-        serializer = UploaderCreateSerilizer(data=data)
+        serializer = UploaderCreateSerializer(data=data)
         if serializer.is_valid(raise_exception=False):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
@@ -90,13 +95,13 @@ class CreateUploaderView(generics.ListCreateAPIView):
             return Response(response_data_fail,status=status.HTTP_400_BAD_REQUEST)
 
 class RetrieveUploaderView(generics.RetrieveAPIView):
-    serializer_class = UploaderCreateSerilizer
+    serializer_class = UploaderCreateSerializer
     permission_classes = [AllowAny]
     queryset = Uploader.objects()
     lookup_field = 'name'
 
 class CreatePostView(generics.ListCreateAPIView):
-    serializer_class = PostCreateSerilizer
+    serializer_class = PostCreateSerializer
     parser_classes = (MultiPartParser,)
     permission_classes = [AllowAny]
     # TODO:later change to IsAuthenticatedOrReadOnly
@@ -119,12 +124,12 @@ class CreatePostView(generics.ListCreateAPIView):
         )
 
         if self.request.method == 'GET':
-            return PostListSerilizer
+            return PostListSerializer
         else:
             return self.serializer_class
 
 class RetrievePostView(generics.RetrieveAPIView):
-    serializer_class = PostListSerilizer
+    serializer_class = PostListSerializer
     permission_classes = [AllowAny]
     queryset = Post.objects() # not necessary set the generate queryset here
 
@@ -179,8 +184,9 @@ class RetrievePostView(generics.RetrieveAPIView):
 
         return result
 
-class ListPostVIew(generics.ListAPIView):
-    serializer_class = PostListSerilizer
+
+class ListPostView(generics.ListAPIView):
+    serializer_class = PostListSerializer
     permission_classes = [AllowAny]
     # TODO:later change to IsAuthenticatedOrReadOnly
     queryset = Post.objects()
@@ -195,6 +201,32 @@ class ListPostVIew(generics.ListAPIView):
         if author is not None:
             queryset = queryset.filter(author=author)
         return queryset
+
+@api_view(['PUT'])
+@permission_classes([AllowAny])
+def insert_comment_post(request):
+    try:
+        id = request.data.get('post',None)
+        data = request.data.copy()
+        content = request.data.get('content',None)
+        owner = request.data.get('owner',None)
+        del data['post']
+        comment_data = {'comment':[{'content':content,'owner':owner}]}
+        logger.debug(comment_data)
+        post = Post.objects.get(id=id) # get model instance
+        logger.debug(post.title)
+        serializer = PostUpdateSerializer(post,data=comment_data)
+        logger.debug(serializer.is_valid())
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_200_OK)
+        return  Response(status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        print("Exception in user code:")
+        print("-"*60)
+        traceback.print_exc(file=sys.stdout)
+        print("-"*60)
+        return Response(status=status.HTTP_417_EXPECTATION_FAILED)
 
 @api_view(['GET'])
 @permission_classes([AllowAny])

@@ -5,9 +5,14 @@ from time import gmtime, strftime
 from pydenticon import Generator
 import PIL
 from os import SEEK_END
-from .models import Uploader,SEX,Post
+from .models import Uploader,SEX,Post,Comment
+from .customize.utils import getlogger
 from accounts.models import User
 from django.core.files.uploadedfile import InMemoryUploadedFile
+import inspect
+from mongoengine.errors import ValidationError as me_ValidationError
+
+logger = getlogger(__name__)
 
 def get_default_image():
 
@@ -38,7 +43,7 @@ def get_default_image():
     return image_InMemoryUploadedFile
 
 
-class UploaderCreateSerilizer(serializers.DocumentSerializer):
+class UploaderCreateSerializer(serializers.DocumentSerializer):
     name = serializers.serializers.CharField()
     birth_day = serializers.serializers.DateTimeField()
     sex = serializers.serializers.ChoiceField(choices=SEX)
@@ -60,7 +65,34 @@ class UploaderCreateSerilizer(serializers.DocumentSerializer):
             'user',
         ]
 
-class PostCreateSerilizer(serializers.DocumentSerializer):
+class CommentCreateSerializer(serializers.EmbeddedDocumentSerializer):
+    # post = fields.ReferenceField(model=Post,required=True)
+    owner = fields.ReferenceField(model=User,required=True)
+    content = serializers.serializers.CharField()
+    class Meta:
+        model = Comment
+        fields = [
+            'content',
+            'owner',
+        ]
+
+    def create(self, post,validated_data):
+        print("[DEBUG0]:{0}".format(str(validated_data['owner'].id)))
+        owner = User.objects.get(id = validated_data['owner'].id)
+        content = validated_data['content']
+        newcomment = Comment(owner= owner,content=content)
+        print("[DEBUG1]:{0}".format(newcomment.owner))
+        print("[DEBUG2]:{0}".format(post.title))
+        post.add_comment(newcomment)
+        print("[DEBUG3]:{0}".format(post.comment))
+        return newcomment
+
+    def insert(self,post):
+        post.add_comment(self)
+
+
+class PostCreateSerializer(serializers.DocumentSerializer):
+    comment = fields.GenericEmbeddedDocumentField(Comment)
 
     class Meta:
         model = Post
@@ -72,10 +104,36 @@ class PostCreateSerilizer(serializers.DocumentSerializer):
             'video_url',
             'audio_url',
             'author',
+            'comment',
         ]
 
-class PostListSerilizer(serializers.DocumentSerializer):
+
+
+class PostListSerializer(serializers.DocumentSerializer):
 
     class Meta:
         model = Post
         exclude = ('_cls',)
+
+
+class PostUpdateSerializer(serializers.DocumentSerializer):
+    comment = CommentCreateSerializer(many = True,required=False)
+
+    class Meta:
+        model = Post
+        fields = [
+            'comment',
+        ]
+
+    def update(self, instance, validated_data):
+        print("[DEBUG]:{0}".format("called"))
+        logger.debug(validated_data)
+        comment = validated_data.pop('comment')
+        logger.debug(comment)
+        for comment_data in comment:
+            instance.comment.append(Comment(**comment_data))
+
+        logger.debug(type(instance))
+        instance.save()
+        return instance
+

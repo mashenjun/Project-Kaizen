@@ -9,5 +9,6 @@ urlpatterns = [
     url(r'^post/$',views.CreatePostView.as_view(),name='post-create-list'),
     url(r'^retrievepost/$',views.RetrievePostView.as_view(),name='post-retrieve'),
     url(r'^retrievepost/(?P<id>.+)/$',views.RetrievePostView.as_view(),name='post-retrieve'),
-    url(r'^listpost/$',views.ListPostVIew.as_view(),name='post-list')
+    url(r'^listpost/$',views.ListPostView.as_view(),name='post-list'),
+    url(r'^comment/$',views.insert_comment_post,name='comment-create')
 ]

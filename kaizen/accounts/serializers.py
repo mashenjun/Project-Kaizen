@@ -72,6 +72,7 @@ class UserRegisterSerializer(serializers.DocumentSerializer):
             'password',
             'email',
         ]
+
     def create(self,validated_data):
         user = User(
             username = validated_data['username'],
