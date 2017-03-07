@@ -65,9 +65,17 @@ class CreateUploaderView(generics.ListCreateAPIView):
             restult = self.fillinlocation(page,serializer.data)
             return self.get_paginated_response(restult)
 
+        elif 'page' not in request.query_params:
+            serializer = UploaderCreateSerializer(queryset, many=True)
+            result = self.fillinlocation(queryset, serializer.data)
+            data = {'count':len(result),
+                    'results': result,
+                    }
+            return Response(data,status=status.HTTP_200_OK)
+
         serializer = UploaderCreateSerializer(queryset, many=True)
         restult = self.fillinlocation(queryset, serializer.data)
-        return Response(restult)
+        return Response(restult,status=status.HTTP_200_OK)
 
     def post(self, request, format = None,):
         # serializer = UploadImageSerilizer(data=request.data)
