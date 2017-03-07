@@ -1,10 +1,11 @@
-import re, traceback, sys
+import re, traceback, sys, os
 from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework import views,status
 
 from rest_framework.parsers import FileUploadParser,MultiPartParser
 from rest_framework.settings import api_settings
+from rest_framework.reverse import reverse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import (
@@ -19,6 +20,7 @@ from rest_framework_mongoengine.generics import get_object_or_404
 
 from .serializers import (
     UploaderCreateSerializer,
+    UploaderListSerializer,
     PostCreateSerializer,
     PostListSerializer,
     CommentCreateSerializer,
@@ -54,6 +56,8 @@ class CreateUploaderView(generics.ListCreateAPIView):
         """
         for x in range(0, len(datalist_db)):
             datalist_output[x]['location'] = datalist_db[x]['location']
+            # TODO: change to real host address
+            datalist_output[x]['photo_url'] = reverse('get-photo', args=[datalist_output[x]['id']])
         return datalist_output
 
     def list(self, request, *args, **kwargs):
@@ -61,19 +65,19 @@ class CreateUploaderView(generics.ListCreateAPIView):
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
         if page is not None and 'page' in request.query_params:
-            serializer = UploaderCreateSerializer(page, many=True)
+            serializer = UploaderListSerializer(page, many=True)
             restult = self.fillinlocation(page,serializer.data)
             return self.get_paginated_response(restult)
 
         elif 'page' not in request.query_params:
-            serializer = UploaderCreateSerializer(queryset, many=True)
+            serializer = UploaderListSerializer(queryset, many=True)
             result = self.fillinlocation(queryset, serializer.data)
             data = {'count':len(result),
                     'results': result,
                     }
             return Response(data,status=status.HTTP_200_OK)
 
-        serializer = UploaderCreateSerializer(queryset, many=True)
+        serializer = UploaderListSerializer(queryset, many=True)
         restult = self.fillinlocation(queryset, serializer.data)
         return Response(restult,status=status.HTTP_200_OK)
 
@@ -238,9 +242,9 @@ def insert_comment_post(request):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def uploader_photo_view(request, name,):
+def uploader_photo_view(request, id,):
     try:
-        uploader = Uploader.objects.get(name=name)
+        uploader = Uploader.objects.get(id=id)
         photo = uploader.photo.read()
         content_type = uploader.photo.format
         # print("[DEBUG]{0}".format(content_type))
