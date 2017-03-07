@@ -60,7 +60,7 @@ class CreateUploaderView(generics.ListCreateAPIView):
         # the location field issue need to be fixed by overwrite the list method.
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
-        if page is not None:
+        if page is not None and 'page' in request.query_params:
             serializer = UploaderCreateSerializer(page, many=True)
             restult = self.fillinlocation(page,serializer.data)
             return self.get_paginated_response(restult)
