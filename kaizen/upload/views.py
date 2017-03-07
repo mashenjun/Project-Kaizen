@@ -62,7 +62,7 @@ class CreateUploaderView(generics.ListCreateAPIView):
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = UploaderCreateSerializer(page, many=True)
-            restult = self.fillinlocation(queryset,serializer.data)
+            restult = self.fillinlocation(page,serializer.data)
             return self.get_paginated_response(restult)
 
         serializer = UploaderCreateSerializer(queryset, many=True)
