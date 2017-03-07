@@ -19,5 +19,7 @@ export default createConstants(
     'UPLOADER_FETCHDATA_SUCCESS',
     'UPLOADER_FETCHDATA_FAILURE',
 
+    'UPLOADER_PAGE_CHANGE',
+
     'INTERNAL_SERVER_ERROR',
 )

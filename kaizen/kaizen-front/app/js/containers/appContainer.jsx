@@ -5,6 +5,7 @@ import '../../less/bulma.css';
 
 class appContainer extends Component{
   render(){
+      console.log('render appcontainer');
     return (
           <div>
             <NavbarComponent/>
@@ -18,18 +19,5 @@ appContainer.propTypes = {
   children: React.PropTypes.node
 };
 
-function mapStateToProps(state, ownProps) {
-    return {
 
-    }
-}
-
-function mapDispatchToProps(dispatch) {
-    return {
-
-        }
-}
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(appContainer);
+export default appContainer;

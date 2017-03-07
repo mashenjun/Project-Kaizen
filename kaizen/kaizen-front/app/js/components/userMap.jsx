@@ -1,6 +1,5 @@
 import React, {Component} from "react";
 import L from 'leaflet';
-import Api from '../sagas/Api'
 
 class UserMap extends Component {
     constructor(props) {
@@ -9,7 +8,7 @@ class UserMap extends Component {
 
     componentWillReceiveProps(nextProps) {
         const  {usermapdata }= nextProps;
-        console.log(usermapdata);
+        console.log('map component render');
         const map =  L.map('mapid', {searchControl: {}}).setView([34, 112], 4);
         L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             minZoom: 3,
