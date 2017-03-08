@@ -11,23 +11,37 @@ class UserList extends React.Component {
     }
 
     onPreClick = () => {
-        if(this.props.currentPage >1 ){
-            this.props.uploaderPageNavigate(this.props.currentPage-1);
+        if (this.props.currentPage > 1) {
+            this.props.uploaderPageNavigate(this.props.currentPage - 1);
         }
     };
 
     onNextClick = () => {
-       const maxPage = Math.floor(this.props.totalCount/consts.PAGE_SIZE) + 1;
-       if(this.props.currentPage < maxPage){
-           this.props.uploaderPageNavigate(this.props.currentPage+1);
-       }
+        const maxPage = Math.floor(this.props.totalCount / consts.PAGE_SIZE) + 1;
+        if (this.props.currentPage < maxPage) {
+            this.props.uploaderPageNavigate(this.props.currentPage + 1);
+        }
     };
 
     render() {
-        const maxPage = Math.floor(this.props.totalCount/consts.PAGE_SIZE) + 1;
+        const maxPage = Math.floor(this.props.totalCount / consts.PAGE_SIZE) + 1;
+        const {currentPage} = this.props;
         const pagi_list = [];
-        for(let i=1;i<=maxPage;i++){
-            pagi_list.push(<li key={i}><a onClick={()=>this.props.uploaderPageNavigate(i)} className={"pagination-link "+ (this.props.currentPage==i?"is-current":"")}>{i}</a></li>);
+        const upload_currentPage = [];
+        for (let i = 1; i <= maxPage; i++) {
+            pagi_list.push(<li key={i}><a onClick={() => this.props.uploaderPageNavigate(i)}
+                                          className={"pagination-link " + (this.props.currentPage == i ? "is-current" : "")}>{i}</a>
+            </li>);
+        }
+        for (let j = (currentPage - 1) * consts.PAGE_SIZE; j < (currentPage) * consts.PAGE_SIZE; j++) {
+            if (j < this.props.totalCount) {
+                upload_currentPage.push(
+                    <div key={j} className="column is-3">
+                        <div className="panel">
+                            <img width="300" height="300" src={this.props.usermapdata[j].photo_url}/>
+                            </div>
+                    </div>)
+            }
         }
         return (
             <div>
@@ -63,30 +77,7 @@ class UserList extends React.Component {
                         </div>
 
                         <div className="columns is-multiline">
-                            <div className="column is-3">
-                                <div className="panel">1</div>
-                            </div>
-                            <div className="column is-3">
-                                <div className="panel">2</div>
-                            </div>
-                            <div className="column is-3">
-                                <div className="panel">3</div>
-                            </div>
-                            <div className="column is-3">
-                                <div className="panel">4</div>
-                            </div>
-                            <div className="column is-3">
-                                <div className="panel">5</div>
-                            </div>
-                            <div className="column is-3">
-                                <div className="panel">6</div>
-                            </div>
-                            <div className="column is-3">
-                                <div className="panel">7</div>
-                            </div>
-                            <div className="column is-3">
-                                <div className="panel">8</div>
-                            </div>
+                            {upload_currentPage}
                         </div>
                         <div className="container">
                             <nav className="pagination is-centered">
@@ -110,11 +101,11 @@ class UserList extends React.Component {
 
 function mapStateToProps(state, ownProps) {
     const {
-        totalCount,currentPage
+        totalCount, currentPage
     } =  state.uploaders;
     return {
         totalCount,
-        currentPage
+        currentPage,
     }
 }
 
