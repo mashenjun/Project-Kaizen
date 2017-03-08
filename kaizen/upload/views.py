@@ -29,6 +29,7 @@ from .serializers import (
 from .models import Uploader,Post
 from .customize.utils import get_token
 from .customize.utils import getlogger
+from .customize.utils import modifyResponseData
 from rest_framework.renderers import JSONRenderer
 
 # Create your views here.
@@ -43,22 +44,22 @@ class CreateUploaderView(generics.ListCreateAPIView):
     # TODO:later change to IsAuthenticatedOrReadOnly
     queryset = Uploader.objects()
 
-    def fillinlocation(self, datalist_db,datalist_output):
-        """
-        this function change the location field in serializer.data according to queryset result
-        because the format in the db doesn't match the view's format.
-        @ShenjunMa
-
-        :param datalist_db:
-        :param datalist_output:
-        :return: a new serializer.data
-
-        """
-        for x in range(0, len(datalist_db)):
-            datalist_output[x]['location'] = datalist_db[x]['location']
-            # TODO: change to real host address
-            datalist_output[x]['photo_url'] = reverse('get-photo', args=[datalist_output[x]['id']])
-        return datalist_output
+    # def modifyResponseData(self, datalist_db, datalist_output):
+    #     """
+    #     this function change the location field in serializer.data according to queryset result
+    #     because the format in the db doesn't match the view's format.
+    #     @ShenjunMa
+    #
+    #     :param datalist_db:
+    #     :param datalist_output:
+    #     :return: a new serializer.data
+    #
+    #     """
+    #     for x in range(0, len(datalist_db)):
+    #         datalist_output[x]['location'] = datalist_db[x]['location']
+    #         # TODO: change to real host address
+    #         datalist_output[x]['photo_url'] = reverse('get-photo', args=[datalist_output[x]['id']])
+    #     return datalist_output
 
     def list(self, request, *args, **kwargs):
         # the location field issue need to be fixed by overwrite the list method.
@@ -66,19 +67,19 @@ class CreateUploaderView(generics.ListCreateAPIView):
         page = self.paginate_queryset(queryset)
         if page is not None and 'page' in request.query_params:
             serializer = UploaderListSerializer(page, many=True)
-            restult = self.fillinlocation(page,serializer.data)
+            restult = modifyResponseData(page, serializer.data)
             return self.get_paginated_response(restult)
 
         elif 'page' not in request.query_params:
             serializer = UploaderListSerializer(queryset, many=True)
-            result = self.fillinlocation(queryset, serializer.data)
+            result = modifyResponseData(queryset, serializer.data)
             data = {'count':len(result),
                     'results': result,
                     }
             return Response(data,status=status.HTTP_200_OK)
 
         serializer = UploaderListSerializer(queryset, many=True)
-        restult = self.fillinlocation(queryset, serializer.data)
+        restult = modifyResponseData(queryset, serializer.data)
         return Response(restult,status=status.HTTP_200_OK)
 
     def post(self, request, format = None,):
@@ -107,10 +108,16 @@ class CreateUploaderView(generics.ListCreateAPIView):
             return Response(response_data_fail,status=status.HTTP_400_BAD_REQUEST)
 
 class RetrieveUploaderView(generics.RetrieveAPIView):
-    serializer_class = UploaderCreateSerializer
+    serializer_class = UploaderListSerializer
     permission_classes = [AllowAny]
     queryset = Uploader.objects()
-    lookup_field = 'name'
+    # lookup_field = 'name'
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        restult = modifyResponseData(instance, serializer.data)
+        return Response(restult)
 
 class CreatePostView(generics.ListCreateAPIView):
     serializer_class = PostCreateSerializer

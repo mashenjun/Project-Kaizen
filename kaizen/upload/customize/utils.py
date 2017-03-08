@@ -7,6 +7,7 @@ import logging
 from hashlib import sha1 as sha
 
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
 from rest_framework import status
 
 from kaizen.config import (
@@ -80,5 +81,21 @@ def get_token():
     # web.header("Access-Control-Allow-Origin","*")
     #web.header('Content-Type', 'text/html; charset=UTF-8')
     result = json.dumps(token_dict)
-    logger.debug(token_dict)
     return Response(token_dict,status=status.HTTP_200_OK)
+
+def modifyResponseData(datalist_db, datalist_output):
+        """
+        this function change the location field in serializer.data according to queryset result
+        because the format in the db doesn't match the view's format.
+        @ShenjunMa
+
+        :param datalist_db:
+        :param datalist_output:
+        :return: a new serializer.data
+
+        """
+        for x in range(0, len(datalist_db)):
+            datalist_output[x]['location'] = datalist_db[x]['location']
+            # TODO: change to real host address
+            datalist_output[x]['photo_url'] = reverse('get-photo', args=[datalist_output[x]['id']])
+        return datalist_output

@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     # /upload/
     url(r'^uploader/$', views.CreateUploaderView.as_view(), name='uploader-create-list'),
+    url(r'^retrieveuploader/(?P<id>.+)/$',views.RetrieveUploaderView.as_view(),name='uploader-retrieve'),
     url(r'^getphoto/(?P<id>.+)/$',views.uploader_photo_view,name='get-photo'),
     url(r'^post/$',views.CreatePostView.as_view(),name='post-create-list'),
     url(r'^retrievepost/$',views.RetrievePostView.as_view(),name='post-retrieve'),
