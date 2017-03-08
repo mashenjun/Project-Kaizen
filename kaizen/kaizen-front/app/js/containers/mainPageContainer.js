@@ -15,7 +15,7 @@ class mainpageContainer extends Component{
         return (
             <div>
                 <UserMap usermapdata={this.props.usermapdata}/>
-                <UserList/>
+                <UserList usermapdata={this.props.usermapdata}/>
                 <Footer/>
             </div>
         )
