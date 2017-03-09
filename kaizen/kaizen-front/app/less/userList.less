@@ -4,3 +4,22 @@
   font-weight: bold;
   padding: 0 10px;
 }
+
+.panel-photo{
+  border:1px solid #eee;
+  min-height:272.25px;
+}
+
+.panel-wrapper{
+  transform: perspective(1px) translateZ(0);
+  box-shadow: 0 0 1px transparent;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  -webkit-transition-property: box-shadow;
+  transition-property: box-shadow;
+  cursor: pointer;
+}
+
+.panel-wrapper:hover{
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4);
+}

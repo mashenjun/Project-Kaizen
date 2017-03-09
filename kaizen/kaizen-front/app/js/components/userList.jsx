@@ -35,12 +35,11 @@ class UserList extends React.Component {
             </li>);
         }
         for (let j = (currentPage - 1) * consts.PAGE_SIZE; j < (currentPage) * consts.PAGE_SIZE; j++) {
-            debugger;
             if (j < this.props.totalCount) {
                 upload_currentPage.push(
                     <div key={j} className="column is-3">
-                        <div className="panel">
-                            <div style={{border:"1px solid #dbdbdb",minHeight:"272.25px"}}>
+                        <div className="panel panel-wrapper">
+                            <div className="panel-photo">
                                 <img width="300" height="300" src={this.props.usermapdata[j].photo_url}/>
                             </div>
                             <div className="panel-block">
