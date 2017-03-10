@@ -42,7 +42,7 @@ class UserList extends React.Component {
                             <div className="panel-photo">
                                 <img width="300" height="300" src={this.props.usermapdata[j].photo_url}/>
                             </div>
-                            <div className="panel-block">
+                            <div className="panel-block" style={{borderRadius:"0 0 4px 4px"}}>
                                 <div className="columns" style={{width:'100%',paddingLeft:'10px'}}>
                                     <div className="column">
                                         <span className="panel-block-item">{this.props.usermapdata[j].name}</span>
@@ -61,7 +61,7 @@ class UserList extends React.Component {
                 <div className="section">
                     <div className="container">
                         <div className="title is-2">Overview</div>
-                        <div className="nav menu">
+                        <div className="nav menu" style={{marginBottom:"10px"}}>
                             <div className="container">
                                 <div className="nav-left">
                                     <a className="nav-item is-tab is-active"><span className="icon-btn"><i
