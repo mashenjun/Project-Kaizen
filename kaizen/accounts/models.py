@@ -2,6 +2,7 @@ from mongoengine import *
 
 from django.utils.deprecation import CallableFalse, CallableTrue
 
+
 # Create your models here.
 
 # class fakeUser(AbstractBaseUser):
@@ -31,3 +32,8 @@ class User(Document):
         authenticated in templates.
         """
         return CallableTrue
+
+    def query_uploaders(self):
+        return Uploader.objects(user=self)
+
+from upload.models import Uploader

@@ -16,6 +16,8 @@ from rest_framework_jwt.settings import api_settings
 from .models import User
 from .captcha_fields import CaptchaField
 
+from upload.serializers import UploaderListSerializer
+
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
@@ -82,6 +84,25 @@ class UserRegisterSerializer(serializers.DocumentSerializer):
         user.password = validated_data['password']
         user.save()
         return user
+
+
+class UserDetailSerializer(serializers.DocumentSerializer):
+    uploaders = serializers.serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'email',
+            'uploaders',
+        ]
+
+    def get_uploaders(self,obj):
+        query_set = obj.query_uploaders()
+        if query_set.count() ==0:
+            return None
+        return UploaderListSerializer(query_set,many=True).data
+
 
 # test captcha
 class RequiredSerializer(RDFserializers.Serializer):

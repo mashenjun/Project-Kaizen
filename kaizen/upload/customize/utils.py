@@ -95,7 +95,7 @@ def modifyUploaderResponseData(datalist_db, datalist_output):
         :return: a new serializer.data
 
         """
-        if isinstance(datalist_db, list) and isinstance(datalist_output, list):
+        if len(datalist_db)==len(datalist_output) and len(datalist_db)>1:
             for x in range(0, len(datalist_db)):
                 if 'location' in datalist_output[x]:
                     datalist_output[x]['location'] = datalist_db[x]['location']
@@ -107,6 +107,7 @@ def modifyUploaderResponseData(datalist_db, datalist_output):
                 datalist_output['location'] = datalist_db['location']
             if 'id' in datalist_db:
                 datalist_output['photo_url'] = reverse('get-photo', args=[datalist_db['id']])
+
         return datalist_output
 
 def modifyUploaderRequestData(request):

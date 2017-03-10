@@ -41,24 +41,26 @@ from .serializers import (
     UserRegisterSerializer,
     RequiredSerializer,
     NotRequiredSerializer,
+    UserDetailSerializer
 )
 from .models import User
+from upload.customize.utils import modifyUploaderResponseData
 
 jwt_response_payload_handler = jwt_api_setting.JWT_RESPONSE_PAYLOAD_HANDLER
 
 # Create your views here.
-def login_view(request):
-    form = UserLoginForm(request.POST or None)
-    if form.is_valid():
-        username = form.cleaned_data.get("username")
-        password = form.cleaned_data.get("password")
-    return render(request,"accounts/test_login.html",{"form":form})
-
-def register_view(request):
-    return render(request,"form.html",{})
-
-def logout_view(request):
-    return render(request,"form.html",{})
+# def login_view(request):
+#     form = UserLoginForm(request.POST or None)
+#     if form.is_valid():
+#         username = form.cleaned_data.get("username")
+#         password = form.cleaned_data.get("password")
+#     return render(request,"accounts/test_login.html",{"form":form})
+#
+# def register_view(request):
+#     return render(request,"form.html",{})
+#
+# def logout_view(request):
+#     return render(request,"form.html",{})
 
 
 class UserLoginAPIView(APIView):
@@ -120,6 +122,20 @@ class UserRegisterAPIView(ListCreateAPIView):
                 'errormessage': errors
             }
             return Response(response_data_fail,status=status.HTTP_400_BAD_REQUEST)
+
+class UserRetrieveView(RetrieveAPIView):
+    # TODO: include posts list
+    serializer_class = UserDetailSerializer
+    permission_classes = [AllowAny]
+    queryset = User.objects()
+    # lookup_field = 'name'
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        result = serializer.data.copy()
+        result['uploaders'] = modifyUploaderResponseData(instance.query_uploaders(),result['uploaders'])
+        return Response(result)
 
 
 @api_view(['GET'])

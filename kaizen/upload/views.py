@@ -118,15 +118,11 @@ class RetrieveUploaderView(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        logger.debug(serializer.data)
         result = serializer.data.copy()
-        posts = Post.objects(author = instance)
-        logger.debug(posts)
         if 'location' in result:
             result['location'] = instance['location']
         if 'id' in instance:
             result['photo_url'] = reverse('get-photo', args=[instance['id']])
-        # result['posts'] = posts
         return Response(result)
 
 
@@ -169,7 +165,6 @@ class EditUploaderView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generic
         return Response(result)
 
     def put(self, request, *args, **kwargs):
-        logger.debug(request.data)
         newrequest = modifyUploaderRequestData(request)
         return self.partial_update(newrequest, *args, **kwargs)
 
@@ -258,7 +253,6 @@ class RetrievePostView(generics.RetrieveAPIView):
             % self.__class__.__name__
         )
         id = self.request.data.get('id',None)
-        logger.debug(self.request.query_params)
         if id is not None:
             result = Post.objects(id = id)
 
@@ -292,11 +286,8 @@ def insert_comment_post(request):
         owner = request.data.get('owner',None)
         del data['post']
         comment_data = {'comment':[{'content':content,'owner':owner}]}
-        logger.debug(comment_data)
         post = Post.objects.get(id=id) # get model instance
-        logger.debug(post.title)
         serializer = PostUpdateSerializer(post,data=comment_data)
-        logger.debug(serializer.is_valid())
         if serializer.is_valid():
             serializer.save()
             return Response(status=status.HTTP_200_OK)
