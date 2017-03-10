@@ -3,6 +3,7 @@ import {hashHistory} from 'react-router';
 import {connect} from 'react-redux';
 import {uploaderPageNavigate} from '../actions/navigationAction';
 import * as consts from '../constants/const';
+import '../../less/userList.less'
 
 class UserList extends React.Component {
 
@@ -37,9 +38,21 @@ class UserList extends React.Component {
             if (j < this.props.totalCount) {
                 upload_currentPage.push(
                     <div key={j} className="column is-3">
-                        <div className="panel">
-                            <img width="300" height="300" src={this.props.usermapdata[j].photo_url}/>
+                        <div className="panel panel-wrapper">
+                            <div className="panel-photo">
+                                <img width="300" height="300" src={this.props.usermapdata[j].photo_url}/>
                             </div>
+                            <div className="panel-block">
+                                <div className="columns" style={{width:'100%',paddingLeft:'10px'}}>
+                                    <div className="column">
+                                        <span className="panel-block-item">{this.props.usermapdata[j].name}</span>
+                                    </div>
+                                    <div className="column has-text-right">
+                                        <span className="panel-block-item">{this.props.usermapdata[j].home_town}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>)
             }
         }
@@ -64,7 +77,7 @@ class UserList extends React.Component {
                                           </span>
                                     </a>
                                     <div className="nav-item is-tab">
-                                        <strong>2 items selected</strong>
+                                        <strong>testing</strong>
                                     </div>
                                 </div>
                                 <div className="nav-right is-hidden-mobile">
