@@ -1,7 +1,7 @@
 import re, traceback, sys, os
 from django.http import HttpResponse
 from django.shortcuts import render
-from rest_framework import views,status
+from rest_framework import views,status,mixins
 
 from rest_framework.parsers import FileUploadParser,MultiPartParser
 from rest_framework.settings import api_settings
@@ -25,11 +25,13 @@ from .serializers import (
     PostListSerializer,
     CommentCreateSerializer,
     PostUpdateSerializer,
+    UploaderEditSerializer,
+    UploaderDetailSerializer,
 )
-from .models import Uploader,Post
+from .models import Uploader,Post,Comment
 from .customize.utils import get_token
 from .customize.utils import getlogger
-from .customize.utils import modifyResponseData
+from .customize.utils import modifyUploaderResponseData, modifyUploaderRequestData
 from rest_framework.renderers import JSONRenderer
 
 # Create your views here.
@@ -43,7 +45,6 @@ class CreateUploaderView(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
     # TODO:later change to IsAuthenticatedOrReadOnly
     queryset = Uploader.objects()
-
     # def modifyResponseData(self, datalist_db, datalist_output):
     #     """
     #     this function change the location field in serializer.data according to queryset result
@@ -60,41 +61,41 @@ class CreateUploaderView(generics.ListCreateAPIView):
     #         # TODO: change to real host address
     #         datalist_output[x]['photo_url'] = reverse('get-photo', args=[datalist_output[x]['id']])
     #     return datalist_output
-
     def list(self, request, *args, **kwargs):
         # the location field issue need to be fixed by overwrite the list method.
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
         if page is not None and 'page' in request.query_params:
             serializer = UploaderListSerializer(page, many=True)
-            restult = modifyResponseData(page, serializer.data)
+            restult = modifyUploaderResponseData(page, serializer.data)
             return self.get_paginated_response(restult)
 
         elif 'page' not in request.query_params:
             serializer = UploaderListSerializer(queryset, many=True)
-            result = modifyResponseData(queryset, serializer.data)
+            result = modifyUploaderResponseData(queryset, serializer.data)
             data = {'count':len(result),
                     'results': result,
                     }
             return Response(data,status=status.HTTP_200_OK)
 
         serializer = UploaderListSerializer(queryset, many=True)
-        restult = modifyResponseData(queryset, serializer.data)
+        restult = modifyUploaderResponseData(queryset, serializer.data)
         return Response(restult,status=status.HTTP_200_OK)
 
     def post(self, request, format = None,):
         # serializer = UploadImageSerilizer(data=request.data)
         # location = [float(x) for x in request.data.get('location').split(',')]
-        data = request.data.copy()
-        date_regex = re.compile('^\d{4}-\d{2}-\d{2}$')
-        location_regex = re.compile('^-?\d+,-?\d+$')
-        if location_regex.match(data.get('location')) is not None:
-            data['location'] = [float(x) for x in request.data.get('location').split(',')]
-        if date_regex.match(data.get('birth_day')) is not None:
-            data['birth_day'] = data['birth_day']+'T00:00:00';
+        # data = request.data.copy()
+        # date_regex = re.compile('^\d{4}-\d{2}-\d{2}$')
+        # location_regex = re.compile('^-?\d+,-?\d+$')
+        # if location_regex.match(data.get('location')) is not None:
+        #     data['location'] = [float(x) for x in request.data.get('location').split(',')]
+        # if date_regex.match(data.get('birth_day')) is not None:
+        #     data['birth_day'] = data['birth_day']+'T00:00:00';
+        newrequest = modifyUploaderRequestData(request)
         # serializer.location = location
         # print('[DEBUGE]{0}'.format(type(data['photo'])))
-        serializer = UploaderCreateSerializer(data=data)
+        serializer = UploaderCreateSerializer(data=newrequest.data)
         if serializer.is_valid(raise_exception=False):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
@@ -108,7 +109,8 @@ class CreateUploaderView(generics.ListCreateAPIView):
             return Response(response_data_fail,status=status.HTTP_400_BAD_REQUEST)
 
 class RetrieveUploaderView(generics.RetrieveAPIView):
-    serializer_class = UploaderListSerializer
+    # TODO: include posts list
+    serializer_class = UploaderDetailSerializer
     permission_classes = [AllowAny]
     queryset = Uploader.objects()
     # lookup_field = 'name'
@@ -116,8 +118,67 @@ class RetrieveUploaderView(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        restult = modifyResponseData(instance, serializer.data)
-        return Response(restult)
+        logger.debug(serializer.data)
+        result = serializer.data.copy()
+        posts = Post.objects(author = instance)
+        logger.debug(posts)
+        if 'location' in result:
+            result['location'] = instance['location']
+        if 'id' in instance:
+            result['photo_url'] = reverse('get-photo', args=[instance['id']])
+        # result['posts'] = posts
+        return Response(result)
+
+
+class EditUploaderView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.RetrieveAPIView):
+    serializer_class = UploaderEditSerializer
+    # TODO: change permission_class
+    # parser_classes = (MultiPartParser,)
+    permission_classes = [AllowAny]
+    queryset = Uploader.objects()
+    # lookup_field = 'name'
+
+    def update(self, request, *args, **kwargs):
+        # modify the photo_url and location format
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # refresh the instance from the database.
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+        result = serializer.data.copy()
+        if 'location' in result:
+            result['location'] = instance['location']
+        if 'id' in instance:
+            result['photo_url'] = reverse('get-photo', args=[instance['id']])
+        return Response(result)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        result = serializer.data.copy()
+        if 'location' in result:
+            result['location'] = instance['location']
+        if 'id' in instance:
+            result['photo_url'] = reverse('get-photo', args=[instance['id']])
+        return Response(result)
+
+    def put(self, request, *args, **kwargs):
+        logger.debug(request.data)
+        newrequest = modifyUploaderRequestData(request)
+        return self.partial_update(newrequest, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
+
+
 
 class CreatePostView(generics.ListCreateAPIView):
     serializer_class = PostCreateSerializer

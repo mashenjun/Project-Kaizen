@@ -4,6 +4,7 @@ import json
 import base64
 import hmac
 import logging
+import re
 from hashlib import sha1 as sha
 
 from rest_framework.response import Response
@@ -83,7 +84,7 @@ def get_token():
     result = json.dumps(token_dict)
     return Response(token_dict,status=status.HTTP_200_OK)
 
-def modifyResponseData(datalist_db, datalist_output):
+def modifyUploaderResponseData(datalist_db, datalist_output):
         """
         this function change the location field in serializer.data according to queryset result
         because the format in the db doesn't match the view's format.
@@ -94,8 +95,28 @@ def modifyResponseData(datalist_db, datalist_output):
         :return: a new serializer.data
 
         """
-        for x in range(0, len(datalist_db)):
-            datalist_output[x]['location'] = datalist_db[x]['location']
-            # TODO: change to real host address
-            datalist_output[x]['photo_url'] = reverse('get-photo', args=[datalist_output[x]['id']])
+        if isinstance(datalist_db, list) and isinstance(datalist_output, list):
+            for x in range(0, len(datalist_db)):
+                if 'location' in datalist_output[x]:
+                    datalist_output[x]['location'] = datalist_db[x]['location']
+                # TODO: change to real host address
+                if 'is' in datalist_db[x]:
+                    datalist_output[x]['photo_url'] = reverse('get-photo', args=[datalist_output[x]['id']])
+        else:
+            if 'location' in datalist_output:
+                datalist_output['location'] = datalist_db['location']
+            if 'id' in datalist_db:
+                datalist_output['photo_url'] = reverse('get-photo', args=[datalist_db['id']])
         return datalist_output
+
+def modifyUploaderRequestData(request):
+    if hasattr(request.data, '_mutable'):
+        request.data._mutable = True
+    date_regex = re.compile('^\d{4}-\d{2}-\d{2}$')
+    location_regex = re.compile('^-?\d+,-?\d+$')
+
+    if 'location' in request.data and location_regex.match(request.data.get('location')) is not None:
+        request.data['location'] = [float(x) for x in request.data.get('location').split(',')]
+    if 'birth_day' in request.data and date_regex.match(request.data.get('birth_day')) is not None:
+        request.data['birth_day'] = request.data['birth_day'] + 'T00:00:00';
+    return request
