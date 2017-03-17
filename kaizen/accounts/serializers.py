@@ -115,6 +115,16 @@ class UserEditSerializer(serializers.DocumentSerializer):
             'password',
         ]
 
+class UserSimpleSerializer(serializers.DocumentSerializer):
+    password = serializers.serializers.CharField(write_only=True, style={'input_type': 'password'}, required=False)
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'email',
+            'password',
+        ]
+
 # test captcha
 class RequiredSerializer(RDFserializers.Serializer):
     captcha = CaptchaField()

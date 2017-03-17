@@ -95,6 +95,9 @@ def modifyUploaderResponseData(datalist_db, datalist_output):
         :return: a new serializer.data
 
         """
+        if(datalist_output is None):
+            return [];
+
         if len(datalist_db)==len(datalist_output) and len(datalist_db)>1:
             for x in range(0, len(datalist_db)):
                 if 'location' in datalist_output[x]:

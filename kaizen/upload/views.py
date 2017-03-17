@@ -15,6 +15,7 @@ from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly
 )
 from .customize.custompermission import WhitelistPermission
+from .customize.custompagination import StandardResultsSetPagination
 from rest_framework_mongoengine import generics
 from rest_framework_mongoengine.generics import get_object_or_404
 
@@ -27,6 +28,7 @@ from .serializers import (
     PostUpdateSerializer,
     UploaderEditSerializer,
     UploaderDetailSerializer,
+    UploaderBelongUserSerializer
 )
 from .models import Uploader,Post,Comment
 from .customize.utils import get_token
@@ -108,8 +110,34 @@ class CreateUploaderView(generics.ListCreateAPIView):
             }
             return Response(response_data_fail,status=status.HTTP_400_BAD_REQUEST)
 
+class FilterUploaderbyUserView(generics.ListAPIView):
+    serializer_class = UploaderBelongUserSerializer
+    permission_classes = [AllowAny]
+    pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        user = self.kwargs['userid']
+        print("[DEBUG]{0}".format(user))
+        return Uploader.objects.filter(user=user)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            restult = modifyUploaderResponseData(page, serializer.data)
+            return self.get_paginated_response(restult)
+
+        serializer = self.get_serializer(queryset, many=True)
+        restult = modifyUploaderResponseData(queryset, serializer.data)
+        return Response(restult)
+
 class RetrieveUploaderView(generics.RetrieveAPIView):
-    # TODO: include posts list
     serializer_class = UploaderDetailSerializer
     permission_classes = [AllowAny]
     queryset = Uploader.objects()

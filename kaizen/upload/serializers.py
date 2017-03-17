@@ -195,6 +195,7 @@ class UploaderBelongUserSerializer(serializers.DocumentSerializer):
     sex = serializers.serializers.ChoiceField(choices=SEX)
     home_town = serializers.serializers.CharField()
     location = fields.GeoPointField()
+    post_count = serializers.serializers.SerializerMethodField()
     class Meta:
         model = Uploader
         fields = [
@@ -204,7 +205,11 @@ class UploaderBelongUserSerializer(serializers.DocumentSerializer):
             'sex',
             'home_town',
             'location',
+            'post_count',
         ]
+
+    def get_post_count(self, obj):
+        return obj.query_posts().count()
 
 
 class UploaderDetailSerializer(serializers.DocumentSerializer):

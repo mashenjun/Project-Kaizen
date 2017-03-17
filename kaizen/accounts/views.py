@@ -42,6 +42,7 @@ from .serializers import (
     NotRequiredSerializer,
     UserDetailSerializer,
     UserEditSerializer,
+    UserSimpleSerializer,
 )
 from .models import User
 from upload.customize.utils import modifyUploaderResponseData
@@ -123,7 +124,7 @@ class UserRegisterAPIView(generics.ListCreateAPIView):
             }
             return Response(response_data_fail,status=status.HTTP_400_BAD_REQUEST)
 
-class UserRetrieveView(generics.RetrieveAPIView):
+class UserDetailView(generics.RetrieveAPIView):
     # TODO: include posts list
     serializer_class = UserDetailSerializer
     permission_classes = [AllowAny]
@@ -136,6 +137,14 @@ class UserRetrieveView(generics.RetrieveAPIView):
         result = serializer.data.copy()
         result['uploaders'] = modifyUploaderResponseData(instance.query_uploaders(),result['uploaders'])
         return Response(result)
+
+class UserSimpleView(generics.RetrieveAPIView):
+    # TODO: include posts list
+    serializer_class = UserSimpleSerializer
+    permission_classes = [AllowAny]
+    queryset = User.objects()
+    # lookup_field = 'name'
+
 
 class UserEditView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.RetrieveAPIView):
     serializer_class = UserEditSerializer
