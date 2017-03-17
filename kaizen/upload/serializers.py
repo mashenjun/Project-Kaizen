@@ -189,6 +189,23 @@ class UploaderListSerializer(serializers.DocumentSerializer):
             'user',
         ]
 
+class UploaderBelongUserSerializer(serializers.DocumentSerializer):
+    name = serializers.serializers.CharField()
+    birth_day = serializers.serializers.DateTimeField()
+    sex = serializers.serializers.ChoiceField(choices=SEX)
+    home_town = serializers.serializers.CharField()
+    location = fields.GeoPointField()
+    class Meta:
+        model = Uploader
+        fields = [
+            'id',
+            'name',
+            'birth_day',
+            'sex',
+            'home_town',
+            'location',
+        ]
+
 
 class UploaderDetailSerializer(serializers.DocumentSerializer):
     name = serializers.serializers.CharField()

@@ -125,7 +125,6 @@ class RetrieveUploaderView(generics.RetrieveAPIView):
             result['photo_url'] = reverse('get-photo', args=[instance['id']])
         return Response(result)
 
-
 class EditUploaderView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.RetrieveAPIView):
     serializer_class = UploaderEditSerializer
     # TODO: change permission_class
@@ -170,10 +169,6 @@ class EditUploaderView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generic
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
-
-
-
-
 
 class CreatePostView(generics.ListCreateAPIView):
     serializer_class = PostCreateSerializer
