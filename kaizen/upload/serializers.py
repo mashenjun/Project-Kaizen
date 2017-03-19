@@ -126,7 +126,7 @@ class PostListSerializer(serializers.DocumentSerializer):
         exclude = ('_cls',)
 
 
-class PostUpdateSerializer(serializers.DocumentSerializer):
+class PostUpdateCommentSerializer(serializers.DocumentSerializer):
     comment = CommentCreateSerializer(many = True,required=False)
 
     class Meta:
@@ -146,6 +146,34 @@ class PostUpdateSerializer(serializers.DocumentSerializer):
         logger.debug(type(instance))
         instance.save()
         return instance
+
+class PostEditSerializer(serializers.DocumentSerializer):
+
+    # user = serializers.serializers.CharField(source='user.username')
+    class Meta:
+        model = Post
+        fields = [
+            'title',
+            'catalogue',
+            'text',
+            'img_url',
+            'video_url',
+            'audio_url',
+        ]
+
+class PostBelongUploaderSerializer(serializers.DocumentSerializer):
+    comment_count = serializers.serializers.SerializerMethodField()
+    class Meta:
+        model = Post
+        fields = [
+            "title",
+            "catalogue",
+            "creadted_at",
+            "comment_count",
+        ]
+
+    def get_comment_count(self, obj):
+        return len(obj.comment);
 
 class UploaderCreateSerializer(serializers.DocumentSerializer):
     name = serializers.serializers.CharField()
@@ -237,8 +265,37 @@ class UploaderDetailSerializer(serializers.DocumentSerializer):
 
     def get_posts(self,obj):
         if obj.query_posts().count() ==0:
-            return None
+            return [];
         return PostSimpletSerializer(obj.query_posts(),many=True).data
+
+    def get_post_count(self,obj):
+        return obj.query_posts().count()
+
+class UploaderSimplelSerializer(serializers.DocumentSerializer):
+    name = serializers.serializers.CharField()
+    birth_day = serializers.serializers.DateTimeField()
+    sex = serializers.serializers.ChoiceField(choices=SEX)
+    home_town = serializers.serializers.CharField()
+    location = fields.GeoPointField()
+    user = fields.ReferenceField(model=User)
+    post_count = serializers.serializers.SerializerMethodField()
+    class Meta:
+        model = Uploader
+        fields = [
+            'id',
+            'name',
+            'birth_day',
+            'sex',
+            'home_town',
+            'location',
+            'user',
+            'post_count',
+        ]
+
+    # def get_posts(self,obj):
+    #     if obj.query_posts().count() ==0:
+    #         return [];
+    #     return PostSimpletSerializer(obj.query_posts(),many=True).data
 
     def get_post_count(self,obj):
         return obj.query_posts().count()

@@ -16,6 +16,9 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from rest_framework import routers
+from rest_framework_swagger.views import get_swagger_view
+
+schema_view = get_swagger_view(title='Pastebin API')
 from rest_framework_jwt.views import obtain_jwt_token
 
 router = routers.DefaultRouter()
@@ -41,6 +44,7 @@ urlpatterns = [
 
 urlpatterns += [
     url(r'^captcha/', include('captcha.urls')),
+    url(r'^api-docs/', schema_view)
 ]
 
 

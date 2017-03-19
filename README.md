@@ -90,5 +90,85 @@ whitelist = [
     host,
 ]
 
+### API endpoints
+[x] /acounts/api/login/
+	Input:
+
+    Return:
+[x] /acounts/api/register/
+	Input:
+
+    Return:
+[x] /acounts/user/(?P<id>.+)/
+	Input:
+
+    Return:
+[x] /acounts/user/(?P<id>.+)/edit/
+	Input:
+
+    Return:
+[x] /acounts/api/captcha/
+	Input:
+
+    Return:
+
+[x] /upload/uploader/
+	Input:
+
+    Return:
+
+[x] /upload/uploader/(?P<id>.+)/
+	Input:
+
+    Return:
+
+[x] /upload/filter/uploader/(?P<userid>.+)/
+	Input:
+
+    Return:
+
+[x] /upload/uploader/(?P<id>.+)/edit/
+	Input:
+
+    Return:
+
+[x] /upload/getphoto/(?P<id>.+)/
+	Input:
+
+    Return:
+
+[x] /upload/post/
+	Input:
+		GET to 
+
+    Return:
+
+[x] /upload/post/(?P<id>.+)/
+	Input:
+		GET to /upload/post/<_id for a post>/
+    Return:
+    	detail info of the given post
+
+[ ] /upload/post/(?P<id>.+)/edit
+	Input:
+
+    Return:
+
+[x] /upload/filter/post/(?P<authorid>.+)/
+	Input:
+		GET to /upload/filter/post/<_id for uploader>/
+    Return:
+    	list of posts created by the given uploader
+
+[x] /upload/comment/
+	Input:
+		PUT to /upload/comment/
+		Input request should has the following data in the request.data payload,
+		    id = request.data.get('post',None)
+	        content = request.data.get('content',None)
+	        owner = request.data.get('owner',None)
+
+    Return:
+    	success or failure message.
 
 

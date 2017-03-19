@@ -25,10 +25,13 @@ from .serializers import (
     PostCreateSerializer,
     PostListSerializer,
     CommentCreateSerializer,
-    PostUpdateSerializer,
+    PostUpdateCommentSerializer,
+    PostBelongUploaderSerializer,
     UploaderEditSerializer,
     UploaderDetailSerializer,
-    UploaderBelongUserSerializer
+    UploaderBelongUserSerializer,
+    UploaderSimplelSerializer,
+    PostEditSerializer,
 )
 from .models import Uploader,Post,Comment
 from .customize.utils import get_token
@@ -41,7 +44,7 @@ from rest_framework.renderers import JSONRenderer
 logger = getlogger(__name__)
 
 
-class CreateUploaderView(generics.ListCreateAPIView):
+class CreateListUploaderView(generics.ListCreateAPIView):
     serializer_class = UploaderCreateSerializer
     parser_classes = (MultiPartParser,)
     permission_classes = [AllowAny]
@@ -138,7 +141,7 @@ class FilterUploaderbyUserView(generics.ListAPIView):
         return Response(restult)
 
 class RetrieveUploaderView(generics.RetrieveAPIView):
-    serializer_class = UploaderDetailSerializer
+    serializer_class = UploaderSimplelSerializer
     permission_classes = [AllowAny]
     queryset = Uploader.objects()
     # lookup_field = 'name'
@@ -198,7 +201,7 @@ class EditUploaderView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generic
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
 
-class CreatePostView(generics.ListCreateAPIView):
+class CreateListPostView(generics.ListCreateAPIView):
     serializer_class = PostCreateSerializer
     parser_classes = (MultiPartParser,)
     permission_classes = [AllowAny]
@@ -255,31 +258,63 @@ class RetrievePostView(generics.RetrieveAPIView):
         return obj
 
     def get_queryset(self):
-        """
-        Get the list of items for this view.
-        This must be an iterable, and may be a queryset.
-        Defaults to using `self.queryset`.
-
-        This method should always be used rather than accessing `self.queryset`
-        directly, as `self.queryset` gets evaluated only once, and those results
-        are cached for all subsequent requests.
-
-        You may want to override this if you need to provide different
-        querysets depending on the incoming request.
-
-        (Eg. return a list of items that is specific to the user)
-        """
         result = Post.objects()
         assert self.queryset is not None, (
             "'%s' should either include a `queryset` attribute, "
             "or override the `get_queryset()` method."
             % self.__class__.__name__
         )
-        id = self.request.data.get('id',None)
+        id = self.kwargs['id']
         if id is not None:
             result = Post.objects(id = id)
 
         return result
+
+class EditPostView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.RetrieveAPIView):
+    serializer_class = PostEditSerializer
+    # TODO: change permission_class
+    # parser_classes = (MultiPartParser,)
+    permission_classes = [AllowAny]
+    queryset = Post.objects()
+    # lookup_field = 'name'
+
+    def update(self, request, *args, **kwargs):
+        # TODO
+        # modify the photo_url and location format
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # refresh the instance from the database.
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+        result = serializer.data.copy()
+        if 'location' in result:
+            result['location'] = instance['location']
+        if 'id' in instance:
+            result['photo_url'] = reverse('get-photo', args=[instance['id']])
+        return Response(result)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        result = serializer.data.copy()
+        if 'location' in result:
+            result['location'] = instance['location']
+        if 'id' in instance:
+            result['photo_url'] = reverse('get-photo', args=[instance['id']])
+        return Response(result)
+
+    def put(self, request, *args, **kwargs):
+        # TODO
+        return self.partial_update(newrequest, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
 class ListPostView(generics.ListAPIView):
@@ -299,6 +334,34 @@ class ListPostView(generics.ListAPIView):
             queryset = queryset.filter(author=author)
         return queryset
 
+class FilterPostbyUploaderView(generics.ListAPIView):
+    serializer_class = PostBelongUploaderSerializer
+    permission_classes = [AllowAny]
+    pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        author = self.kwargs['authorid']
+        return Post.objects.filter(author=author)
+
+    # def list(self, request, *args, **kwargs):
+    #     queryset = self.filter_queryset(self.get_queryset())
+    #
+    #     page = self.paginate_queryset(queryset)
+    #     if page is not None:
+    #         serializer = self.get_serializer(page, many=True)
+    #         restult = modifyUploaderResponseData(page, serializer.data)
+    #         return self.get_paginated_response(restult)
+    #
+    #     serializer = self.get_serializer(queryset, many=True)
+    #     restult = modifyUploaderResponseData(queryset, serializer.data)
+    #     return Response(restult)
+
+
+# function based view
 @api_view(['PUT'])
 @permission_classes([AllowAny])
 def insert_comment_post(request):
@@ -310,7 +373,7 @@ def insert_comment_post(request):
         del data['post']
         comment_data = {'comment':[{'content':content,'owner':owner}]}
         post = Post.objects.get(id=id) # get model instance
-        serializer = PostUpdateSerializer(post,data=comment_data)
+        serializer = PostUpdateCommentSerializer(post, data=comment_data)
         if serializer.is_valid():
             serializer.save()
             return Response(status=status.HTTP_200_OK)
