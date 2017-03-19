@@ -4,9 +4,11 @@ import json
 import base64
 import hmac
 import logging
+import re
 from hashlib import sha1 as sha
 
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
 from rest_framework import status
 
 from kaizen.config import (
@@ -80,5 +82,45 @@ def get_token():
     # web.header("Access-Control-Allow-Origin","*")
     #web.header('Content-Type', 'text/html; charset=UTF-8')
     result = json.dumps(token_dict)
-    logger.debug(token_dict)
     return Response(token_dict,status=status.HTTP_200_OK)
+
+def modifyUploaderResponseData(datalist_db, datalist_output):
+        """
+        this function change the location field in serializer.data according to queryset result
+        because the format in the db doesn't match the view's format.
+        @ShenjunMa
+
+        :param datalist_db:
+        :param datalist_output:
+        :return: a new serializer.data
+
+        """
+        if(datalist_output is None):
+            return [];
+
+        if len(datalist_db)==len(datalist_output) and len(datalist_db)>1:
+            for x in range(0, len(datalist_db)):
+                if 'location' in datalist_output[x]:
+                    datalist_output[x]['location'] = datalist_db[x]['location']
+                # TODO: change to real host address
+                if 'is' in datalist_db[x]:
+                    datalist_output[x]['photo_url'] = reverse('get-photo', args=[datalist_output[x]['id']])
+        else:
+            if 'location' in datalist_output:
+                datalist_output['location'] = datalist_db['location']
+            if 'id' in datalist_db:
+                datalist_output['photo_url'] = reverse('get-photo', args=[datalist_db['id']])
+
+        return datalist_output
+
+def modifyUploaderRequestData(request):
+    if hasattr(request.data, '_mutable'):
+        request.data._mutable = True
+    date_regex = re.compile('^\d{4}-\d{2}-\d{2}$')
+    location_regex = re.compile('^-?\d+,-?\d+$')
+
+    if 'location' in request.data and location_regex.match(request.data.get('location')) is not None:
+        request.data['location'] = [float(x) for x in request.data.get('location').split(',')]
+    if 'birth_day' in request.data and date_regex.match(request.data.get('birth_day')) is not None:
+        request.data['birth_day'] = request.data['birth_day'] + 'T00:00:00';
+    return request

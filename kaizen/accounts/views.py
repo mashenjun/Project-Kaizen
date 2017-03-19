@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from rest_framework_jwt.settings import api_settings as jwt_api_setting
 
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status,mixins
 from rest_framework.views import APIView
 from rest_framework.settings import api_settings
 from rest_framework.decorators import api_view, permission_classes
@@ -22,43 +22,46 @@ from rest_framework.permissions import (
     IsAdminUser,
     IsAuthenticatedOrReadOnly
 )
-
-from rest_framework_mongoengine.generics import (
-    ListCreateAPIView,
-    CreateAPIView,
-    ListAPIView,
-    UpdateAPIView,
-    RetrieveAPIView,
-    RetrieveUpdateAPIView,
-    GenericAPIView)
+from rest_framework_mongoengine import generics
+# from rest_framework_mongoengine.generics import (
+#     ListCreateAPIView,
+#     CreateAPIView,
+#     ListAPIView,
+#     UpdateAPIView,
+#     RetrieveAPIView,
+#     RetrieveUpdateAPIView,
+#     GenericAPIView)
 
 from captcha.models import CaptchaStore
 from captcha.conf import settings
 
-from .forms import UserLoginForm
 from .serializers import (
     UserLoginSerializer,
     UserRegisterSerializer,
     RequiredSerializer,
     NotRequiredSerializer,
+    UserDetailSerializer,
+    UserEditSerializer,
+    UserSimpleSerializer,
 )
 from .models import User
+from upload.customize.utils import modifyUploaderResponseData
 
 jwt_response_payload_handler = jwt_api_setting.JWT_RESPONSE_PAYLOAD_HANDLER
 
 # Create your views here.
-def login_view(request):
-    form = UserLoginForm(request.POST or None)
-    if form.is_valid():
-        username = form.cleaned_data.get("username")
-        password = form.cleaned_data.get("password")
-    return render(request,"accounts/test_login.html",{"form":form})
-
-def register_view(request):
-    return render(request,"form.html",{})
-
-def logout_view(request):
-    return render(request,"form.html",{})
+# def login_view(request):
+#     form = UserLoginForm(request.POST or None)
+#     if form.is_valid():
+#         username = form.cleaned_data.get("username")
+#         password = form.cleaned_data.get("password")
+#     return render(request,"accounts/test_login.html",{"form":form})
+#
+# def register_view(request):
+#     return render(request,"form.html",{})
+#
+# def logout_view(request):
+#     return render(request,"form.html",{})
 
 
 class UserLoginAPIView(APIView):
@@ -95,7 +98,7 @@ class UserLoginAPIView(APIView):
             return Response(response_data_fail,status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserRegisterAPIView(ListCreateAPIView):
+class UserRegisterAPIView(generics.ListCreateAPIView):
     queryset = User.objects
     permission_classes = [AllowAny]
     serializer_class = UserRegisterSerializer
@@ -121,7 +124,43 @@ class UserRegisterAPIView(ListCreateAPIView):
             }
             return Response(response_data_fail,status=status.HTTP_400_BAD_REQUEST)
 
+class UserDetailView(generics.RetrieveAPIView):
+    # TODO: include posts list
+    serializer_class = UserDetailSerializer
+    permission_classes = [AllowAny]
+    queryset = User.objects()
+    # lookup_field = 'name'
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        result = serializer.data.copy()
+        result['uploaders'] = modifyUploaderResponseData(instance.query_uploaders(),result['uploaders'])
+        return Response(result)
+
+class UserSimpleView(generics.RetrieveAPIView):
+    # TODO: include posts list
+    serializer_class = UserSimpleSerializer
+    permission_classes = [AllowAny]
+    queryset = User.objects()
+    # lookup_field = 'name'
+
+
+class UserEditView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.RetrieveAPIView):
+    serializer_class = UserEditSerializer
+    # TODO: change permission_class and object level permission
+    # parser_classes = (MultiPartParser,)
+    permission_classes = [AllowAny]
+    queryset = User.objects()
+    # lookup_field = 'name'
+
+    def put(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+# function based api
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def captcha(request):
@@ -137,7 +176,7 @@ def captcha(request):
     return Response(data,status=status.HTTP_200_OK)
 
 # test captcha
-class TestView(GenericAPIView):
+class TestView(generics.GenericAPIView):
     permission_classes = [AllowAny]
 
     def get_serializer_class(self):

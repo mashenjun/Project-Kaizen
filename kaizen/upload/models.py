@@ -29,6 +29,9 @@ class Uploader(Document):
     home_town = StringField()
     location = PointField()
 
+    def query_posts(self,):
+        return Post.objects(author = self)
+
 # TODO: think the relationship between Uploaders, Posts and Comments.
 class Comment(EmbeddedDocument):
     content = StringField()
@@ -53,6 +56,7 @@ class Post(Document):
     def add_comment(self,comment):
         self.comment.append(comment)
         self.save()
+
 
 
 # class TextPost(Post):
