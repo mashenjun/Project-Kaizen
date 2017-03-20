@@ -108,6 +108,7 @@ def modifyUploaderResponseData(datalist_db, datalist_output):
         else:
             if 'location' in datalist_output:
                 datalist_output['location'] = datalist_db['location']
+                # TODO: change to real host address
             if 'id' in datalist_db:
                 datalist_output['photo_url'] = reverse('get-photo', args=[datalist_db['id']])
 

@@ -116,7 +116,7 @@ class CreateListUploaderView(generics.ListCreateAPIView):
 class FilterUploaderbyUserView(generics.ListAPIView):
     serializer_class = UploaderBelongUserSerializer
     permission_classes = [AllowAny]
-    pagination_class = StandardResultsSetPagination
+    pagination_class = None
 
     def get_queryset(self):
         """
@@ -337,7 +337,7 @@ class ListPostView(generics.ListAPIView):
 class FilterPostbyUploaderView(generics.ListAPIView):
     serializer_class = PostBelongUploaderSerializer
     permission_classes = [AllowAny]
-    pagination_class = StandardResultsSetPagination
+    pagination_class = None
 
     def get_queryset(self):
         """
