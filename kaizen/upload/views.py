@@ -311,7 +311,7 @@ class EditPostView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.Re
 
     def put(self, request, *args, **kwargs):
         # TODO
-        return self.partial_update(newrequest, *args, **kwargs)
+        return self.partial_update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
