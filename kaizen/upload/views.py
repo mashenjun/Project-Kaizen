@@ -116,7 +116,7 @@ class CreateListUploaderView(generics.ListCreateAPIView):
 class FilterUploaderbyUserView(generics.ListAPIView):
     serializer_class = UploaderBelongUserSerializer
     permission_classes = [AllowAny]
-    pagination_class = StandardResultsSetPagination
+    pagination_class = None
 
     def get_queryset(self):
         """
@@ -311,7 +311,7 @@ class EditPostView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.Re
 
     def put(self, request, *args, **kwargs):
         # TODO
-        return self.partial_update(newrequest, *args, **kwargs)
+        return self.partial_update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
@@ -337,7 +337,7 @@ class ListPostView(generics.ListAPIView):
 class FilterPostbyUploaderView(generics.ListAPIView):
     serializer_class = PostBelongUploaderSerializer
     permission_classes = [AllowAny]
-    pagination_class = StandardResultsSetPagination
+    pagination_class = None
 
     def get_queryset(self):
         """
