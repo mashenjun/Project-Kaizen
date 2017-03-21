@@ -26,7 +26,7 @@ class UserLoginSerializer(serializers.DocumentSerializer):
     token = serializers.serializers.CharField(allow_blank=True, read_only=True)
     username = serializers.serializers.CharField(required=True)
     password = serializers.serializers.CharField(required=False, write_only=True,style={'input_type': 'password'})
-
+    id = serializers.serializers.CharField(allow_blank=True, read_only=True)
     class Meta:
         model = User
         fields = [
@@ -61,6 +61,7 @@ class UserLoginSerializer(serializers.DocumentSerializer):
         #     )
         token = jwt_encode_handler(payload)
         data["token"] = str(token)
+        data["id"] = user.id
         return data
 
 class UserRegisterSerializer(serializers.DocumentSerializer):

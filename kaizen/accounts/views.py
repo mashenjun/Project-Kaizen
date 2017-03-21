@@ -75,7 +75,9 @@ class UserLoginAPIView(APIView):
         if serializer.is_valid(raise_exception=False):
             username = serializer.data.get('username') or data.username
             token = serializer.data.get('token')
+            id = serializer.data.get('id')
             response_data_success = {
+                                'id': id,
                                 'username':username,
                                 'loginsuccess': True,
                                 'token': token,
