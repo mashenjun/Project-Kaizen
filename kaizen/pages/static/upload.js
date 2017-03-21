@@ -63,7 +63,7 @@ function get_signature()
         expire = parseInt(obj['expire'])
         callbackbody = obj['callback'] 
         key = obj['dir']
-        console.log('[DEBUG]:'+obj)
+        console.log('[DEBUG]:'+callbackbody)
         return true;
     }
     return false;
@@ -157,8 +157,10 @@ var uploader = new plupload.Uploader({
     filters: {
         mime_types : [ //只允许上传图片和zip文件
         { title : "Image files", extensions : "jpg,gif,png,bmp" }, 
-        { title : "Zip files", extensions : "zip,rar" }
-        ],
+        { title : "Zip files", extensions : "zip,rar" },
+        { title : "Video files", extensions : "mp4,flv,avi,wmv" }, 
+        { title : "Audio files", extensions : "mp3,wav" },
+	],
         max_file_size : '10mb', //最大只能上传10mb的文件
         prevent_duplicates : true //不允许选取重复文件
     },

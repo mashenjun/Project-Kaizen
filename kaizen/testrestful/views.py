@@ -6,6 +6,7 @@ import json
 import base64
 import hmac
 import logging
+import os
 from hashlib import sha1 as sha
 
 from django.shortcuts import render_to_response
@@ -122,5 +123,7 @@ def OSSgetsig(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def checkrequest(request):
-    print(request.method)
-    return Response(request.date,status=status.HTTP_200_OK)
+    result =request.data.copy()
+    result['OSS_url'] = os.path.join(host, request.data['filename'])
+    print(result)
+    return Response(result,status=status.HTTP_200_OK)
