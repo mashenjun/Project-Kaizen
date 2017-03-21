@@ -30,7 +30,7 @@ class UserLoginSerializer(serializers.DocumentSerializer):
     class Meta:
         model = User
         fields = [
-            'id'
+            'id',
             'username',
             'password',
             'token',
