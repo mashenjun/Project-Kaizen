@@ -21,5 +21,9 @@ export default createConstants(
 
     'UPLOADER_PAGE_CHANGE',
 
+    'USER_UPLOADERS_REQUEST',
+    'USER_UPLOADERS_SUCCESS',
+    'USER_UPLOADERS_FAILURE',
+
     'INTERNAL_SERVER_ERROR',
 )

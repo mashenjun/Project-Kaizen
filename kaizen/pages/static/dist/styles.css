@@ -1,3 +1,18 @@
+.uploader-wrapper {
+  padding-left: 2rem;
+  padding-top: 1rem;
+  padding-bottom: 0.5rem;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.1), 0 2px 1px -1px rgba(0, 0, 0, 0.2);
+  margin-top: 1px!important;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: box-shadow;
+  transition-property: box-shadow;
+}
+.uploader-wrapper:hover {
+  cursor: pointer;
+  box-shadow: 0 2px 10px 10px rgba(0, 0, 0, 0.14), 0 1px 5px 5px rgba(0, 0, 0, 0.12), 0 2px 2px -2px rgba(0, 0, 0, 0.2);
+}
 /*! bulma.io v0.3.1 | MIT License | github.com/jgthms/bulma */
 @keyframes spinAround {
   from {
