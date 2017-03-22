@@ -203,7 +203,7 @@ class EditUploaderView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generic
 
 class CreateListPostView(generics.ListCreateAPIView):
     serializer_class = PostCreateSerializer
-    parser_classes = (MultiPartParser,)
+    # parser_classes = (MultiPartParser,)
     permission_classes = [AllowAny]
     # TODO:later change to IsAuthenticatedOrReadOnly
     queryset = Post.objects()
