@@ -1,10 +1,6 @@
 # Create your views here.
 import oss2
-import time
-import datetime
-import json
-import base64
-import hmac
+import os
 import logging
 from hashlib import sha1 as sha
 
@@ -32,10 +28,18 @@ from kaizen.config import (
     callback_url,
 )
 
-import oss2
+
 from .serializers import EmployeeSerilizer,UploadFileSerilizer,UploadImageSerilizer
 from testconnect.models import Employee
 from .utils import get_token
+from kaizen.config import (
+    accessKeyId,
+    accessKeySecret,
+    host,
+    expire_time,
+    upload_dir,
+    callback_url,
+)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -107,6 +111,8 @@ def hello_world(request,name):
         return Response({"message": "Got some data!", "data": request.data})
     return Response({"message": "Hello, world!"+str(name)})
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
 def OSStestpage(request):
     # View code here...
     return render_to_response('index.html')
@@ -122,5 +128,7 @@ def OSSgetsig(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def checkrequest(request):
-    print(request.method)
-    return Response(request.date,status=status.HTTP_200_OK)
+    result =request.data.copy()
+    result['OSS_url'] = os.path.join(host, request.data['filename'])
+    print(result)
+    return Response(result,status=status.HTTP_200_OK)

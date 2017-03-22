@@ -47,9 +47,9 @@ class Post(Document):
     comment = EmbeddedDocumentListField(document_type=Comment)
     creadted_at = DateTimeField(default=datetime.datetime.utcnow())
     text = StringField()
-    img_url = URLField()
-    video_url = URLField()
-    audio_url = URLField()
+    img_url = ListField(URLField())
+    video_url = ListField(URLField())
+    audio_url = ListField(URLField())
 
     meta = {'allow_inheritance': True}
 
