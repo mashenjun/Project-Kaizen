@@ -46,3 +46,6 @@ db.sqlite3
 
 # User Settings:
 config.py
+
+# TestData
+dump/

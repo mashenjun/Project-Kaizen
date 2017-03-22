@@ -90,7 +90,7 @@ class CommentCreateSerializer(serializers.EmbeddedDocumentSerializer):
 
 
 class PostCreateSerializer(serializers.DocumentSerializer):
-    comment = fields.GenericEmbeddedDocumentField(Comment)
+    # comment = fields.GenericEmbeddedDocumentField(Comment)
 
     class Meta:
         model = Post
@@ -102,7 +102,7 @@ class PostCreateSerializer(serializers.DocumentSerializer):
             'video_url',
             'audio_url',
             'author',
-            'comment',
+            # 'comment',
         ]
 
 

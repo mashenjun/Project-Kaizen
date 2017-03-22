@@ -9,7 +9,52 @@ key = ''
 expire = 0
 g_object_name = ''
 g_object_name_type = ''
-now = timestamp = Date.parse(new Date()) / 1000; 
+call_back_response_content =[]
+now = timestamp = Date.parse(new Date()) / 1000;
+
+document.getElementById("submit").onclick = function () {
+    var xmlhttp = null;
+    if (window.XMLHttpRequest)
+    {
+        xmlhttp=new XMLHttpRequest();
+    }
+    else if (window.ActiveXObject)
+    {
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+
+    if (xmlhttp!=null)
+    {
+        var catalogue = '';
+        var text = '';
+        var img_url = [];
+        var video_url = [];
+        var audio_url = [];
+        var author = '';
+	call_back_response_content.forEach(function(element) {
+    		console.log(element);
+		if( element["mimeType"].includes("image") ){
+			img_url.push( element["OSS_url"] )
+		}
+		else if(element["mimeType"].includes("video") ){
+			video_url.push( element["OSS_url"])
+		}
+		else if(element["mimeType"].includes("audio") ){
+			audio_url.push( element["OSS_url"] )
+		}
+	});
+        apiserverUrl = '/upload/post/'
+        xmlhttp.open( "POST", apiserverUrl );
+        xmlhttp.setRequestHeader("Content-Type", "application/json");
+	xmlhttp.send(JSON.stringify({title:title, catalogue:catalogue, text:text, img_url:img_url, video_url:video_url, audio_url:audio_url, author:author}));
+        return xmlhttp.responseText;
+    }
+    else
+    {
+        alert("Your browser does not support XMLHTTP.");
+    }
+    alert('hello!');
+};
 
 function send_request()
 {
@@ -22,7 +67,6 @@ function send_request()
     {
         xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
     }
-  
     if (xmlhttp!=null)
     {
         serverUrl = '../OSSgetsig/'
@@ -62,8 +106,6 @@ function get_signature()
         signature = obj['signature']
         expire = parseInt(obj['expire'])
         callbackbody = obj['callback'] 
-        key = obj['dir']
-        console.log('[DEBUG]:'+obj)
         return true;
     }
     return false;
@@ -151,14 +193,16 @@ var uploader = new plupload.Uploader({
 	container: document.getElementById('container'),
 	flash_swf_url : 'lib/plupload-2.1.2/js/Moxie.swf',
 	silverlight_xap_url : 'lib/plupload-2.1.2/js/Moxie.xap',
-    //waht is this url
+    //what is this url
     url : 'http://oss.aliyuncs.com',
 
     filters: {
-        mime_types : [ //只允许上传图片和zip文件
-        { title : "Image files", extensions : "jpg,gif,png,bmp" }, 
-        { title : "Zip files", extensions : "zip,rar" }
-        ],
+        mime_types : [ //允许上传的文件后缀
+        { title : "Image files", extensions : "jpg,gif,png,bmp" },
+        { title : "Zip files", extensions : "zip,rar" },
+        { title : "Video files", extensions : "mp4,flv,avi,wmv" }, 
+        { title : "Audio files", extensions : "mp3,wav" },
+	],
         max_file_size : '10mb', //最大只能上传10mb的文件
         prevent_duplicates : true //不允许选取重复文件
     },
@@ -198,6 +242,7 @@ var uploader = new plupload.Uploader({
             if (info.status == 200)
             {
                 document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = 'upload to oss success, object name:' + get_uploaded_object_name(file.name) + ' 回调服务器返回的内容是:' + info.response;
+		        call_back_response_content.push(JSON.parse(info.response));
             }
             else if (info.status == 203)
             {
