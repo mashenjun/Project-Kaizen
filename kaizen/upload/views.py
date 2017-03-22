@@ -229,6 +229,10 @@ class CreateListPostView(generics.ListCreateAPIView):
         else:
             return self.serializer_class
 
+    def post(self, request, *args, **kwargs):
+        logger.debug(request.data)
+        return self.create(request, *args, **kwargs)
+
 class RetrievePostView(generics.RetrieveAPIView):
     serializer_class = PostListSerializer
     permission_classes = [AllowAny]

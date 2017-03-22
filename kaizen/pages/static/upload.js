@@ -106,7 +106,8 @@ function get_signature()
         accessid = obj['accessid']
         signature = obj['signature']
         expire = parseInt(obj['expire'])
-        callbackbody = obj['callback'] 
+        callbackbody = obj['callback']
+        key = obj['dir']
         return true;
     }
     return false;
