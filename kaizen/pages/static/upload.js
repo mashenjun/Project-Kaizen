@@ -10,6 +10,7 @@ expire = 0
 g_object_name = ''
 g_object_name_type = ''
 call_back_response_content =[]
+
 now = timestamp = Date.parse(new Date()) / 1000;
 
 document.getElementById("submit").onclick = function () {
