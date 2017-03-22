@@ -2,6 +2,7 @@
 import oss2
 import os
 import logging
+import os
 from hashlib import sha1 as sha
 
 from django.shortcuts import render_to_response
