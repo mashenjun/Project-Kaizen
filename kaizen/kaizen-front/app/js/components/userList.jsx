@@ -29,12 +29,12 @@ class UserList extends React.Component {
         const {currentPage} = this.props;
         const pagi_list = [];
         const upload_currentPage = [];
-        for (let i = 1; i <= maxPage; i++) {
+        for (let i = 1; i <= maxPage && this.props.usermapdata.length>0; i++) {
             pagi_list.push(<li key={i}><a onClick={() => this.props.uploaderPageNavigate(i)}
                                           className={"pagination-link " + (this.props.currentPage == i ? "is-current" : "")}>{i}</a>
             </li>);
         }
-        for (let j = (currentPage - 1) * consts.PAGE_SIZE; j < (currentPage) * consts.PAGE_SIZE; j++) {
+        for (let j = (currentPage - 1) * consts.PAGE_SIZE; j < (currentPage) * consts.PAGE_SIZE && this.props.usermapdata.length; j++) {
             if (j < this.props.totalCount) {
                 upload_currentPage.push(
                     <div key={j} className="column is-3">
@@ -42,7 +42,7 @@ class UserList extends React.Component {
                             <div className="panel-photo">
                                 <img width="300" height="300" src={this.props.usermapdata[j].photo_url}/>
                             </div>
-                            <div className="panel-block">
+                            <div className="panel-block" style={{borderRadius:"0 0 4px 4px"}}>
                                 <div className="columns" style={{width:'100%',paddingLeft:'10px'}}>
                                     <div className="column">
                                         <span className="panel-block-item">{this.props.usermapdata[j].name}</span>
@@ -61,7 +61,7 @@ class UserList extends React.Component {
                 <div className="section">
                     <div className="container">
                         <div className="title is-2">Overview</div>
-                        <div className="nav menu">
+                        <div className="nav menu" style={{marginBottom:"10px"}}>
                             <div className="container">
                                 <div className="nav-left">
                                     <a className="nav-item is-tab is-active"><span className="icon-btn"><i
@@ -114,9 +114,10 @@ class UserList extends React.Component {
 
 function mapStateToProps(state, ownProps) {
     const {
-        totalCount, currentPage
+        totalCount, currentPage, usermapdata
     } =  state.uploaders;
     return {
+        usermapdata,
         totalCount,
         currentPage,
     }

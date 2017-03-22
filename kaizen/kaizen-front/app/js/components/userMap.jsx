@@ -41,7 +41,7 @@ class UserMap extends Component {
 
     render() {
         return (
-            <div style={{paddingLeft:"80px",paddingRight:"80px"}}>
+            <div style={{paddingLeft:"80px",paddingRight:"80px",marginTop:"10px"}}>
                 <div id="mapid" style={{height: "330px"}}></div>
             </div>
         )

@@ -4,11 +4,12 @@ function loginReducer(state = {'isAuthenticated': false, errorMessage:{}}, actio
     const {payload} = action
     switch (action.type) {
         case actionTypes.USER_LOGIN_SUCCESS:
-            localstore.setToken(payload['token']);
+            localstore.setToken(payload);
             return Object.assign({}, state, {
                 token: payload['token'],
                 username: payload['username'],
-                isAuthenticated: true
+                isAuthenticated: true,
+                uid:payload['id']
             });
         case actionTypes.USER_LOGIN_FAILURE:
             return Object.assign({}, state, {
@@ -22,7 +23,7 @@ function loginReducer(state = {'isAuthenticated': false, errorMessage:{}}, actio
                 serverError:payload['serverError']
             });
         default:
-            return state;1
+            return state;
     }
 }
 export default loginReducer;
