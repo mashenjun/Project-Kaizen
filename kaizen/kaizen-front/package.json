@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "devf": "webpack-dev-server --progress  --inline --hot",
     "dev": "./node_modules/.bin/webpack --devtool source-map --progress --colors --watch",
-    "build": "webpack -d"
+    "build": "webpack"
   },
   "keywords": [
     "react"
