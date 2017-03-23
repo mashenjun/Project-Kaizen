@@ -122,12 +122,13 @@ DATABASES = {
 _MONGODB_USER = 'mongouser'
 _MONGODB_PASSWD = 'password'
 _MONGODB_HOST = 'localhost'
+_MONGODB_PORT = 27017
 _MONGODB_NAME = 'sample_database'
 _MONGODB_DATABASE_HOST = \
     'mongodb://%s:%s@%s/%s' \
     % (_MONGODB_USER, _MONGODB_PASSWD, _MONGODB_HOST, _MONGODB_NAME)
 
-mongoengine.connect(_MONGODB_NAME, host='localhost',port=27017)
+mongoengine.connect(_MONGODB_NAME, host=_MONGODB_HOST,port=_MONGODB_PORT)
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend'

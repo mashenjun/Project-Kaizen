@@ -15,5 +15,8 @@ urlpatterns = [
     url(r'^post/(?P<id>.+)/edit$$',views.EditPostView.as_view(),name='post-edit'),
     url(r'^filter/post/(?P<authorid>.+)/$', views.FilterPostbyUploaderView.as_view(), name='post-filter-uploader'),
     # url(r'^list-post/$',views.ListPostView.as_view(),name='post-list'),
-    url(r'^comment/$',views.insert_comment_post,name='comment-create')
+    url(r'^comment/$',views.insert_comment_post,name='comment-create'),
+    url(r'^query/province/$',views.query_province,name='province-query'),
+    url(r'^query/city/$',views.query_city,name='city-query'),
+    url(r'^query/district/$', views.query_district, name='district-query'),
 ]

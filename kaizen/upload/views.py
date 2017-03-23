@@ -1,4 +1,6 @@
 import re, traceback, sys, os
+
+from pymongo import MongoClient
 from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework import views,status,mixins
@@ -32,6 +34,14 @@ from .serializers import (
     UploaderBelongUserSerializer,
     UploaderSimplelSerializer,
     PostEditSerializer,
+)
+from kaizen.settings import (
+    _MONGODB_DATABASE_HOST,
+    _MONGODB_HOST,
+    _MONGODB_NAME,
+    _MONGODB_PASSWD,
+    _MONGODB_USER,
+    _MONGODB_PORT,
 )
 from .models import Uploader,Post,Comment
 from .customize.utils import get_token
@@ -88,6 +98,7 @@ class CreateListUploaderView(generics.ListCreateAPIView):
         return Response(restult,status=status.HTTP_200_OK)
 
     def post(self, request, format = None,):
+        logger.debug(request.data)
         # serializer = UploadImageSerilizer(data=request.data)
         # location = [float(x) for x in request.data.get('location').split(',')]
         # data = request.data.copy()
@@ -410,6 +421,90 @@ def OSS_signature():
     token = get_token()
     print(token)
     return token
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def query_province(request):
+    client = MongoClient(_MONGODB_HOST, _MONGODB_PORT)
+    try:
+        province = client[_MONGODB_NAME].city
+        result = []
+        for item in province.find():
+            info = {
+                "name": item.get("name"),
+                "prefix": item.get("prefix"),
+            }
+            result.append(info)
+        return Response(result, status=status.HTTP_200_OK)
+    except :
+        error_msg = {
+            "error_message": "Something wrong with your request."
+        }
+        return Response(error_msg, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def query_city(request):
+    client = MongoClient(_MONGODB_HOST, _MONGODB_PORT)
+    try:
+        province_name = request.query_params['province']
+        province = client[_MONGODB_NAME].city.find({"name": province_name})[0]
+        result = []
+        if(province['prefix']!='省'):
+            error_msg = {
+                "error_message": "Input parameter should be province."
+            }
+            return Response(error_msg, status=status.HTTP_400_BAD_REQUEST)
+        for item in province['cities']:
+            info = {
+                "name": item.get("name"),
+                "prefix": item.get("prefix"),
+            }
+            result.append(info)
+        return Response(result, status=status.HTTP_200_OK)
+    except :
+        error_msg = {
+            "error_message": "Something wrong with your request."
+        }
+        return Response(error_msg, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def query_district(request):
+    client = MongoClient(_MONGODB_HOST, _MONGODB_PORT)
+    try:
+        result = []
+        if('province' not in request.query_params.keys()):
+            city_name = request.query_params['city']
+            city = client[_MONGODB_NAME].city.find({"name": city_name})[0]
+            for item in city['cities']:
+                info = {
+                    "name": item.get("name"),
+                    "prefix": item.get("prefix"),
+                }
+                result.append(info)
+        else :
+            city_name = request.query_params['city']
+            province_name = request.query_params['province']
+            city = client[_MONGODB_NAME].city.find({"name": province_name})[0]['cities']
+            for item in city:
+                if (item["name"]==city_name):
+                    for area in item['cities']:
+                        info = {
+                            "name": area.get("name"),
+                            "prefix": area.get("prefix"),
+                        }
+                        result.append(info)
+                    break
+        return Response(result, status=status.HTTP_200_OK)
+    except:
+        error_msg = {
+            "error_message": "Something wrong with your request."
+        }
+    return Response(error_msg, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 if __name__ == '__main__':
