@@ -14,7 +14,7 @@ class mainpageContainer extends Component{
         const {usermapdata} = this.props;
         return (
             <div>
-                <UserMap usermapdata={this.props.usermapdata}/>
+                <UserMap/>
                 <UserList/>
                 <Footer/>
             </div>
@@ -23,11 +23,8 @@ class mainpageContainer extends Component{
 }
 
 function mapStateToProps(state, ownProps) {
-    const {
-        usermapdata
-    } =  state.uploaders;
     return {
-        usermapdata
+
     }
 }
 

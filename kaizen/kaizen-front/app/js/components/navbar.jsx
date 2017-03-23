@@ -1,11 +1,20 @@
 import React, {Component} from "react";
 import {hashHistory} from 'react-router';
 import {connect} from 'react-redux';
+import DatePicker from 'react-datepicker';
 import {localstore} from '../store/localstore';
 import {fetchuseruploadersrequest} from '../actions/useraction';
-import '../../less/navbar.less'
-class NavbarComponent extends Component {
+import '../../less/navbar.less';
+import moment from 'moment';
+import 'react-datepicker/dist/react-datepicker.css'
 
+class NavbarComponent extends Component {
+  constructor(props){
+    super(props);
+    this.state ={
+      startDate :moment()
+    };
+  }
   onUploaderClick = () => {
     this.modal.classList.add("is-active");
     const {uid} = localstore.getToken();
@@ -17,6 +26,13 @@ class NavbarComponent extends Component {
   componentWillReceiveProps(nextProps) {
     this.loading.style.display = 'none'
   }
+
+  handleChange = (date) => {
+    console.log(this.state.startDate)
+    this.setState({
+      startDate: date
+    });
+  };
 
   render() {
     const imageStyle = {
@@ -30,7 +46,7 @@ class NavbarComponent extends Component {
     const postUrl = '/testrestful/OSSpage/';
     for (let up of this.props.userUploaders) {
       uploaderList.push(
-          <div className="media uploader-wrapper" onClick={() => {
+          <div key={up.id} className="media uploader-wrapper" onClick={() => {
             window.location.href = postUrl + "?uploaderid=" + up.id;
           }}>
             <figure style={imageStyle} className="media-left">
@@ -38,16 +54,14 @@ class NavbarComponent extends Component {
             </figure>
             <div className="media-content">
               <div className="content">
-                <p>
-                  <div className="columns">
-                    <div className="column is-half">
-                      <span style={{marginRight: '1rem'}}><strong>{up.name}</strong> <small>@{up.home_town}</small></span>
-                    </div>
-                    <div className="column is-half">
-                      <span>Already has <strong>{up.post_count}</strong> post </span>
-                    </div>
+                <div className="columns">
+                  <div className="column is-half">
+                    <span style={{marginRight: '1rem'}}><strong>{up.name}</strong> <small>@{up.home_town}</small></span>
                   </div>
-                </p>
+                  <div className="column is-half">
+                    <span>Already has <strong>{up.post_count}</strong> post </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -55,7 +69,7 @@ class NavbarComponent extends Component {
     }
     console.log('rererer...rerender', this.props.userUploaders);
     const {username, isAuthenticated} = localstore.getToken();
-    if(uploaderList.length===0){
+    if (uploaderList.length === 0) {
       uploaderList = 'You do not have any uploaders. You should create one'
     }
     return (
@@ -87,12 +101,90 @@ class NavbarComponent extends Component {
               </section>
               <footer className="modal-card-foot">
                 {isAuthenticated ?
-                    <a className="button is-success"><i className="fa fa-plus" style={{marginRight: '5px'}}></i>Create
-                      New
-                      Uploader</a> :
+                    <a className="button is-success" onClick={() => {
+                      this.formModal.classList.add("is-active");
+                      this.modal.classList.remove("is-active");
+                    }}><i className="fa fa-plus" style={{marginRight: '5px'}}></i>Create
+                      New Uploader</a> :
                     <a className="button is-success" onClick={() => hashHistory.push('/login')}>Login</a>}
                 <a className="button" onClick={() => this.modal.classList.remove("is-active")}>Cancel</a>
               </footer>
+            </div>
+          </div>
+
+          <div>
+            <div ref={(modal) => {
+              this.formModal = modal
+            }} className="modal">
+              <div className="modal-background"></div>
+              <div className="modal-card">
+                <header className="modal-card-head">
+                  <p className="modal-card-title">Create a Uploader</p>
+                  <button className="delete" onClick={() => this.formModal.classList.remove("is-active")}></button>
+                </header>
+                <section className="modal-card-body">
+                  <div className="form">
+                    <div className="field is-horizontal">
+                      <div className="field-label is-normal">
+                        <label className="label">Name</label>
+                      </div>
+                      <div className="field-body">
+                        <div className="field">
+                          <div className="control">
+                            <input className="input" type="text" placeholder="Name"/>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="field is-horizontal">
+                      <div className="field-label is-normal">
+                        <label className="label">Picture</label>
+                      </div>
+                      <div className="field-body">
+                        <div className="field">
+                          <div className="control">
+                            <input type="file" accept="image/*"/>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="field is-horizontal">
+                      <div className="field-label is-normal">
+                        <label className="label">BirthDay</label>
+                      </div>
+                      <div className="field-body">
+                        <div className="field">
+                          <div className="control">
+                            <DatePicker
+                                className={'dateWrapper'}
+                                peekNextMonth
+                                showMonthDropdown
+                                showYearDropdown
+                                onChange={this.handleChange}
+                                dropdownMode="select"/>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="field is-horizontal">
+                      <div className="field-label is-normal">
+                        <label className="label">HomeTown</label>
+                      </div>
+                      <div className="field-body">
+                        <div className="field">
+                          <div className="control">
+                            <input className="input" type="text" placeholder="Home town"/>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+                <footer className="modal-card-foot">
+                  <a className="button is-success"><i className="fa fa-plus" style={{marginRight: '5px'}}></i>Create</a>
+                  <a className="button" onClick={() => this.formModal.classList.remove("is-active")}>Cancel</a>
+                </footer>
+              </div>
             </div>
           </div>
 

@@ -17,8 +17,8 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+bundle.js.map
 bundle.js
-
 
 pip-log.txt
 pip-delete-this-directory.txt

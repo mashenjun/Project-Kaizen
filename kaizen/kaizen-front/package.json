@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "devf": "webpack-dev-server --progress  --inline --hot",
     "dev": "./node_modules/.bin/webpack --devtool source-map --progress --colors --watch",
-    "build": "webpack -d"
+    "build": "webpack"
   },
   "keywords": [
     "react"
@@ -46,8 +46,10 @@
     "immutable": "^3.8.1",
     "leaflet": "^1.0.3",
     "material-ui": "^0.16.6",
+    "moment": "^2.18.1",
     "plupload_2.1.9": "0.0.1",
     "react": "^15.4.1",
+    "react-datepicker": "^0.43.0",
     "react-dom": "^15.4.1",
     "react-dropzone": "^3.9.0",
     "react-redux": "^5.0.1",

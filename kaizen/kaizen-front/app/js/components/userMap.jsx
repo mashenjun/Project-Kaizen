@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import L from 'leaflet';
-
+import {connect} from 'react-redux'
 class UserMap extends Component {
     constructor(props) {
         super(props);
@@ -49,5 +49,17 @@ class UserMap extends Component {
 }
 
 
-export default UserMap;
+function mapStateToProps(state, ownProps) {
+  const {
+      usermapdata
+  } =  state.uploaders;
+  return {
+    usermapdata
+  }
+}
+
+export default connect(
+    mapStateToProps,
+    ()=>{return {}}
+)(UserMap);
 

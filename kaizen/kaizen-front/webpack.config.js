@@ -8,7 +8,6 @@ var APP_DIR = path.resolve(__dirname, 'app');
 
 var config = {
     entry: ['babel-polyfill', APP_DIR + '/js/index.jsx'],
-    debug: true,
     output: {
         path: BUILD_DIR,
         filename: 'bundle.js'
@@ -22,18 +21,26 @@ var config = {
             include: APP_DIR,
             exclude: /(node_modules|bower_components|dist)/,
             loader: "babel"
-        },
-            {  test: /\.less$|\.css$/,
-                loader: ExtractTextPlugin.extract("style-loader", "css-loader!less-loader")},
-            {
-                test: /\.(png|jpg|jpeg|gif)$/,
-                loader: 'url-loader?limit=10000&name=./images/[name].[ext]'
-            }
-        ]
+        }, {
+            test: /\.less$|\.css$/,
+            loader: ExtractTextPlugin.extract("style-loader", "css-loader!less-loader")
+        }, {
+            test: /\.(png|jpg|jpeg|gif)$/,
+            loader: 'url-loader?limit=10000&name=./images/[name].[ext]'
+        }]
     },
     plugins: [
-        new ExtractTextPlugin("styles.css")
+        new ExtractTextPlugin("styles.css"),
+        new webpack.DefinePlugin({ // <-- key to reducing React's size
+            'process.env': {
+                'NODE_ENV': JSON.stringify('production')
+            }
+        }),
+        new webpack.optimize.DedupePlugin(), //dedupe similar code 
+        new webpack.optimize.UglifyJsPlugin(), //minify everything
+        new webpack.optimize.AggressiveMergingPlugin()//Merge chunks 
     ],
+    performance: { hints: false },
     devServer: {
         publicPath: '/dist',
         filename: 'bundle.js',
