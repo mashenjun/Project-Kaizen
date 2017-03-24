@@ -2,19 +2,25 @@ import React, {Component} from "react";
 import {hashHistory} from 'react-router';
 import {connect} from 'react-redux';
 import DatePicker from 'react-datepicker';
+import Cropper from 'react-cropper';
 import {localstore} from '../store/localstore';
 import {fetchuseruploadersrequest} from '../actions/useraction';
 import '../../less/navbar.less';
 import moment from 'moment';
-import 'react-datepicker/dist/react-datepicker.css'
+import 'react-datepicker/dist/react-datepicker.css';
+import 'cropperjs/dist/cropper.css';
+import 'whatwg-fetch';
 
 class NavbarComponent extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.state ={
-      startDate :moment()
+    this.state = {
+      startDate: moment(),
+      src: "",
+      cropResult: "",
     };
   }
+
   onUploaderClick = () => {
     this.modal.classList.add("is-active");
     const {uid} = localstore.getToken();
@@ -23,12 +29,60 @@ class NavbarComponent extends Component {
     }
   };
 
+
+  onChange = (e) => {
+    e.preventDefault();
+    let files;
+    if (e.dataTransfer) {
+      files = e.dataTransfer.files;
+    } else if (e.target) {
+      files = e.target.files;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.setState({src: reader.result});
+    };
+    reader.readAsDataURL(files[0]);
+  };
+
+  _crop = () => {
+    if (typeof this.cropper.getCroppedCanvas() === 'undefined') {
+      return;
+    }
+    this.setState({
+      cropResult: this.cropper.getCroppedCanvas().toDataURL(),
+    });
+  };
+
+  onCreateHandler = () => {
+    const {uid} = localstore.getToken();
+    let formData = new FormData();
+    formData.append('name', this.name.value);
+    // formData.append('birth_day', this.state.startDate.format());
+    formData.append('birth_day', '2012-03-08T00:12')
+    formData.append('sex', this.sex.value);
+    formData.append('user', uid);
+    formData.append('home_town', 'shanghai');
+    formData.append('location', [11,22]);
+    if (!typeof this.cropper.getCroppedCanvas() ||typeof this.cropper.getCroppedCanvas() === 'undefined') {
+      console.log(formData);
+    } else {
+      this.cropper.getCroppedCanvas().toBlob((blob) => {
+        formData.append('photo', blob);
+        fetch('/upload/uploader/', {
+          method: 'POST',
+          body: formData
+        });
+        // console.log(uid,this.name.value, this.state.startDate.format(),this.sex.value, blob);
+      });
+    }
+  };
+
   componentWillReceiveProps(nextProps) {
     this.loading.style.display = 'none'
-  }
+  };
 
   handleChange = (date) => {
-    console.log(this.state.startDate)
     this.setState({
       startDate: date
     });
@@ -131,11 +185,32 @@ class NavbarComponent extends Component {
                       <div className="field-body">
                         <div className="field">
                           <div className="control">
-                            <input className="input" type="text" placeholder="Name"/>
+                            <input className="input" ref={(name) => {
+                              this.name = name
+                            }} type="text" placeholder="Name"/>
                           </div>
                         </div>
                       </div>
                     </div>
+
+                    <div className="field is-horizontal">
+                      <div className="field-label is-normal">
+                        <label className="label">Sex</label>
+                      </div>
+                      <div className="field-body">
+                        <div className="field">
+                          <div className="control">
+                             <span className="select">
+                              <select ref={(sex)=>{this.sex=sex}}>
+                                <option value={'M'}>Male</option>
+                                <option value={'F'}>Female</option>
+                              </select>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="field is-horizontal">
                       <div className="field-label is-normal">
                         <label className="label">Picture</label>
@@ -143,7 +218,17 @@ class NavbarComponent extends Component {
                       <div className="field-body">
                         <div className="field">
                           <div className="control">
-                            <input type="file" accept="image/*"/>
+                            <input type="file" accept="image/*" onChange={this.onChange}/>
+                            <Cropper
+                                style={{maxHeight: 150, maxWidth: 150}}
+                                aspectRatio={1}
+                                preview=".img-preview"
+                                guides={false}
+                                src={this.state.src}
+                                ref={cropper => {
+                                  this.cropper = cropper
+                                }}
+                            />
                           </div>
                         </div>
                       </div>
@@ -156,6 +241,7 @@ class NavbarComponent extends Component {
                         <div className="field">
                           <div className="control">
                             <DatePicker
+                                selected={this.state.startDate}
                                 className={'dateWrapper'}
                                 peekNextMonth
                                 showMonthDropdown
@@ -181,7 +267,8 @@ class NavbarComponent extends Component {
                   </div>
                 </section>
                 <footer className="modal-card-foot">
-                  <a className="button is-success"><i className="fa fa-plus" style={{marginRight: '5px'}}></i>Create</a>
+                  <a className="button is-success" onClick={this.onCreateHandler}><i className="fa fa-plus"
+                                                                                     style={{marginRight: '5px'}}></i>Create</a>
                   <a className="button" onClick={() => this.formModal.classList.remove("is-active")}>Cancel</a>
                 </footer>
               </div>
@@ -215,7 +302,6 @@ class NavbarComponent extends Component {
                                   Sign up
                               </a></span>)
                           }
-
                         </span>
               </div>
             </div>
