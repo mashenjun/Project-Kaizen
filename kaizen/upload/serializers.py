@@ -7,7 +7,7 @@ from pydenticon import Generator
 import PIL
 from os import SEEK_END
 
-
+from rest_framework.exceptions import ErrorDetail, ValidationError
 from rest_framework_mongoengine import serializers,fields
 
 
@@ -17,7 +17,6 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from .models import Uploader,SEX,Post,Comment
 from .customize.utils import getlogger
 from accounts.models import User
-
 import inspect
 from mongoengine.errors import ValidationError as me_ValidationError
 
@@ -56,9 +55,10 @@ def validate_photo_size(value):
     """
     Check that the blog post is about Django.
     """
+    logger.debug("validate_photo_size(value)")
     max_size = 210 * 210 * 20  # 20MB
     if value.size > max_size:
-        raise serializers.ValidationError('Profile Image too large.')
+        raise ValidationError('Profile Image too large.')
     return value
 
 
@@ -179,7 +179,7 @@ class UploaderCreateSerializer(serializers.DocumentSerializer):
     name = serializers.serializers.CharField()
     birth_day = serializers.serializers.DateTimeField()
     sex = serializers.serializers.ChoiceField(choices=SEX)
-    photo = fields.ImageField(default=get_default_image(),use_url=True,validators=[validate_photo_size])
+    photo = fields.ImageField(default=get_default_image(),use_url=True,validators=[validate_photo_size,])
     home_town = serializers.serializers.CharField()
     location = fields.GeoPointField()
     user = fields.ReferenceField(model=User)

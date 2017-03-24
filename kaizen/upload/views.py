@@ -111,7 +111,8 @@ class CreateListUploaderView(generics.ListCreateAPIView):
         newrequest = modifyUploaderRequestData(request)
         # serializer.location = location
         # print('[DEBUGE]{0}'.format(type(data['photo'])))
-        serializer = UploaderCreateSerializer(data=newrequest.data)
+        serializer = self.get_serializer(data=newrequest.data)
+        logger.debug("after serializer created")
         if serializer.is_valid(raise_exception=False):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
