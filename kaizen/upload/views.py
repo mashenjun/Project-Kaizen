@@ -444,17 +444,12 @@ def query_province(request):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def query_city(request):
+def query_city(request,province_name=None):
     client = MongoClient(_MONGODB_HOST, _MONGODB_PORT)
     try:
-        province_name = request.query_params['province']
         province = client[_MONGODB_NAME].city.find({"name": province_name})[0]
         result = []
-        if(province['prefix']!='省'):
-            error_msg = {
-                "error_message": "Input parameter should be province."
-            }
-            return Response(error_msg, status=status.HTTP_400_BAD_REQUEST)
+
         for item in province['cities']:
             info = {
                 "name": item.get("name"),
@@ -472,32 +467,20 @@ def query_city(request):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def query_district(request):
+def query_district(request,province_name=None,city_name=None):
     client = MongoClient(_MONGODB_HOST, _MONGODB_PORT)
     try:
         result = []
-        if('province' not in request.query_params.keys()):
-            city_name = request.query_params['city']
-            city = client[_MONGODB_NAME].city.find({"name": city_name})[0]
-            for item in city['cities']:
-                info = {
-                    "name": item.get("name"),
-                    "prefix": item.get("prefix"),
-                }
-                result.append(info)
-        else :
-            city_name = request.query_params['city']
-            province_name = request.query_params['province']
-            city = client[_MONGODB_NAME].city.find({"name": province_name})[0]['cities']
-            for item in city:
-                if (item["name"]==city_name):
-                    for area in item['cities']:
-                        info = {
-                            "name": area.get("name"),
-                            "prefix": area.get("prefix"),
-                        }
-                        result.append(info)
-                    break
+        city = client[_MONGODB_NAME].city.find({"name": province_name})[0]['cities']
+        for item in city:
+            if (item["name"]==city_name):
+                for area in item['cities']:
+                    info = {
+                        "name": area.get("name"),
+                        "prefix": area.get("prefix"),
+                    }
+                    result.append(info)
+                break
         return Response(result, status=status.HTTP_200_OK)
     except:
         error_msg = {

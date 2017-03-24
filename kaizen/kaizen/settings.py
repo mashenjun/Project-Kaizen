@@ -24,6 +24,13 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '=mq6_9!h*=1r)u-gnb-yia6p9(xn7b46&fyq8ce0f+rs1p6rkz'
+try:
+    from kaizen.config import SECRET_KEY
+
+    SECRET_KEY = SECRET_KEY
+
+except:
+    pass
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

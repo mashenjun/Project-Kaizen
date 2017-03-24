@@ -17,6 +17,6 @@ urlpatterns = [
     # url(r'^list-post/$',views.ListPostView.as_view(),name='post-list'),
     url(r'^comment/$',views.insert_comment_post,name='comment-create'),
     url(r'^query/province/$',views.query_province,name='province-query'),
-    url(r'^query/city/$',views.query_city,name='city-query'),
-    url(r'^query/district/$', views.query_district, name='district-query'),
+    url(r'^query/province/(?P<province_name>\w+)/$',views.query_city,name='city-query'),
+    url(r'^query/province/(?P<province_name>\w+)/(?P<city_name>\w+)/$', views.query_district, name='district-query'),
 ]
