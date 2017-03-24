@@ -433,6 +433,7 @@ def query_province(request):
             info = {
                 "name": item.get("name"),
                 "prefix": item.get("prefix"),
+                "code": item.get("code")
             }
             result.append(info)
         return Response(result, status=status.HTTP_200_OK)
@@ -444,16 +445,17 @@ def query_province(request):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def query_city(request,province_name=None):
+def query_city(request,province_code=None):
     client = MongoClient(_MONGODB_HOST, _MONGODB_PORT)
     try:
-        province = client[_MONGODB_NAME].city.find({"name": province_name})[0]
+        province = client[_MONGODB_NAME].city.find({"code": province_code})[0]
         result = []
 
         for item in province['cities']:
             info = {
                 "name": item.get("name"),
                 "prefix": item.get("prefix"),
+                "code": item.get("code")
             }
             result.append(info)
         return Response(result, status=status.HTTP_200_OK)
@@ -467,13 +469,13 @@ def query_city(request,province_name=None):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def query_district(request,province_name=None,city_name=None):
+def query_district(request,province_code=None,city_code=None):
     client = MongoClient(_MONGODB_HOST, _MONGODB_PORT)
     try:
         result = []
-        city = client[_MONGODB_NAME].city.find({"name": province_name})[0]['cities']
+        city = client[_MONGODB_NAME].city.find({"code": province_code})[0]['cities']
         for item in city:
-            if (item["name"]==city_name):
+            if (item["code"]==city_code):
                 for area in item['cities']:
                     info = {
                         "name": area.get("name"),
