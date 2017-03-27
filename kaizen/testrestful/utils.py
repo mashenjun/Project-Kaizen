@@ -17,6 +17,7 @@ from kaizen.config import (
     upload_dir,
     callback_url,
 )
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 

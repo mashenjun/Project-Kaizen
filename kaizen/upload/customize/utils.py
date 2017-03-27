@@ -5,6 +5,7 @@ import base64
 import hmac
 import logging
 import re
+from collections import Iterable
 from hashlib import sha1 as sha
 
 from rest_framework.response import Response
@@ -98,19 +99,19 @@ def modifyUploaderResponseData(datalist_db, datalist_output):
         if(datalist_output is None):
             return [];
 
-        if len(datalist_db)==len(datalist_output) and len(datalist_db)>1:
+        if isinstance(datalist_output,list):
             for x in range(0, len(datalist_db)):
                 if 'location' in datalist_output[x]:
                     datalist_output[x]['location'] = datalist_db[x]['location']
                 # TODO: change to real host address
-                if 'id' in datalist_db[x]:
-                    datalist_output[x]['photo_url'] = reverse('get-photo', args=[datalist_output[x]['id']])
+                # if 'id' in datalist_db[x]:
+                #     datalist_output[x]['photo_url'] = reverse('get-photo', args=[datalist_output[x]['id']])
         else:
             if 'location' in datalist_output:
                 datalist_output['location'] = datalist_db['location']
                 # TODO: change to real host address
-            if 'id' in datalist_db:
-                datalist_output['photo_url'] = reverse('get-photo', args=[datalist_db['id']])
+            # if 'id' in datalist_db:
+            #     datalist_output['photo_url'] = reverse('get-photo', args=[datalist_db['id']])
 
         return datalist_output
 

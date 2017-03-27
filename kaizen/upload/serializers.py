@@ -55,13 +55,10 @@ def validate_photo_size(value):
     """
     Check that the blog post is about Django.
     """
-    logger.debug("validate_photo_size(value)")
-    max_size = 210 * 210 * 20  # 20MB
+    max_size = 210 * 210 * 50  # xxxMB
     if value.size > max_size:
         raise ValidationError('Profile Image too large.')
     return value
-
-
 
 class CommentCreateSerializer(serializers.EmbeddedDocumentSerializer):
     # post = fields.ReferenceField(model=Post,required=True)
@@ -75,16 +72,11 @@ class CommentCreateSerializer(serializers.EmbeddedDocumentSerializer):
         ]
 
     def create(self, post,validated_data):
-        print("[DEBUG0]:{0}".format(str(validated_data['owner'].id)))
         owner = User.objects.get(id = validated_data['owner'].id)
         content = validated_data['content']
         newcomment = Comment(owner= owner,content=content)
-        print("[DEBUG1]:{0}".format(newcomment.owner))
-        print("[DEBUG2]:{0}".format(post.title))
         post.add_comment(newcomment)
-        print("[DEBUG3]:{0}".format(post.comment))
         return newcomment
-
     def insert(self,post):
         post.add_comment(self)
 
@@ -106,7 +98,6 @@ class PostCreateSerializer(serializers.DocumentSerializer):
         ]
 
 
-
 class PostSimpletSerializer(serializers.DocumentSerializer):
 
     class Meta:
@@ -118,13 +109,62 @@ class PostSimpletSerializer(serializers.DocumentSerializer):
             'audio_url',
         ]
 
-
-class PostListSerializer(serializers.DocumentSerializer):
+class PostDetailSerializer(serializers.DocumentSerializer):
+    comment_count = serializers.serializers.SerializerMethodField()
+    edit_url = serializers.serializers.HyperlinkedIdentityField(
+        view_name='post-edit',
+        lookup_field='id',
+    )
 
     class Meta:
         model = Post
-        exclude = ('_cls',)
+        fields = [
+            'id',
+            'title',
+            'catalogue',
+            'text',
+            'img_url',
+            'video_url',
+            'audio_url',
+            'author',
+            'comment',
+            "comment_count",
+            'edit_url',
+        ]
 
+    def get_comment_count(self, obj):
+        return len(obj.comment);
+
+
+class PostListSerializer(serializers.DocumentSerializer):
+    comment_count = serializers.serializers.SerializerMethodField()
+    edit_url = serializers.serializers.HyperlinkedIdentityField(
+        view_name='post-edit',
+        lookup_field='id',
+    )
+    detail_url = serializers.serializers.HyperlinkedIdentityField(
+        view_name='post-retrieve',
+        lookup_field='id',
+    )
+
+    class Meta:
+        model = Post
+        fields = [
+            'id',
+            'title',
+            'catalogue',
+            'text',
+            'img_url',
+            'video_url',
+            'audio_url',
+            'author',
+            "comment_count",
+            'edit_url',
+            'detail_url',
+        ]
+
+    def get_comment_count(self, obj):
+        return len(obj.comment);
 
 class PostUpdateCommentSerializer(serializers.DocumentSerializer):
     comment = CommentCreateSerializer(many = True,required=False)
@@ -163,6 +203,14 @@ class PostEditSerializer(serializers.DocumentSerializer):
 
 class PostBelongUploaderSerializer(serializers.DocumentSerializer):
     comment_count = serializers.serializers.SerializerMethodField()
+    edit_url = serializers.serializers.HyperlinkedIdentityField(
+        view_name='post-edit',
+        lookup_field='id',
+    )
+    detail_url = serializers.serializers.HyperlinkedIdentityField(
+        view_name='post-retrieve',
+        lookup_field='id',
+    )
     class Meta:
         model = Post
         fields = [
@@ -170,6 +218,8 @@ class PostBelongUploaderSerializer(serializers.DocumentSerializer):
             "catalogue",
             "creadted_at",
             "comment_count",
+            'edit_url',
+            'detail_url',
         ]
 
     def get_comment_count(self, obj):
@@ -205,6 +255,18 @@ class UploaderListSerializer(serializers.DocumentSerializer):
     home_town = serializers.serializers.CharField()
     location = fields.GeoPointField()
     user = fields.ReferenceField(model=User)
+    photo_url = serializers.serializers.HyperlinkedIdentityField(
+        view_name='get-photo',
+        lookup_field='id',
+    )
+    edit_url = serializers.serializers.HyperlinkedIdentityField(
+        view_name='uploader-edit',
+        lookup_field='id',
+    )
+    detail_url = serializers.serializers.HyperlinkedIdentityField(
+        view_name='uploader-retrieve',
+        lookup_field='id',
+    )
     class Meta:
         model = Uploader
         fields = [
@@ -215,6 +277,9 @@ class UploaderListSerializer(serializers.DocumentSerializer):
             'home_town',
             'location',
             'user',
+            'photo_url',
+            'edit_url',
+            'detail_url',
         ]
 
 class UploaderBelongUserSerializer(serializers.DocumentSerializer):
@@ -224,6 +289,18 @@ class UploaderBelongUserSerializer(serializers.DocumentSerializer):
     home_town = serializers.serializers.CharField()
     location = fields.GeoPointField()
     post_count = serializers.serializers.SerializerMethodField()
+    photo_url = serializers.serializers.HyperlinkedIdentityField(
+        view_name='get-photo',
+        lookup_field='id',
+    )
+    edit_url = serializers.serializers.HyperlinkedIdentityField(
+        view_name='uploader-edit',
+        lookup_field='id',
+    )
+    detail_url = serializers.serializers.HyperlinkedIdentityField(
+        view_name='uploader-retrieve',
+        lookup_field='id',
+    )
     class Meta:
         model = Uploader
         fields = [
@@ -234,6 +311,9 @@ class UploaderBelongUserSerializer(serializers.DocumentSerializer):
             'home_town',
             'location',
             'post_count',
+            'photo_url',
+            'edit_url',
+            'detail_url',
         ]
 
     def get_post_count(self, obj):
@@ -249,6 +329,14 @@ class UploaderDetailSerializer(serializers.DocumentSerializer):
     user = fields.ReferenceField(model=User)
     posts = serializers.serializers.SerializerMethodField()
     post_count = serializers.serializers.SerializerMethodField()
+    photo_url = serializers.serializers.HyperlinkedIdentityField(
+        view_name='get-photo',
+        lookup_field='id',
+    )
+    edit_url = serializers.serializers.HyperlinkedIdentityField(
+        view_name='uploader-edit',
+        lookup_field='id',
+    )
     class Meta:
         model = Uploader
         fields = [
@@ -261,6 +349,8 @@ class UploaderDetailSerializer(serializers.DocumentSerializer):
             'user',
             'posts',
             'post_count',
+            'photo_url',
+            'edit_url',
         ]
 
     def get_posts(self,obj):
@@ -279,6 +369,14 @@ class UploaderSimplelSerializer(serializers.DocumentSerializer):
     location = fields.GeoPointField()
     user = fields.ReferenceField(model=User)
     post_count = serializers.serializers.SerializerMethodField()
+    photo_url = serializers.serializers.HyperlinkedIdentityField(
+        view_name='get-photo',
+        lookup_field='id',
+    )
+    edit_url = serializers.serializers.HyperlinkedIdentityField(
+        view_name='uploader-edit',
+        lookup_field='id',
+    )
     class Meta:
         model = Uploader
         fields = [
@@ -290,6 +388,8 @@ class UploaderSimplelSerializer(serializers.DocumentSerializer):
             'location',
             'user',
             'post_count',
+            'photo_url',
+            'edit_url',
         ]
 
     # def get_posts(self,obj):

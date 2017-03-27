@@ -34,6 +34,7 @@ from .serializers import (
     UploaderBelongUserSerializer,
     UploaderSimplelSerializer,
     PostEditSerializer,
+    PostDetailSerializer,
 )
 from kaizen.settings import (
     _MONGODB_DATABASE_HOST,
@@ -81,19 +82,19 @@ class CreateListUploaderView(generics.ListCreateAPIView):
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
         if page is not None and 'page' in request.query_params:
-            serializer = UploaderListSerializer(page, many=True)
+            serializer = UploaderListSerializer(page, context={'request':request},many=True)
             restult = modifyUploaderResponseData(page, serializer.data)
             return self.get_paginated_response(restult)
 
         elif 'page' not in request.query_params:
-            serializer = UploaderListSerializer(queryset, many=True)
+            serializer = UploaderListSerializer(queryset,context={'request':request}, many=True)
             result = modifyUploaderResponseData(queryset, serializer.data)
             data = {'count':len(result),
                     'results': result,
                     }
             return Response(data,status=status.HTTP_200_OK)
 
-        serializer = UploaderListSerializer(queryset, many=True)
+        serializer = UploaderListSerializer(queryset, context={'request':request} ,many=True)
         restult = modifyUploaderResponseData(queryset, serializer.data)
         return Response(restult,status=status.HTTP_200_OK)
 
@@ -112,7 +113,6 @@ class CreateListUploaderView(generics.ListCreateAPIView):
         # serializer.location = location
         # print('[DEBUGE]{0}'.format(type(data['photo'])))
         serializer = self.get_serializer(data=newrequest.data)
-        logger.debug("after serializer created")
         if serializer.is_valid(raise_exception=False):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
@@ -149,8 +149,8 @@ class FilterUploaderbyUserView(generics.ListAPIView):
             return self.get_paginated_response(restult)
 
         serializer = self.get_serializer(queryset, many=True)
-        restult = modifyUploaderResponseData(queryset, serializer.data)
-        return Response(restult)
+        result = modifyUploaderResponseData(queryset, serializer.data)
+        return Response(result)
 
 class RetrieveUploaderView(generics.RetrieveAPIView):
     serializer_class = UploaderSimplelSerializer
@@ -161,11 +161,11 @@ class RetrieveUploaderView(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        result = serializer.data.copy()
-        if 'location' in result:
-            result['location'] = instance['location']
-        if 'id' in instance:
-            result['photo_url'] = reverse('get-photo', args=[instance['id']])
+        result = modifyUploaderResponseData(instance, serializer.data)
+        # if 'location' in result:
+        #     result['location'] = instance['location']
+        # if 'id' in instance:
+        #     result['photo_url'] = reverse('get-photo', args=[instance['id']])
         return Response(result)
 
 class EditUploaderView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.RetrieveAPIView):
@@ -241,12 +241,9 @@ class CreateListPostView(generics.ListCreateAPIView):
         else:
             return self.serializer_class
 
-    def post(self, request, *args, **kwargs):
-        logger.debug(request.data)
-        return self.create(request, *args, **kwargs)
 
 class RetrievePostView(generics.RetrieveAPIView):
-    serializer_class = PostListSerializer
+    serializer_class = PostDetailSerializer
     permission_classes = [AllowAny]
     queryset = Post.objects() # not necessary set the generate queryset here
 
@@ -490,8 +487,6 @@ def query_district(request,province_code=None,city_code=None):
             "error_message": "Something wrong with your request."
         }
     return Response(error_msg, status=status.HTTP_400_BAD_REQUEST)
-
-
 
 if __name__ == '__main__':
     @api_view(['POST'])
