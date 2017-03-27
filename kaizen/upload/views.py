@@ -453,7 +453,9 @@ def query_city(request,province_code=None):
             info = {
                 "name": item.get("name"),
                 "prefix": item.get("prefix"),
-                "code": item.get("code")
+                "code": item.get("code"),
+                "cities": [{"name":city["name"],"prefix": city["prefix"]} for city in item.get("cities")]
+
             }
             result.append(info)
         return Response(result, status=status.HTTP_200_OK)

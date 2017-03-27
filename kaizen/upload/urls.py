@@ -18,5 +18,5 @@ urlpatterns = [
     url(r'^comment/$',views.insert_comment_post,name='comment-create'),
     url(r'^query/province/$',views.query_province,name='province-query'),
     url(r'^query/province/(?P<province_code>\d+)/$',views.query_city,name='city-query'),
-    url(r'^query/province/(?P<province_code>\d+)/(?P<city_code>\d+)/$', views.query_district, name='district-query'),
+    # url(r'^query/province/(?P<province_code>\d+)/(?P<city_code>\d+)/$', views.query_district, name='district-query'),
 ]
