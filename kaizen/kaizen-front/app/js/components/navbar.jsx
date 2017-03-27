@@ -54,6 +54,15 @@ class NavbarComponent extends Component {
     });
   };
 
+  onFetchDatahandler = (data)=>{
+    const postUrl = '/testrestful/OSSpage/';
+    window.location.href = postUrl+ "?uploaderid=" + data.id;
+  };
+
+  onFetchErrorHandler = (err)=>{
+    console.log(err);
+  };
+
   onCreateHandler = () => {
     const {uid} = localstore.getToken();
     let formData = new FormData();
@@ -64,16 +73,18 @@ class NavbarComponent extends Component {
     formData.append('user', uid);
     formData.append('home_town', 'shanghai');
     formData.append('location', [11,22]);
-    if (!typeof this.cropper.getCroppedCanvas() ||typeof this.cropper.getCroppedCanvas() === 'undefined') {
-      console.log(formData);
+    if (!this.cropper.getCroppedCanvas() || typeof this.cropper.getCroppedCanvas() === 'undefined') {
+        fetch('/upload/uploader/', {
+          method: 'POST',
+          body: formData
+        }).then((response)=>response.json()).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
     } else {
       this.cropper.getCroppedCanvas().toBlob((blob) => {
         formData.append('photo', blob);
         fetch('/upload/uploader/', {
           method: 'POST',
           body: formData
-        });
-        // console.log(uid,this.name.value, this.state.startDate.format(),this.sex.value, blob);
+        }).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
       });
     }
   };
