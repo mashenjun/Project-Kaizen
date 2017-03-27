@@ -226,13 +226,13 @@ class PostBelongUploaderSerializer(serializers.DocumentSerializer):
         return len(obj.comment);
 
 class UploaderCreateSerializer(serializers.DocumentSerializer):
-    name = serializers.serializers.CharField()
-    birth_day = serializers.serializers.DateTimeField()
-    sex = serializers.serializers.ChoiceField(choices=SEX)
-    photo = fields.ImageField(default=get_default_image(),use_url=True,validators=[validate_photo_size,])
-    home_town = serializers.serializers.CharField()
-    location = fields.GeoPointField()
-    user = fields.ReferenceField(model=User)
+    name = serializers.serializers.CharField(write_only=True)
+    birth_day = serializers.serializers.DateTimeField(write_only=True)
+    sex = serializers.serializers.ChoiceField(choices=SEX,write_only=True)
+    photo = fields.ImageField(default=get_default_image(),use_url=True,validators=[validate_photo_size,],write_only=True)
+    home_town = serializers.serializers.CharField(write_only=True)
+    location = fields.GeoPointField(write_only=True)
+    user = fields.ReferenceField(model=User,write_only=True)
 
     class Meta:
         model = Uploader
