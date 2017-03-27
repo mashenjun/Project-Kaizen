@@ -237,6 +237,7 @@ class UploaderCreateSerializer(serializers.DocumentSerializer):
     class Meta:
         model = Uploader
         fields = [
+            'id',
             'name',
             'birth_day',
             'sex',
