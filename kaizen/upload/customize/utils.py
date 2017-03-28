@@ -103,13 +103,15 @@ def modifyUploaderResponseData(datalist_db, datalist_output):
             for x in range(0, len(datalist_db)):
                 if 'location' in datalist_output[x]:
                     datalist_output[x]['location'] = datalist_db[x]['location']
-                # TODO: change to real host address
+                if 'birth_day' in datalist_output[x]:
+                    datalist_output[x]['birth_day'] = datalist_output[x]['birth_day'].split("T")[0]
                 # if 'id' in datalist_db[x]:
                 #     datalist_output[x]['photo_url'] = reverse('get-photo', args=[datalist_output[x]['id']])
         else:
             if 'location' in datalist_output:
                 datalist_output['location'] = datalist_db['location']
-                # TODO: change to real host address
+            if 'birth_day' in datalist_output:
+                datalist_output['birth_day'] = datalist_output['birth_day'].split("T")[0]
             # if 'id' in datalist_db:
             #     datalist_output['photo_url'] = reverse('get-photo', args=[datalist_db['id']])
 

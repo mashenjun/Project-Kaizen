@@ -409,6 +409,10 @@ class UploaderEditSerializer(serializers.DocumentSerializer):
     home_town = serializers.serializers.CharField()
     location = fields.GeoPointField(required=False)
     photo = fields.ImageField(use_url=True,validators=[validate_photo_size],required=False)
+    detail_url = serializers.serializers.HyperlinkedIdentityField(
+        view_name='uploader-retrieve',
+        lookup_field='id',
+    )
     # user = serializers.serializers.CharField(source='user.username')
     class Meta:
         model = Uploader
@@ -419,6 +423,7 @@ class UploaderEditSerializer(serializers.DocumentSerializer):
             'photo',
             'home_town',
             'location',
+            'detail_url',
             # 'user'
         ]
         depth = 2

@@ -189,21 +189,14 @@ class EditUploaderView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generic
             # refresh the instance from the database.
             instance = self.get_object()
             serializer = self.get_serializer(instance)
-        result = serializer.data.copy()
-        if 'location' in result:
-            result['location'] = instance['location']
-        if 'id' in instance:
-            result['photo_url'] = reverse('get-photo', args=[instance['id']])
+
+        result = modifyUploaderResponseData(instance, serializer.data)
         return Response(result)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        result = serializer.data.copy()
-        if 'location' in result:
-            result['location'] = instance['location']
-        if 'id' in instance:
-            result['photo_url'] = reverse('get-photo', args=[instance['id']])
+        result = modifyUploaderResponseData(instance, serializer.data)
         return Response(result)
 
     def put(self, request, *args, **kwargs):
