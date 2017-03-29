@@ -443,13 +443,21 @@ def query_city(request,province_code=None):
         result = []
 
         for item in province['cities']:
-            info = {
-                "name": item.get("name"),
-                "prefix": item.get("prefix"),
-                "code": item.get("code"),
-                "cities": [{"name":city["name"],"prefix": city["prefix"]} for city in item.get("cities")]
+            if (item.get("prefix")=="市"):
+                info = {
+                    "name": item.get("name"),
+                    "prefix": item.get("prefix"),
+                    "code": item.get("code"),
+                    # "cities": [{"name":city["name"],"prefix": city["prefix"]} for city in item.get("cities")]
 
-            }
+                }
+            elif (item.get("prefix")=="区"):
+                info = {
+                    "name": item.get("name"),
+                    "prefix": item.get("prefix"),
+                    # "code": item.get("code"),
+                    # "cities": [{"name":city["name"],"prefix": city["prefix"]} for city in item.get("cities")]
+                }
             result.append(info)
         return Response(result, status=status.HTTP_200_OK)
     except :
