@@ -60,6 +60,8 @@ def validate_photo_size(value):
         raise ValidationError('Profile Image too large.')
     return value
 
+
+
 class CommentCreateSerializer(serializers.EmbeddedDocumentSerializer):
     # post = fields.ReferenceField(model=Post,required=True)
     owner = fields.ReferenceField(model=User,required=True)
@@ -188,7 +190,10 @@ class PostUpdateCommentSerializer(serializers.DocumentSerializer):
         return instance
 
 class PostEditSerializer(serializers.DocumentSerializer):
-
+    img_url = serializers.serializers.ListField(child=serializers.serializers.URLField(allow_blank=True) ,min_length=0)
+    video_url = serializers.serializers.ListField(child=serializers.serializers.URLField(allow_blank=True) ,min_length=0)
+    audio_url = serializers.serializers.ListField(child=serializers.serializers.URLField(allow_blank=True) ,min_length=0)
+    title = serializers.serializers.CharField(required=False)
     # user = serializers.serializers.CharField(source='user.username')
     class Meta:
         model = Post
