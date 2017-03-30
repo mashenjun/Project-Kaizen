@@ -1,4 +1,4 @@
-#-*- coding:utf-8 –*-
+#-*- coding: UTF-8 -*-
 import re, traceback, sys, os
 
 from pymongo import MongoClient
@@ -430,7 +430,7 @@ def query_city(request,province_code=None):
         result = []
 
         for item in province['cities']:
-            if (item.get("prefix")=="市"):
+            if (item.get("prefix")==u"市"):
                 info = {
                     "name": item.get("name"),
                     "prefix": item.get("prefix"),
@@ -438,7 +438,7 @@ def query_city(request,province_code=None):
                     # "cities": [{"name":city["name"],"prefix": city["prefix"]} for city in item.get("cities")]
 
                 }
-            elif (item.get("prefix")=="区"):
+            elif (item.get("prefix")==u"区"):
                 info = {
                     "name": item.get("name"),
                     "prefix": item.get("prefix"),
