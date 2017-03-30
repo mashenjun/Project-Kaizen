@@ -1,3 +1,4 @@
+#-*- coding:utf-8 –*-
 import re, traceback, sys, os
 
 from pymongo import MongoClient
