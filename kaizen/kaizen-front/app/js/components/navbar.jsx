@@ -19,7 +19,8 @@ class NavbarComponent extends Component {
       src: "",
       cropResult: "",
       provinces: [],
-      citys:[],
+      citys: [],
+      finalCity: ""
     };
   }
 
@@ -31,14 +32,18 @@ class NavbarComponent extends Component {
     }
   };
 
-  onProvinchange = ()=>{
-    fetch('/upload/query/province/'+this.proveList.value).then((response) => response.json()).then((data) => {
-      this.setState({citys: data})
-    });
+  onProvinchange = () => {
+    this.setState({finalCity: ""});
+    if(this.proveList.value){
+      fetch('/upload/query/province/' + this.proveList.value).then((response) => response.json()).then((data) => {
+        this.setState({citys: data})
+      });
+    }
   };
 
-  onCitychange = ()=>{
-
+  onCitychange = () => {
+    this.errorHint.style.display = "none";
+    this.setState({finalCity: this.cityList.value})
   };
 
 
@@ -81,20 +86,24 @@ class NavbarComponent extends Component {
     formData.append('user', uid);
     formData.append('home_town', 'shanghai');
     formData.append('location', [11, 22]);
-    if (!this.cropper.getCroppedCanvas() || typeof this.cropper.getCroppedCanvas() === 'undefined') {
-      fetch('/upload/uploader/', {
-        method: 'POST',
-        body: formData
-      }).then((response) => response.json()).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
-    } else {
-      this.cropper.getCroppedCanvas().toBlob((blob) => {
-        formData.append('photo', blob);
-        fetch('/upload/uploader/', {
-          method: 'POST',
-          body: formData
-        }).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
-      });
+    if (!this.state.finalCity) {
+      console.log('error');
+      this.errorHint.style.display = "inline"
     }
+    // if (!this.cropper.getCroppedCanvas() || typeof this.cropper.getCroppedCanvas() === 'undefined') {
+    //   fetch('/upload/uploader/', {
+    //     method: 'POST',
+    //     body: formData
+    //   }).then((response) => response.json()).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
+    // } else {
+    //   this.cropper.getCroppedCanvas().toBlob((blob) => {
+    //     formData.append('photo', blob);
+    //     fetch('/upload/uploader/', {
+    //       method: 'POST',
+    //       body: formData
+    //     }).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
+    //   });
+    // }
   };
 
   componentWillReceiveProps(nextProps) {
@@ -151,7 +160,7 @@ class NavbarComponent extends Component {
     }
     const cityList = [];
     for (let c of this.state.citys) {
-      cityList.push(<option key={c.code} value={c.code}>{c.name}</option>);
+      cityList.push(<option key={c.code} value={c.name}>{c.name}</option>);
     }
 
     return (
@@ -292,19 +301,28 @@ class NavbarComponent extends Component {
                           <div className="control">
                             <span style={{marginLeft: '8px', lineHeight: '2.5', marginRight: '8px'}}>Province:</span>
                             <span className="select">
-                                <select onChange={this.onProvinchange} ref={(proveList)=>{this.proveList = proveList}}>
+                                <select onChange={this.onProvinchange} ref={(proveList) => {
+                                  this.proveList = proveList
+                                }}>
                                   <option>---</option>
                                   {provinceList}
                                 </select>
                                </span>
-                            <span style={{marginLeft: '8px', lineHeight: '2.5',marginRight: '8px'}}>City:</span>
+                            <span style={{marginLeft: '8px', lineHeight: '2.5', marginRight: '8px'}}>City:</span>
                             <span className="select">
-                                <select onChange={this.onCitychange} ref={(cityList)=>{this.cityList = cityList}}>
+                                <select onChange={this.onCitychange} ref={(cityList) => {
+                                  this.cityList = cityList
+                                }}>
                                   <option>---</option>
                                   {cityList}
                                 </select>
                                </span>
                           </div>
+                          <p ref={(errorHint) => {
+                            this.errorHint = errorHint
+                          }} style={{display: 'none'}} className="help is-danger">
+                            Both provice and city are required
+                          </p>
                         </div>
                       </div>
                     </div>
