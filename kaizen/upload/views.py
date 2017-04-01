@@ -45,7 +45,12 @@ from kaizen.settings import (
     _MONGODB_USER,
     _MONGODB_PORT,
 )
-from .models import Uploader,Post,Comment
+from .models import (
+    Uploader,
+    Post,
+    Comment,
+)
+
 from .customize.utils import get_token
 from .customize.utils import getlogger
 from .customize.utils import modifyUploaderResponseData, modifyUploaderRequestData
@@ -137,7 +142,6 @@ class FilterUploaderbyUserView(generics.ListAPIView):
         by filtering against a `username` query parameter in the URL.
         """
         user = self.kwargs['userid']
-        print("[DEBUG]{0}".format(user))
         return Uploader.objects.filter(user=user)
 
     def list(self, request, *args, **kwargs):
@@ -303,7 +307,6 @@ class EditPostView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.Re
 
 
     def put(self, request, *args, **kwargs):
-        logger.debug(request.data)
         return self.partial_update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
@@ -485,7 +488,6 @@ if __name__ == '__main__':
     def OSS_callback_handler(request):
         # TODO:store data in to db.
         # content is {"mimeType":"image/png","height":"256","size":"3251","url":"","filename":"user-dir/files.png","width":"256"}
-
         return Response(request.data,status=status.HTTP_200_OK)
 
 
