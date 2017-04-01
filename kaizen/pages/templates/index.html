@@ -1,67 +1,96 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-	<title>OSS web直传</title>
-	<link rel="stylesheet" type="text/css" href="/static/style-OSS.css"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>Kaizen Project</title>
+    <link rel="stylesheet" type="text/css" href="/static/bulma.css" />
+    <link rel="stylesheet" type="text/css" href="/static/style-OSS.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 </head>
+
 <body>
-
-<h2>Post Uploader Form</h2>
-<!--<ol>-->
-<!--<li>基于plupload封装 </li>-->
-<!--<li>支持html5,flash,silverlight,html4 等协议上传</li>-->
-<!--<li>可以运行在PC浏览器，手机浏览器，微信</li>-->
-<!--<li>签名在服务端(php)完成, 安全可靠, 推荐使用!</li>-->
-<!--<li>显示上传进度条</li>-->
-<!--<li>可以控制上传文件的大小,允许上传文件的类型,本例子设置了，只能上传jpg,png,gif结尾和zip,rar文件，最大大小是10M</li>-->
-<!--<li>最关键的是，让你10分钟之内就能移植到你的系统，实现以上牛逼的功能！</li>-->
-<!--<li>注意一点:bucket必须设置了Cors(Post打勾）,不然没有办法上传</li>-->
-<!--<li>注意一点:此例子默认是上传到user-dir目录下面，这个目录的设置是在php/get.php, $dir变量!</li>-->
-<!--<li>注意一点:把php/get.php里面的callbackUrl变量改成你自己的url</li>-->
-<!--<li>注意一点:这里返回的success,是OSS已经回调应用服务器，应用服务已经返回200!</li>-->
-<!--<li><a href="https://help.aliyun.com/document_detail/oss/practice/pc_web_upload/js_php_callback.html">点击查看详细文档</a></li>-->
-<!--</ol>-->
-<br>
-<form name=theform>
-Title:<br>
-<input type="text" id="title" value="">
-<br>
-Catalogue:<br>
-    <select id="catalogue">
-        <option value="GA" selected>民间游戏</option>
-        <option value="ST">传说/故事</option>
-        <option value="TO" >儿歌/童谣</option>
-        <option value="SP">玩意/把式</option>
-    </select>
-<br>
-Description:<br>
-    <textarea id="description" style="width:500px;height:150px;"></textarea>
-<br><br>
-<input type="radio" name="myradio" value="local_name" checked=true/> 上传文件名字保持本地文件名字
-<input type="radio" name="myradio" value="random_name" /> 上传文件名字是随机文件名, 后缀保留
-
-</form>
-
-<h4>您所选择的文件列表：</h4>
-<div id="ossfile">你的浏览器不支持flash,Silverlight或者HTML5！</div>
-
-<br/>
-
-<div id="container">
-	<a id="selectfiles" href="javascript:void(0);" class='btn'>选择文件</a>
-	<a id="postfiles" href="javascript:void(0);" class='btn'>开始上传</a>
-	<a id="submit" href="#" class='btn'>submit</a>
-</div>
-<br/>
-
-<pre id="console"></pre>
-
-<p></p>
-
+    <nav class="nav is-dark has-shadow" id="top">
+        <div class="container">
+            <div class="nav-left">
+                <a class="nav-item" href="../home.html">
+                    <img src="/static/images/bulma.png" alt="Description" />
+                </a>
+            </div>
+            <span class="nav-toggle">
+                          <span></span>
+            <span></span>
+            <span></span>
+            </span>
+            <div class="nav-right nav-menu">
+                <a class="nav-item is-tab ">Home</a>
+                <a class="nav-item is-tab">Map</a>
+                <a class="nav-item is-tab is-active">Upload</a>
+                <a class="nav-item is-tab">About</a>
+                <span class="nav-item">          
+                <span>profile: Login as </span>
+                <span>
+                <a class="button">Log in</a>
+                <a class="button is-info">Sign up</a></span>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="container" style="margin-top: 20px">
+        <h1 style="color: #363636;font-size: 2rem;font-weight: 300;">Post Uploader Form</h1>
+        <form name=theform style="margin-top: 10px">
+            <div class="field">
+                <label class="label">Title:</label>
+                <p class="control">
+                    <input class="input" type="text" id="title" placeholder="Text input" value="">
+                </p>
+            </div>
+            <div class="field">
+                <label class="label">Catalogue:</label>
+                <p class="control">
+                    <span class="select">
+				      <select id="catalogue">
+				          	<option value="GA" selected>民间游戏</option>
+			                <option value="ST">传说/故事</option>
+			                <option value="TO">儿歌/童谣</option>
+			                <option value="SP">玩意/把式</option>
+				      </select>
+	    			</span>
+                </p>
+            </div>
+            <div class="field">
+                <label class="label">Description:</label>
+                <p class="control">
+                    <textarea style="height:150px;" id="description" class="textarea" placeholder="Textarea"></textarea>
+                </p>
+            </div>
+            <div class="field">
+                <p class="control">
+                    <label class="radio">
+                        <input type="radio" name="myradio" value="local_name" checked=true/> 上传文件名字保持本地文件名字
+                    </label>
+                    <label class="radio">
+                        <input type="radio" name="myradio" value="random_name" /> 上传文件名字是随机文件名, 后缀保留
+                    </label>
+                </p>
+            </div>
+        </form>
+        <div class="field" style="margin-top: 20px">
+            <h4>您所选择的文件列表：</h4>
+            <div id="ossfile">你的浏览器不支持flash,Silverlight或者HTML5！</div>
+            <br/>
+            <div id="container">
+                <a id="selectfiles" href="javascript:void(0);" class="button">选择文件</a>
+                <a id="postfiles" href="javascript:void(0);" class="button is-info">开始上传</a>
+                <a id="submit" href="#" class="button is-success">submit</a>
+            </div>
+            <br/>
+            <pre id="console"></pre>
+            <p></p>
+        </div>
+    </div>
 </body>
 <script type="text/javascript" src="/static/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
 <script type="text/javascript" src="/static/upload.js"></script>
-</html>
 
+</html>

@@ -18,6 +18,9 @@ class NavbarComponent extends Component {
       startDate: moment(),
       src: "",
       cropResult: "",
+      provinces: [],
+      citys: [],
+      finalCity: ""
     };
   }
 
@@ -29,6 +32,26 @@ class NavbarComponent extends Component {
     }
   };
 
+  onProvinchange = () => {
+    this.setState({finalCity: ""});
+    if(this.proveList.value){
+      fetch('/upload/query/province/' + this.proveList.value).then((response) => response.json()).then((data) => {
+        this.setState({citys: data})
+      });
+    }
+  };
+
+  onCitychange = () => {
+    this.errorHint.style.display = "none";
+    this.setState({finalCity: this.cityList.value})
+  };
+
+
+  componentDidMount = () => {
+    fetch('/upload/query/province/').then((response) => response.json()).then((data) => {
+      this.setState({provinces: data})
+    });
+  };
 
   onChange = (e) => {
     e.preventDefault();
@@ -45,21 +68,12 @@ class NavbarComponent extends Component {
     reader.readAsDataURL(files[0]);
   };
 
-  _crop = () => {
-    if (typeof this.cropper.getCroppedCanvas() === 'undefined') {
-      return;
-    }
-    this.setState({
-      cropResult: this.cropper.getCroppedCanvas().toDataURL(),
-    });
-  };
-
-  onFetchDatahandler = (data)=>{
+  onFetchDatahandler = (data) => {
     const postUrl = '/testrestful/OSSpage/';
-    window.location.href = postUrl+ "?uploaderid=" + data.id;
+    window.location.href = postUrl + "?uploaderid=" + data.id;
   };
 
-  onFetchErrorHandler = (err)=>{
+  onFetchErrorHandler = (err) => {
     console.log(err);
   };
 
@@ -67,26 +81,29 @@ class NavbarComponent extends Component {
     const {uid} = localstore.getToken();
     let formData = new FormData();
     formData.append('name', this.name.value);
-    // formData.append('birth_day', this.state.startDate.format());
-    formData.append('birth_day', '2012-03-08T00:12')
+    formData.append('birth_day', this.state.startDate.format('YYYY-MM-DD'));
     formData.append('sex', this.sex.value);
     formData.append('user', uid);
     formData.append('home_town', 'shanghai');
-    formData.append('location', [11,22]);
-    if (!this.cropper.getCroppedCanvas() || typeof this.cropper.getCroppedCanvas() === 'undefined') {
-        fetch('/upload/uploader/', {
-          method: 'POST',
-          body: formData
-        }).then((response)=>response.json()).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
-    } else {
-      this.cropper.getCroppedCanvas().toBlob((blob) => {
-        formData.append('photo', blob);
-        fetch('/upload/uploader/', {
-          method: 'POST',
-          body: formData
-        }).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
-      });
+    formData.append('location', [11, 22]);
+    if (!this.state.finalCity) {
+      console.log('error');
+      this.errorHint.style.display = "inline"
     }
+    // if (!this.cropper.getCroppedCanvas() || typeof this.cropper.getCroppedCanvas() === 'undefined') {
+    //   fetch('/upload/uploader/', {
+    //     method: 'POST',
+    //     body: formData
+    //   }).then((response) => response.json()).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
+    // } else {
+    //   this.cropper.getCroppedCanvas().toBlob((blob) => {
+    //     formData.append('photo', blob);
+    //     fetch('/upload/uploader/', {
+    //       method: 'POST',
+    //       body: formData
+    //     }).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
+    //   });
+    // }
   };
 
   componentWillReceiveProps(nextProps) {
@@ -132,11 +149,20 @@ class NavbarComponent extends Component {
           </div>
       )
     }
-    console.log('rererer...rerender', this.props.userUploaders);
+    console.log('rererer...rerender');
     const {username, isAuthenticated} = localstore.getToken();
     if (uploaderList.length === 0) {
       uploaderList = 'You do not have any uploaders. You should create one'
     }
+    const provinceList = [];
+    for (let p of this.state.provinces) {
+      provinceList.push(<option key={p.code} value={p.code}>{p.name}</option>);
+    }
+    const cityList = [];
+    for (let c of this.state.citys) {
+      cityList.push(<option key={c.code} value={c.name}>{c.name}</option>);
+    }
+
     return (
         <div>
           <div ref={(modal) => this.modal = modal} className="modal">
@@ -212,7 +238,9 @@ class NavbarComponent extends Component {
                         <div className="field">
                           <div className="control">
                              <span className="select">
-                              <select ref={(sex)=>{this.sex=sex}}>
+                              <select ref={(sex) => {
+                                this.sex = sex
+                              }}>
                                 <option value={'M'}>Male</option>
                                 <option value={'F'}>Female</option>
                               </select>
@@ -231,7 +259,7 @@ class NavbarComponent extends Component {
                           <div className="control">
                             <input type="file" accept="image/*" onChange={this.onChange}/>
                             <Cropper
-                                style={{maxHeight: 150, maxWidth: 150}}
+                                style={{maxHeight: 180, maxWidth: 180}}
                                 aspectRatio={1}
                                 preview=".img-preview"
                                 guides={false}
@@ -263,6 +291,7 @@ class NavbarComponent extends Component {
                         </div>
                       </div>
                     </div>
+
                     <div className="field is-horizontal">
                       <div className="field-label is-normal">
                         <label className="label">HomeTown</label>
@@ -270,17 +299,44 @@ class NavbarComponent extends Component {
                       <div className="field-body">
                         <div className="field">
                           <div className="control">
-                            <input className="input" type="text" placeholder="Home town"/>
+                            <span style={{marginLeft: '8px', lineHeight: '2.5', marginRight: '8px'}}>Province:</span>
+                            <span className="select">
+                                <select onChange={this.onProvinchange} ref={(proveList) => {
+                                  this.proveList = proveList
+                                }}>
+                                  <option>---</option>
+                                  {provinceList}
+                                </select>
+                               </span>
+                            <span style={{marginLeft: '8px', lineHeight: '2.5', marginRight: '8px'}}>City:</span>
+                            <span className="select">
+                                <select onChange={this.onCitychange} ref={(cityList) => {
+                                  this.cityList = cityList
+                                }}>
+                                  <option>---</option>
+                                  {cityList}
+                                </select>
+                               </span>
                           </div>
+                          <p ref={(errorHint) => {
+                            this.errorHint = errorHint
+                          }} style={{display: 'none'}} className="help is-danger">
+                            Both provice and city are required
+                          </p>
                         </div>
                       </div>
                     </div>
+
+
                   </div>
                 </section>
                 <footer className="modal-card-foot">
                   <a className="button is-success" onClick={this.onCreateHandler}><i className="fa fa-plus"
                                                                                      style={{marginRight: '5px'}}></i>Create</a>
-                  <a className="button" onClick={() => this.formModal.classList.remove("is-active")}>Cancel</a>
+                  <a className="button" onClick={() => {
+                    this.formModal.classList.remove("is-active");
+                    window.location.reload();
+                  }}>Cancel</a>
                 </footer>
               </div>
             </div>
