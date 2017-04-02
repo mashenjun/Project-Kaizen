@@ -85,7 +85,11 @@ class CommentCreateSerializer(serializers.EmbeddedDocumentSerializer):
 
 class PostCreateSerializer(serializers.DocumentSerializer):
     # comment = fields.GenericEmbeddedDocumentField(Comment)
-
+    img_url = serializers.serializers.ListField(child=serializers.serializers.URLField(allow_blank=True), min_length=0)
+    video_url = serializers.serializers.ListField(child=serializers.serializers.URLField(allow_blank=True),
+                                                  min_length=0)
+    audio_url = serializers.serializers.ListField(child=serializers.serializers.URLField(allow_blank=True),
+                                                  min_length=0)
     class Meta:
         model = Post
         fields = [

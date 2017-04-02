@@ -5,6 +5,7 @@ import base64
 import hmac
 import logging
 import re
+import oss2
 from collections import Iterable
 from hashlib import sha1 as sha
 
@@ -47,7 +48,7 @@ def get_iso_8601(expire):
 
 def get_token():
     now = int(time.time())
-    expire_syncpoint  = now + expire_time
+    expire_syncpoint = now + expire_time
     expire = get_iso_8601(expire_syncpoint)
 
     policy_dict = {}
@@ -66,7 +67,8 @@ def get_token():
 
     callback_dict = {}
     callback_dict['callbackUrl'] = callback_url;
-    callback_dict['callbackBody'] = 'filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}';
+    callback_dict[
+        'callbackBody'] = 'filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}';
     callback_dict['callbackBodyType'] = 'application/x-www-form-urlencoded';
     callback_param = json.dumps(callback_dict).strip()
     base64_callback_body = base64.b64encode(callback_param.encode('ascii'));
@@ -81,9 +83,8 @@ def get_token():
     token_dict['callback'] = base64_callback_body.decode('utf-8')
     # web.header("Access-Control-Allow-Methods","POST")
     # web.header("Access-Control-Allow-Origin","*")
-    #web.header('Content-Type', 'text/html; charset=UTF-8')
-    result = json.dumps(token_dict)
-    return Response(token_dict,status=status.HTTP_200_OK)
+    # web.header('Content-Type', 'text/html; charset=UTF-8')
+    return Response(token_dict, content_type='application/json', status=status.HTTP_200_OK)
 
 def modifyUploaderResponseData(datalist_db, datalist_output):
         """
@@ -128,3 +129,17 @@ def modifyUploaderRequestData(request):
     if 'birth_day' in request.data and date_regex.match(request.data.get('birth_day')) is not None:
         request.data['birth_day'] = request.data['birth_day'] + 'T00:00:00';
     return request
+
+def delectOSSFile(url_list):
+    auth = oss2.Auth(accessKeyId, accessKeySecret)
+    bucketname = host.split('.')[0]
+    endpoint = host.replace(bucketname+'.','')
+    bucket = oss2.Bucket(auth,endpoint,bucketname)
+    logger = getlogger(__name__)
+    result = bucket.batch_delete_objects(url_list)
+    # for file in url_list:
+    #     exist = bucket.object_exists(file)
+    #     if exist:
+    #         print('object exist')
+    #     else:
+    #         pass

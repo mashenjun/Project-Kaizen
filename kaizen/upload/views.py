@@ -3,7 +3,8 @@ import re, traceback, sys, os
 
 from pymongo import MongoClient
 from django.http import HttpResponse
-from django.shortcuts import render
+
+from django.shortcuts import render_to_response
 from rest_framework import views,status,mixins
 
 from rest_framework.parsers import FileUploadParser,MultiPartParser
@@ -50,10 +51,22 @@ from .models import (
     Post,
     Comment,
 )
+from kaizen.config import (
+    accessKeyId,
+    accessKeySecret,
+    host,
+    expire_time,
+    upload_dir,
+    callback_url,
+)
+from .customize.utils import (
+    get_token,
+    getlogger,
+    modifyUploaderResponseData,
+    modifyUploaderRequestData,
+    delectOSSFile,
+)
 
-from .customize.utils import get_token
-from .customize.utils import getlogger
-from .customize.utils import modifyUploaderResponseData, modifyUploaderRequestData
 from rest_framework.renderers import JSONRenderer
 
 # Create your views here.
@@ -240,6 +253,9 @@ class CreateListPostView(generics.ListCreateAPIView):
         else:
             return self.serializer_class
 
+    def post(self, request, *args, **kwargs):
+        logger.debug(request.data)
+        return self.create(request, *args, **kwargs)
 
 class RetrievePostView(generics.RetrieveAPIView):
     serializer_class = PostDetailSerializer
@@ -311,6 +327,24 @@ class EditPostView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.Re
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        '''
+        change the default destroy function. delete the file stored on OSS at the same time.
+        :param request: 
+        :param args: 
+        :param kwargs: 
+        :return: 
+        '''
+        instance = self.get_object()
+        url_list = instance['img_url']+instance['video_url']+instance['audio_url']
+        img_url =  logger.debug(instance['img_url'])
+        video_url = logger.debug(instance['video_url'])
+        audio_url = logger.debug(instance['audio_url'])
+        if (len(url_list)>0):
+            delectOSSFile(url_list)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ListPostView(generics.ListAPIView):
@@ -403,6 +437,7 @@ def OSS_signature():
     print(token)
     return token
 
+
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def query_province(request):
@@ -423,6 +458,7 @@ def query_province(request):
             "error_message": "Something wrong with your request."
         }
         return Response(error_msg, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -457,7 +493,6 @@ def query_city(request,province_code=None):
         return Response(error_msg, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def query_district(request,province_code=None,city_code=None):
@@ -481,14 +516,20 @@ def query_district(request,province_code=None,city_code=None):
         }
     return Response(error_msg, status=status.HTTP_400_BAD_REQUEST)
 
-if __name__ == '__main__':
-    @api_view(['POST'])
-    @permission_classes([AllowAny])
-    # @permission_classes([WhitelistPermission])
-    def OSS_callback_handler(request):
-        # TODO:store data in to db.
-        # content is {"mimeType":"image/png","height":"256","size":"3251","url":"","filename":"user-dir/files.png","width":"256"}
-        return Response(request.data,status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def OSSuploadepage(request):
+    # View code here...
+    return render_to_response('index.html')
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+# @permission_classes([WhitelistPermission])
+def OSS_callback_handler(request):
+    result = request.data.copy()
+    result['OSS_url'] = os.path.join(host, request.data['filename'])
+    return Response(result, status=status.HTTP_200_OK)
 
 # TODO:insert comment into post.
