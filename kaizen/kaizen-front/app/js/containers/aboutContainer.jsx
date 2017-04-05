@@ -1,6 +1,4 @@
 import React, {Component} from "react";
-import Footer from '../components/footer'
-import {connect} from 'react-redux'
 
 class  aboutContainer extends Component{
     render(){
@@ -9,7 +7,6 @@ class  aboutContainer extends Component{
                 <div className="container">
                     about page
                 </div>
-                <Footer/>
             </div>
         )
     }

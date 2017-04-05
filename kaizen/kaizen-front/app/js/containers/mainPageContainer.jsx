@@ -1,9 +1,9 @@
 import React, {Component} from "react";
 import UserList from '../components/userList'
 import UserMap from '../components/userMap'
-import Footer from '../components/footer'
 import {connect} from 'react-redux'
 import {fetchUploaderDataRequest} from '../actions/dataActions'
+
 class mainpageContainer extends Component{
     componentDidMount(){
         console.log('testing map');
@@ -16,7 +16,6 @@ class mainpageContainer extends Component{
             <div>
                 <UserMap/>
                 <UserList/>
-                <Footer/>
             </div>
         )
     }
