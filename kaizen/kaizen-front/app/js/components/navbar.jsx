@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {hashHistory} from 'react-router';
+import {hashHistory, Link} from 'react-router';
 import {connect} from 'react-redux';
 import DatePicker from 'react-datepicker';
 import Cropper from 'react-cropper';
@@ -355,10 +355,10 @@ class NavbarComponent extends Component {
                           <span></span>
                     </span>
               <div className="nav-right nav-menu">
-                <a className="nav-item is-tab is-active">Home</a>
+                <a ref={(a) => this.hometab = a} onClick={(e)=>{hashHistory.push('/home');e.target.classList.add('is-active');this.aboutab.classList.remove('is-active')}} className="nav-item is-tab is-active">Home</a>
                 <a className="nav-item is-tab">Map</a>
                 <a className="nav-item is-tab" ref={(upload) => this.uploadtab = upload} onClick={this.onUploaderClick}>Upload</a>
-                <a className="nav-item is-tab">About</a>
+                <a ref={(a) => this.aboutab = a} onClick={(e)=>{hashHistory.push('/about');e.target.classList.add('is-active');this.hometab.classList.remove('is-active')}}  className="nav-item is-tab">About</a>
                 <span className="nav-item">
                           { isAuthenticated ?
                               <span>profile: Login as {username}</span> :

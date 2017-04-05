@@ -9,6 +9,7 @@ import loginContainer from './containers/loginContainer';
 import signupContainer from './containers/signupContainer'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import mainpageContainer from './containers/mainPageContainer'
+import aboutContainer from './containers/aboutContainer'
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
 injectTapEventPlugin();
@@ -25,6 +26,7 @@ render(
                     <Route path="/" component={AppContainer}>
                         <IndexRedirect to="home"/>
                          <Route path="/home" component={mainpageContainer} />
+                         <Route path="/about" component={aboutContainer} />
                     </Route>
                 </Router>
                 <DevTools/>
