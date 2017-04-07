@@ -379,6 +379,10 @@ class UploaderSimplelSerializer(serializers.DocumentSerializer):
     location = fields.GeoPointField()
     user = fields.ReferenceField(model=User)
     post_count = serializers.serializers.SerializerMethodField()
+    posts_url = serializers.serializers.HyperlinkedIdentityField(
+        view_name = 'post-filter-uploader',
+        lookup_field='id',
+    )
     photo_url = serializers.serializers.HyperlinkedIdentityField(
         view_name='get-photo',
         lookup_field='id',
@@ -400,6 +404,7 @@ class UploaderSimplelSerializer(serializers.DocumentSerializer):
             'post_count',
             'photo_url',
             'edit_url',
+            'posts_url'
         ]
 
     # def get_posts(self,obj):
