@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {connect} from 'react-redux'
+import Footer from '../components/footer'
 import NavbarComponent from '../components/navbar'
 import '../../less/bulma.css';
 
@@ -10,6 +10,7 @@ class appContainer extends Component{
           <div>
             <NavbarComponent/>
             {this.props.children}
+            <Footer/>
           </div>
       )
   }
