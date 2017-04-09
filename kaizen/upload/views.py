@@ -374,7 +374,7 @@ class FilterPostbyUploaderView(generics.ListAPIView):
         Optionally restricts the returned purchases to a given user,
         by filtering against a `username` query parameter in the URL.
         """
-        author = self.kwargs['authorid']
+        author = self.kwargs['id']
         return Post.objects.filter(author=author)
 
     # def list(self, request, *args, **kwargs):

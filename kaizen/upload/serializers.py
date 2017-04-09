@@ -223,6 +223,7 @@ class PostBelongUploaderSerializer(serializers.DocumentSerializer):
     class Meta:
         model = Post
         fields = [
+            "id",
             "title",
             "catalogue",
             "creadted_at",
