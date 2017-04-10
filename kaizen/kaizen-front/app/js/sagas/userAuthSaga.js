@@ -3,7 +3,6 @@ import { select, take, takem, call, put } from 'redux-saga/effects';
 import types from '../actions/actionTypes'
 import {userLoginSuccess,userLoginFailure,userSignupFailure,userSignupSuccess,ServerSideError} from '../actions/authActions'
 import Api from './Api'
-import 'whatwg-fetch'
 
 
 export function* userLoginTask(action) {
