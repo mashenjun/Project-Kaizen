@@ -90,20 +90,20 @@ class NavbarComponent extends Component {
       console.log('error');
       this.errorHint.style.display = "inline"
     }
-    // if (!this.cropper.getCroppedCanvas() || typeof this.cropper.getCroppedCanvas() === 'undefined') {
-    //   fetch('/upload/uploader/', {
-    //     method: 'POST',
-    //     body: formData
-    //   }).then((response) => response.json()).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
-    // } else {
-    //   this.cropper.getCroppedCanvas().toBlob((blob) => {
-    //     formData.append('photo', blob);
-    //     fetch('/upload/uploader/', {
-    //       method: 'POST',
-    //       body: formData
-    //     }).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
-    //   });
-    // }
+    if (!this.cropper.getCroppedCanvas() || typeof this.cropper.getCroppedCanvas() === 'undefined') {
+      fetch('/upload/uploader/', {
+        method: 'POST',
+        body: formData
+      }).then((response) => response.json()).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
+    } else {
+      this.cropper.getCroppedCanvas().toBlob((blob) => {
+        formData.append('photo', blob);
+        fetch('/upload/uploader/', {
+          method: 'POST',
+          body: formData
+        }).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
+      });
+    }
   };
 
   componentWillReceiveProps(nextProps) {
@@ -345,7 +345,7 @@ class NavbarComponent extends Component {
           <nav className="nav is-dark has-shadow" id="top">
             <div className="container">
               <div className="nav-left">
-                <a className="nav-item" href="../home.html">
+                <a className="nav-item" href="/pages/#/home">
                   <img src="/static/images/bulma.png" alt="Description"/>
                 </a>
               </div>

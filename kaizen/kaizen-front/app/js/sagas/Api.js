@@ -54,6 +54,18 @@ export default {
       method: 'GET'
     })
   },
+  getUploderPost(uploaderid) {
+    const url = '/upload/filter/post/' + uploaderid;
+    return callApi(url, {
+      method: 'GET'
+    })
+  },
+  getPostDetail(pid){
+    const url = '/upload/post/'+pid;
+    return callApi(url, {
+      method: 'GET'
+    })
+  },
   getUploaders(uid){
     const url = '/upload/filter/uploader/' + uid;
     return callApi(url, {

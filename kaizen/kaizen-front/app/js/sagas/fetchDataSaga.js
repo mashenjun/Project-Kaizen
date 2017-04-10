@@ -6,7 +6,6 @@ import { select, take, takem, call, put } from 'redux-saga/effects';
 import types from '../actions/actionTypes'
 import {ServerSideError,fetchUploaderDataSuccess,fetchUploaderDataFailure} from '../actions/dataActions'
 import Api from './Api'
-import 'whatwg-fetch'
 
 
 export function* fetchUploaderDataTask() {

@@ -9,7 +9,7 @@ import loginContainer from './containers/loginContainer';
 import signupContainer from './containers/signupContainer'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import mainpageContainer from './containers/mainPageContainer'
-import uploaderContainer from './containers/uploaderContainer'
+import postContainer from './containers/postContainer'
 import aboutContainer from './containers/aboutContainer'
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
@@ -27,7 +27,7 @@ render(
                     <Route path="/" component={AppContainer}>
                         <IndexRedirect to="home"/>
                          <Route path="/home" component={mainpageContainer} />
-                         <Route path="/updetail/:uploaderid" component={uploaderContainer} />
+                         <Route path="/upload/post/:postid" component={postContainer} />
                          <Route path="/about" component={aboutContainer} />
                     </Route>
                 </Router>

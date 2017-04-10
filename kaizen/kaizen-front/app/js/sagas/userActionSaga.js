@@ -4,7 +4,6 @@ import { select, take, takem, call, put } from 'redux-saga/effects';
 import types from '../actions/actionTypes'
 import {ServerSideError,fetchuseruploadersSuccess,fetchuseruploadersFailure} from '../actions/useraction'
 import Api from './Api'
-import 'whatwg-fetch'
 
 
 export function* fetchUserActionTask(action) {
