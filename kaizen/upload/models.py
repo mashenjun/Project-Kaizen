@@ -57,6 +57,8 @@ class Post(Document):
         self.comment.append(comment)
         self.save()
 
+    def query_author(self,):
+        return Uploader.objects(id = self.author.id).first()
 
 
 # class TextPost(Post):

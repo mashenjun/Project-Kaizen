@@ -9,10 +9,14 @@ from os import SEEK_END
 
 from rest_framework.exceptions import ErrorDetail, ValidationError
 from rest_framework_mongoengine import serializers,fields
-
+from rest_framework.reverse import reverse
+from rest_framework.compat import (
+    NoReverseMatch, Resolver404, get_script_prefix, resolve
+)
+from rest_framework.relations import Hyperlink
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
-
+from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 
 from .models import Uploader,SEX,Post,Comment
 from .customize.utils import getlogger
@@ -60,6 +64,24 @@ def validate_photo_size(value):
         raise ValidationError('Profile Image too large.')
     return value
 
+
+class UploaderAvatarHyperlinkField(serializers.serializers.HyperlinkedIdentityField):
+    view_name = 'get-photo'
+
+    def get_url(self, obj, view_name, request, format):
+        """
+        Given an object, return the URL that hyperlinks to the object.
+
+        May raise a `NoReverseMatch` if the `view_name` and `lookup_field`
+        attributes are not configured to correctly match the URL conf.
+        """
+        # Unsaved objects will not yet have a valid URL.
+        if hasattr(obj, 'pk') and obj.pk in (None, ''):
+            return None
+
+        lookup_value = getattr(obj, self.lookup_field)
+        kwargs = {self.lookup_url_kwarg: lookup_value.id}
+        return self.reverse(view_name, kwargs=kwargs, request=request, format=format)
 
 
 class CommentCreateSerializer(serializers.EmbeddedDocumentSerializer):
@@ -122,6 +144,11 @@ class PostDetailSerializer(serializers.DocumentSerializer):
         lookup_field='id',
     )
 
+    author_avatar_url = UploaderAvatarHyperlinkField(view_name='get-photo',lookup_field='author', lookup_url_kwarg='id',read_only=True)
+    # author_avatar_url = serializers.serializers.SerializerMethodField()
+
+    author_name = serializers.serializers.SerializerMethodField()
+
     class Meta:
         model = Post
         fields = [
@@ -136,10 +163,19 @@ class PostDetailSerializer(serializers.DocumentSerializer):
             'comment',
             "comment_count",
             'edit_url',
+            'author_avatar_url',
+            'author_name',
         ]
 
     def get_comment_count(self, obj):
         return len(obj.comment);
+
+    def get_author_name(self, obj):
+        uploader= obj.query_author()
+        return uploader.name
+
+    def get_author_avatar_url(self,obj):
+        return reverse('get-photo', args=[obj.author.id])
 
 
 class PostListSerializer(serializers.DocumentSerializer):
