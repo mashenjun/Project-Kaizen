@@ -10,11 +10,11 @@ from accounts.models import User
 SEX = (('M', 'Male'),
         ('F', 'Female'),)
 
-CATALOGUE = (('GA',"民间游戏"),
-        ('ST',"传说/故事"),
-        ('SO',"儿歌/童谣"),
-        ('TO',"玩意/把式"),
-        ('SP',"地方特色"),)
+CATALOGUE = (('GA',u"民间游戏"),
+        ('ST',u"传说/故事"),
+        ('SO',u"儿歌/童谣"),
+        ('TO',u"玩意/把式"),
+        ('SP',u"地方特色"),)
 
 TYPR = ()
 

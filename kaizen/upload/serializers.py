@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 from rest_framework_mongoengine import serializers,fields
 import random
 from io import BytesIO
