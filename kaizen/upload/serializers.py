@@ -18,7 +18,7 @@ from rest_framework.relations import Hyperlink
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 
-from .models import Uploader,SEX,Post,Comment
+from .models import Uploader,SEX,Post,Comment,CATALOGUE
 from .customize.utils import getlogger
 from accounts.models import User
 import inspect
@@ -112,6 +112,7 @@ class PostCreateSerializer(serializers.DocumentSerializer):
                                                   min_length=0)
     audio_url = serializers.serializers.ListField(child=serializers.serializers.URLField(allow_blank=True),
                                                   min_length=0)
+
     class Meta:
         model = Post
         fields = [
@@ -146,8 +147,8 @@ class PostDetailSerializer(serializers.DocumentSerializer):
 
     author_avatar_url = UploaderAvatarHyperlinkField(view_name='get-photo',lookup_field='author', lookup_url_kwarg='id',read_only=True)
     # author_avatar_url = serializers.serializers.SerializerMethodField()
-
     author_name = serializers.serializers.SerializerMethodField()
+    catalogue = serializers.serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -174,8 +175,8 @@ class PostDetailSerializer(serializers.DocumentSerializer):
         uploader= obj.query_author()
         return uploader.name
 
-    def get_author_avatar_url(self,obj):
-        return reverse('get-photo', args=[obj.author.id])
+    def get_catalogue(self,obj):
+        return obj.get_catalogue_display()
 
 
 class PostListSerializer(serializers.DocumentSerializer):
@@ -188,6 +189,7 @@ class PostListSerializer(serializers.DocumentSerializer):
         view_name='post-retrieve',
         lookup_field='id',
     )
+    catalogue = serializers.serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -207,6 +209,9 @@ class PostListSerializer(serializers.DocumentSerializer):
 
     def get_comment_count(self, obj):
         return len(obj.comment);
+
+    def get_catalogue(self,obj):
+        return obj.get_catalogue_display()
 
 class PostUpdateCommentSerializer(serializers.DocumentSerializer):
     comment = CommentCreateSerializer(many = True,required=False)
@@ -235,6 +240,7 @@ class PostEditSerializer(serializers.DocumentSerializer):
     audio_url = serializers.serializers.ListField(child=serializers.serializers.URLField(allow_blank=True) ,min_length=0)
     title = serializers.serializers.CharField(required=False)
     # user = serializers.serializers.CharField(source='user.username')
+
     class Meta:
         model = Post
         fields = [
@@ -246,6 +252,7 @@ class PostEditSerializer(serializers.DocumentSerializer):
             'audio_url',
         ]
 
+
 class PostBelongUploaderSerializer(serializers.DocumentSerializer):
     comment_count = serializers.serializers.SerializerMethodField()
     edit_url = serializers.serializers.HyperlinkedIdentityField(
@@ -256,6 +263,7 @@ class PostBelongUploaderSerializer(serializers.DocumentSerializer):
         view_name='post-retrieve',
         lookup_field='id',
     )
+    catalogue = serializers.serializers.SerializerMethodField()
     class Meta:
         model = Post
         fields = [
@@ -270,6 +278,9 @@ class PostBelongUploaderSerializer(serializers.DocumentSerializer):
 
     def get_comment_count(self, obj):
         return len(obj.comment);
+
+    def get_catalogue(self,obj):
+        return obj.get_catalogue_display()
 
 class UploaderCreateSerializer(serializers.DocumentSerializer):
     name = serializers.serializers.CharField(write_only=True)
@@ -298,7 +309,7 @@ class UploaderCreateSerializer(serializers.DocumentSerializer):
 class UploaderListSerializer(serializers.DocumentSerializer):
     name = serializers.serializers.CharField()
     birth_day = serializers.serializers.DateTimeField()
-    sex = serializers.serializers.ChoiceField(choices=SEX)
+    sex = serializers.serializers.SerializerMethodField()
     home_town = serializers.serializers.CharField()
     location = fields.GeoPointField()
     user = fields.ReferenceField(model=User)
@@ -329,10 +340,13 @@ class UploaderListSerializer(serializers.DocumentSerializer):
             'detail_url',
         ]
 
+    def get_sex(self,obj):
+        return obj.get_sex_display()
+
 class UploaderBelongUserSerializer(serializers.DocumentSerializer):
     name = serializers.serializers.CharField()
     birth_day = serializers.serializers.DateTimeField()
-    sex = serializers.serializers.ChoiceField(choices=SEX)
+    sex = serializers.serializers.SerializerMethodField()
     home_town = serializers.serializers.CharField()
     location = fields.GeoPointField()
     post_count = serializers.serializers.SerializerMethodField()
@@ -366,11 +380,13 @@ class UploaderBelongUserSerializer(serializers.DocumentSerializer):
     def get_post_count(self, obj):
         return obj.query_posts().count()
 
+    def get_sex(self, obj):
+        return obj.get_sex_display()
 
 class UploaderDetailSerializer(serializers.DocumentSerializer):
     name = serializers.serializers.CharField()
     birth_day = serializers.serializers.DateTimeField()
-    sex = serializers.serializers.ChoiceField(choices=SEX)
+    sex = serializers.serializers.SerializerMethodField()
     home_town = serializers.serializers.CharField()
     location = fields.GeoPointField()
     user = fields.ReferenceField(model=User)
@@ -408,10 +424,13 @@ class UploaderDetailSerializer(serializers.DocumentSerializer):
     def get_post_count(self,obj):
         return obj.query_posts().count()
 
+    def get_sex(self, obj):
+        return obj.get_sex_display()
+
 class UploaderSimplelSerializer(serializers.DocumentSerializer):
     name = serializers.serializers.CharField()
     birth_day = serializers.serializers.DateTimeField()
-    sex = serializers.serializers.ChoiceField(choices=SEX)
+    sex = serializers.serializers.SerializerMethodField()
     home_town = serializers.serializers.CharField()
     location = fields.GeoPointField()
     user = fields.ReferenceField(model=User)
@@ -451,6 +470,9 @@ class UploaderSimplelSerializer(serializers.DocumentSerializer):
 
     def get_post_count(self,obj):
         return obj.query_posts().count()
+
+    def get_sex(self, obj):
+        return obj.get_sex_display()
 
 
 class UploaderEditSerializer(serializers.DocumentSerializer):
