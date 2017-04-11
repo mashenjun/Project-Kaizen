@@ -77,7 +77,7 @@ logger = getlogger(__name__)
 class CreateListUploaderView(generics.ListCreateAPIView):
     serializer_class = UploaderCreateSerializer
     parser_classes = (MultiPartParser,)
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     # TODO:later change to IsAuthenticatedOrReadOnly
     queryset = Uploader.objects()
     # def modifyResponseData(self, datalist_db, datalist_output):

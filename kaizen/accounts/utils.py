@@ -6,9 +6,9 @@ from calendar import timegm
 
 from django.utils.translation import ugettext as _
 
-from rest_framework import exceptions
+from rest_framework import exceptions,status
 from rest_framework.views import exception_handler
-
+from rest_framework.reverse import reverse
 from rest_framework_jwt.settings import api_settings
 from rest_framework_jwt.compat import get_username, get_username_field
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
@@ -59,6 +59,10 @@ def custom_exception_handler(exc, context):
     # Now add the HTTP status code to the response.
     if response is not None:
         response.data['status_code'] = response.status_code
+
+    if response.status_code == status.HTTP_401_UNAUTHORIZED:
+        request = context['request']
+        response['Location'] = reverse('api/login', request=request)
 
     return response
 
