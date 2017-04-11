@@ -4,6 +4,7 @@ import {fetchpostDetailRequest} from '../actions/postActions';
 import {connect} from 'react-redux';
 import {DefaultPlayer as Video} from 'react-html5video';
 import 'react-html5video/dist/styles.css';
+import '../../less/postDetail.less'
 
 class postContainer extends Component {
   componentDidMount() {
@@ -12,54 +13,90 @@ class postContainer extends Component {
 
   render() {
     const {postDetail} = this.props;
+    console.log(postDetail);
     return (
         <div>
           <div className="container">
+            <div className="columns post-header">
+              <div className="column">
+                <h3 className="post-header-title">Title</h3>
+                {postDetail.title}
+              </div>
+              <div className="column">
+                <h3 className="post-header-title">Catelogue</h3>
+                {postDetail.catalogue}
+              </div>
+              <div className="column">
+                <h3 className="post-header-title">Author</h3>
+                <div className="media">
+                  <div className="media-left">
+                    <figure className="image is-48x48">
+                      <img src={postDetail.author_avatar_url} alt="Image"/>
+                    </figure>
+                  </div>
+                  <div className="media-content">
+                    <p className="title is-4"></p>
+                    <p class="subtitle is-6">{postDetail.author_name}</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
             <div style={{padding: '24px'}} className="card">
               <div className="card-content">
                 <div className="content">
-                  <h3>Content</h3>
-                  {postDetail.title}
 
+                  <h3>Content</h3>
+                  {postDetail.text}
                   <hr/>
+
+
                   <h3>Images</h3>
                   { postDetail.img_url &&
                     postDetail.img_url.map((url) =>
                       <img width='300px' src={url}/>)
                   }
-
                   <hr/>
-                  <h3>Videos</h3>
-                  { postDetail.video_url &&
-                  <div style={{width: '50%', height: '50%'}}>
-                    <Video
-                        controls={['PlayPause', 'Seek', 'Time', 'Volume', 'Fullscreen']}
-                        onCanPlayThrough={() => {
-                          // Do stuff
-                        }}>
-                      <source src={postDetail.video_url[0]} type="video/webm"/>
-                    </Video>
+
+                  <h3>Audios</h3>
+                  { postDetail.audio_url &&
+                  <div>{
+                    postDetail.audio_url.map((audio_url) =>
+                        <div style={{paddingTop: '40px'}}>
+                          <audio controls src={audio_url}>
+                            Your browser does not support the <code>audio</code> element.
+                          </audio>
+                        </div>
+                    )}
                   </div>
                   }
 
                   <hr/>
-                  <h3>Audios</h3>
-                  { postDetail.audio_url &&
+                  <h3>Videos</h3>
+                  { postDetail.video_url &&
                       <div>
-                        <div style={{paddingTop: '40px'}}>
-                          <audio controls src={postDetail.audio_url[0]}>
-                            Your browser does not support the <code>audio</code> element.
-                          </audio>
-                        </div>
+                        {
+                          postDetail.video_url.map((video_url)=>
+                          <div style={{width: '50%', height: '50%'}}>
+                            <Video
+                                controls={['PlayPause', 'Seek', 'Time', 'Volume', 'Fullscreen']}
+                                onCanPlayThrough={() => {
+                                  // Do stuff
+                                }}>
+                              <source src={video_url} type="video/webm"/>
+                            </Video>
+                          </div>)
+                        }
                       </div>
-
                   }
 
-                  <hr/>
-                  <h3>Content</h3>
-                  {postDetail.text}
-
-                  <br/>
+                </div>
+              </div>
+            </div>
+            <div style={{padding: '24px'}} className="card">
+              <div className="card-content">
+                <div className="content">
+                  <h3>Comments</h3>
                 </div>
               </div>
             </div>
