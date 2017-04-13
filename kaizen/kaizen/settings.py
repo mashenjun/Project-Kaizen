@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 'mongoengine.django.mongo_auth',
     'rest_framework',
     'rest_framework_gis',
     'rest_framework_swagger',
@@ -63,10 +64,12 @@ INSTALLED_APPS = [
 # AUTH_USER_MODEL = ['accounts.User']
 # MONGOENGINE_USER_DOCUMENT = 'accounts.models.User'
 # JWT_ENCOD = 'account.utils.JSONEncoder'
-# AUTH_USER_MODEL = 'accounts.User'
+# AUTH_USER_MODEL = 'mongo_auth.MongoUser'
+
 JWT_AUTH ={
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=3000),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=1800),
     'JWT_PAYLOAD_HANDLER':'accounts.utils.my_jwt_payload_handler',
+    'JWT_ALLOW_REFRESH': True,
 }
 
 MIDDLEWARE = [

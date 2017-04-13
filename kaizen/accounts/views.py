@@ -23,17 +23,11 @@ from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly
 )
 from rest_framework_mongoengine import generics
-# from rest_framework_mongoengine.generics import (
-#     ListCreateAPIView,
-#     CreateAPIView,
-#     ListAPIView,
-#     UpdateAPIView,
-#     RetrieveAPIView,
-#     RetrieveUpdateAPIView,
-#     GenericAPIView)
 
 from captcha.models import CaptchaStore
 from captcha.conf import settings
+
+from rest_framework_jwt.views import JSONWebTokenAPIView
 
 from .serializers import (
     UserLoginSerializer,
@@ -43,6 +37,7 @@ from .serializers import (
     UserDetailSerializer,
     UserEditSerializer,
     UserSimpleSerializer,
+    CustomRefreshJSONWebTokenSerializer
 )
 from .models import User
 from upload.customize.utils import modifyUploaderResponseData
@@ -161,6 +156,15 @@ class UserEditView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.Re
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+
+class CustomRefreshJSONWebToken(JSONWebTokenAPIView):
+    """
+    override the RefreshJSONWebToken to a custom RefreshJSONWebTokenSerializer
+    """
+    serializer_class = CustomRefreshJSONWebTokenSerializer
+
+
 
 # function based api
 @api_view(['GET'])

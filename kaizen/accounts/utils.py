@@ -23,6 +23,7 @@ jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
 def my_jwt_payload_handler(user):
     username_field = get_username_field()
     username = get_username(user)
+    # here we change : user.pk to str(uer.pk)
     payload = {
         'user_id': str(user.pk),
         'email': user.email,
@@ -105,6 +106,7 @@ class MYJSONWebTokenAuthentication(JSONWebTokenAuthentication):
             raise exceptions.AuthenticationFailed(msg)
 
         return user
+
 
 
 

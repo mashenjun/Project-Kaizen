@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^user/(?P<id>.+)/$', views.UserSimpleView.as_view(), name='user-simple'),
     url(r'^user/(?P<id>.+)/edit$$', views.UserEditView.as_view(), name='user-edit'),
     url(r'^api-token-verify/', verify_jwt_token, name='api/verify'),
+    url(r'^api-token-refresh/', views.CustomRefreshJSONWebToken.as_view(), name='api/token/refresh'),
     url(r'^api/captcha/$', views.captcha, name='api/captcha'),
     url(r'^api/test/$', views.TestView.as_view(), name='api/test'),
 ]
