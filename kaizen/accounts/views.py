@@ -42,8 +42,6 @@ from .serializers import (
 from .models import User
 from upload.customize.utils import modifyUploaderResponseData
 
-jwt_response_payload_handler = jwt_api_setting.JWT_RESPONSE_PAYLOAD_HANDLER
-
 # Create your views here.
 # def login_view(request):
 #     form = UserLoginForm(request.POST or None)
@@ -124,7 +122,7 @@ class UserRegisterAPIView(generics.ListCreateAPIView):
 class UserDetailView(generics.RetrieveAPIView):
     # TODO: include posts list
     serializer_class = UserDetailSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     queryset = User.objects()
     # lookup_field = 'name'
 
@@ -138,7 +136,7 @@ class UserDetailView(generics.RetrieveAPIView):
 class UserSimpleView(generics.RetrieveAPIView):
     # TODO: include posts list
     serializer_class = UserSimpleSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     queryset = User.objects()
     # lookup_field = 'name'
 
@@ -147,7 +145,7 @@ class UserEditView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.Re
     serializer_class = UserEditSerializer
     # TODO: change permission_class and object level permission
     # parser_classes = (MultiPartParser,)
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     queryset = User.objects()
     # lookup_field = 'name'
 

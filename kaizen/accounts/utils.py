@@ -13,9 +13,9 @@ from rest_framework_jwt.settings import api_settings
 from rest_framework_jwt.compat import get_username, get_username_field
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
-
 from .models import User
 
+jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
 jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
 
@@ -68,6 +68,18 @@ def custom_exception_handler(exc, context):
     return response
 
 
+def custom_refresh_token(token):
+    new_token = token
+    try:
+        payload = jwt_decode_handler(token)
+        username = payload.get('username')
+        user = User.objects.get(username=username)
+        new_payload = my_jwt_payload_handler(user)
+        new_token = jwt_encode_handler(new_payload)
+    except :
+        pass
+
+    return new_token
 
 
 class JSONEncoder(json.JSONEncoder):

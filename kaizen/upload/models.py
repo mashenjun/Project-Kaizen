@@ -32,6 +32,9 @@ class Uploader(Document):
     def query_posts(self,):
         return Post.objects(author = self)
 
+    def query_user(self,):
+        return self.user
+
 # TODO: think the relationship between Uploaders, Posts and Comments.
 class Comment(EmbeddedDocument):
     content = StringField()
@@ -58,8 +61,10 @@ class Post(Document):
         self.save()
 
     def query_author(self,):
-        return Uploader.objects(id = self.author.id).first()
-
+        return self.author
+        # return Uploader.objects(id = self.author.id).first()
+    def query_user(self,):
+        return self.author.user
 
 # class TextPost(Post):
 #     content = StringField()

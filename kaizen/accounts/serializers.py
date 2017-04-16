@@ -171,7 +171,6 @@ class CustomRefreshJSONWebTokenSerializer(VerificationBaseSerializer):
 
         new_payload = jwt_payload_handler(user)
         new_payload['orig_iat'] = orig_iat
-
         return {
             'token': jwt_encode_handler(new_payload),
             'user': user

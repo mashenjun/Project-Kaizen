@@ -21,6 +21,8 @@ from kaizen.config import (
     upload_dir,
     callback_url,
 )
+from upload.models import Uploader
+
 
 def getlogger(name):
     logger = logging.getLogger(name)
@@ -143,3 +145,6 @@ def delectOSSFile(url_list):
     #         print('object exist')
     #     else:
     #         pass
+
+
+
