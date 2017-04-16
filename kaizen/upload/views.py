@@ -87,28 +87,10 @@ class CreateListUploaderView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     # TODO:later change to IsAuthenticatedOrReadOnly
     queryset = Uploader.objects()
-    # def modifyResponseData(self, datalist_db, datalist_output):
-    #     """
-    #     this function change the location field in serializer.data according to queryset result
-    #     because the format in the db doesn't match the view's format.
-    #     @ShenjunMa
-    #
-    #     :param datalist_db:
-    #     :param datalist_output:
-    #     :return: a new serializer.data
-    #
-    #     """
-    #     for x in range(0, len(datalist_db)):
-    #         datalist_output[x]['location'] = datalist_db[x]['location']
-    #         # TODO: change to real host address
-    #         datalist_output[x]['photo_url'] = reverse('get-photo', args=[datalist_output[x]['id']])
-    #     return datalist_output
     def list(self, request, *args, **kwargs):
         # the location field issue need to be fixed by overwrite the list method.
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
-        new_token = custom_refresh_token(request.auth)
-        print("[DEBUG ]{0}".format(request.user))
         if page is not None and 'page' in request.query_params:
             serializer = UploaderListSerializer(page, context={'request':request},many=True)
             restult = modifyUploaderResponseData(page, serializer.data)
@@ -123,11 +105,10 @@ class CreateListUploaderView(generics.ListCreateAPIView):
             return Response(data,status=status.HTTP_200_OK)
 
         serializer = UploaderListSerializer(queryset, context={'request':request} ,many=True)
-        restult = modifyUploaderResponseData(queryset, serializer.data)
-        return Response(restult,status=status.HTTP_200_OK)
+        result = modifyUploaderResponseData(queryset, serializer.data)
+        return Response(result,status=status.HTTP_200_OK)
 
     def post(self, request, format = None,):
-        logger.debug(request.data)
         # serializer = UploadImageSerilizer(data=request.data)
         # location = [float(x) for x in request.data.get('location').split(',')]
         # data = request.data.copy()
@@ -144,10 +125,12 @@ class CreateListUploaderView(generics.ListCreateAPIView):
         if serializer.is_valid(raise_exception=False):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
+            result = serializer.data.copy()
+            new_token = custom_refresh_token(request.auth)
+            result["token"] = new_token
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         else:
             errors = serializer.errors
-
             response_data_fail = {
                 'errormessage': errors
             }
@@ -189,10 +172,8 @@ class RetrieveUploaderView(generics.RetrieveAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         result = modifyUploaderResponseData(instance, serializer.data)
-        # if 'location' in result:
-        #     result['location'] = instance['location']
-        # if 'id' in instance:
-        #     result['photo_url'] = reverse('get-photo', args=[instance['id']])
+        new_token = custom_refresh_token(request.auth)
+        result["token"] = new_token
         return Response(result)
 
 class EditUploaderView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.RetrieveAPIView):
@@ -218,16 +199,19 @@ class EditUploaderView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generic
             serializer = self.get_serializer(instance)
 
         result = modifyUploaderResponseData(instance, serializer.data)
+        new_token = custom_refresh_token(request.auth)
+        result["token"] = new_token
         return Response(result)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         result = modifyUploaderResponseData(instance, serializer.data)
+        new_token = custom_refresh_token(request.auth)
+        result["token"] = new_token
         return Response(result)
 
     def put(self, request, *args, **kwargs):
-        logger.debug(request.data)
         newrequest = modifyUploaderRequestData(request)
         return self.partial_update(newrequest, *args, **kwargs)
 
@@ -263,15 +247,20 @@ class CreateListPostView(generics.ListCreateAPIView):
             return self.serializer_class
 
     def post(self, request, *args, **kwargs):
-        logger.debug(request.user.id)
-        return self.create(request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        result = serializer.data
+        new_token = custom_refresh_token(request.auth)
+        result["token"] = new_token
+        return Response(result, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class RetrievePostView(generics.RetrieveAPIView):
     serializer_class = PostDetailSerializer
     permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
     queryset = Post.objects() # not necessary set the generate queryset here
-
 
     def get_object(self):
         ""
@@ -290,9 +279,7 @@ class RetrievePostView(generics.RetrieveAPIView):
         # filter_kwargs = {self.lookup_field: self.kwargs[lookup_url_kwarg]}
 
         obj = get_object_or_404(queryset)
-
         self.check_object_permissions(self.request, obj)
-
         return obj
 
     def get_queryset(self):
@@ -305,8 +292,16 @@ class RetrievePostView(generics.RetrieveAPIView):
         id = self.kwargs['id']
         if id is not None:
             result = Post.objects(id = id)
-
         return result
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        result = serializer.data.copy()
+        new_token = custom_refresh_token(request.auth)
+        result["token"] = new_token
+        return Response(result)
+
 
 class EditPostView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.RetrieveAPIView):
     serializer_class = PostEditSerializer
@@ -321,7 +316,6 @@ class EditPostView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.Re
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        logger.debug(instance)
         self.perform_update(serializer)
 
         if getattr(instance, '_prefetched_objects_cache', None):
@@ -329,7 +323,10 @@ class EditPostView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.Re
             # forcibly invalidate the prefetch cache on the instance.
             instance._prefetched_objects_cache = {}
 
-        return Response(serializer.data)
+        result = serializer.data.copy()
+        new_token = custom_refresh_token(request.auth)
+        result["token"] = new_token
+        return Response(result)
 
 
     def put(self, request, *args, **kwargs):
@@ -348,9 +345,6 @@ class EditPostView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.Re
         '''
         instance = self.get_object()
         url_list = instance['img_url']+instance['video_url']+instance['audio_url']
-        img_url =  logger.debug(instance['img_url'])
-        video_url = logger.debug(instance['video_url'])
-        audio_url = logger.debug(instance['audio_url'])
         if (len(url_list)>0):
             delectOSSFile(url_list)
         self.perform_destroy(instance)
@@ -373,6 +367,21 @@ class ListPostView(generics.ListAPIView):
         if author is not None:
             queryset = queryset.filter(author=author)
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        result = serializer.data.copy()
+        new_token = custom_refresh_token(request.auth)
+        result["token"] = new_token
+        return Response(result)
+
 
 class FilterPostbyUploaderView(generics.ListAPIView):
     serializer_class = PostBelongUploaderSerializer
@@ -399,7 +408,6 @@ class FilterPostbyUploaderView(generics.ListAPIView):
     #     serializer = self.get_serializer(queryset, many=True)
     #     restult = modifyUploaderResponseData(queryset, serializer.data)
     #     return Response(restult)
-
 
 # function based view
 @api_view(['PUT'])
@@ -444,7 +452,6 @@ def uploader_photo_view(request, id,):
 # @permission_classes([IsAuthenticated])
 def OSS_signature():
     token = get_token()
-    print(token)
     return token
 
 
