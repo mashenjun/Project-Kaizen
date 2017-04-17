@@ -259,7 +259,7 @@ class CreateListPostView(generics.ListCreateAPIView):
 
 class RetrievePostView(generics.RetrieveAPIView):
     serializer_class = PostDetailSerializer
-    permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Post.objects() # not necessary set the generate queryset here
 
     def get_object(self):
