@@ -138,7 +138,7 @@ class CreateListUploaderView(generics.ListCreateAPIView):
 
 class FilterUploaderbyUserView(generics.ListAPIView):
     serializer_class = UploaderBelongUserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = None
 
     def get_queryset(self):
@@ -160,7 +160,13 @@ class FilterUploaderbyUserView(generics.ListAPIView):
 
         serializer = self.get_serializer(queryset, many=True)
         result = modifyUploaderResponseData(queryset, serializer.data)
-        return Response(result)
+        new_token = custom_refresh_token(request.auth)
+        logger.debug(type(result))
+        # result['token'] = new_token
+        response = Response(result,status=status.HTTP_200_OK,)
+        response['NewToken']= new_token
+        logger.debug(response._headers)
+        return response
 
 class RetrieveUploaderView(generics.RetrieveAPIView):
     serializer_class = UploaderSimplelSerializer
