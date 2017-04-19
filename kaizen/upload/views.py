@@ -138,7 +138,7 @@ class CreateListUploaderView(generics.ListCreateAPIView):
 
 class FilterUploaderbyUserView(generics.ListAPIView):
     serializer_class = UploaderBelongUserSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     pagination_class = None
 
     def get_queryset(self):
