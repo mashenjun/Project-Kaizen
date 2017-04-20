@@ -127,8 +127,7 @@ class CreateListUploaderView(generics.ListCreateAPIView):
             headers = self.get_success_headers(serializer.data)
             result = serializer.data.copy()
             new_token = custom_refresh_token(request.auth)
-            result["token"] = new_token
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            return Response(serializer.data, status=status.HTTP_200_OK,headers={'NewToken':new_token})
         else:
             errors = serializer.errors
             response_data_fail = {
@@ -161,12 +160,7 @@ class FilterUploaderbyUserView(generics.ListAPIView):
         serializer = self.get_serializer(queryset, many=True)
         result = modifyUploaderResponseData(queryset, serializer.data)
         new_token = custom_refresh_token(request.auth)
-        logger.debug(type(result))
-        # result['token'] = new_token
-        response = Response(result,status=status.HTTP_200_OK,)
-        response['NewToken']= new_token
-        logger.debug(response._headers)
-        return response
+        return Response(result,status=status.HTTP_200_OK,headers={'NewToken':new_token})
 
 class RetrieveUploaderView(generics.RetrieveAPIView):
     serializer_class = UploaderSimplelSerializer
@@ -206,8 +200,7 @@ class EditUploaderView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generic
 
         result = modifyUploaderResponseData(instance, serializer.data)
         new_token = custom_refresh_token(request.auth)
-        result["token"] = new_token
-        return Response(result)
+        return Response(result,status=status.HTTP_200_OK,headers={'NewToken':new_token})
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -223,6 +216,12 @@ class EditUploaderView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generic
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        new_token = custom_refresh_token(request.auth)
+        return Response(status=status.HTTP_204_NO_CONTENT,headers={'NewToken':new_token})
 
 class CreateListPostView(generics.ListCreateAPIView):
     serializer_class = PostCreateSerializer
@@ -259,8 +258,7 @@ class CreateListPostView(generics.ListCreateAPIView):
         headers = self.get_success_headers(serializer.data)
         result = serializer.data
         new_token = custom_refresh_token(request.auth)
-        result["token"] = new_token
-        return Response(result, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(result, status=status.HTTP_200_OK,headers={'NewToken':new_token})
 
 
 class RetrievePostView(generics.RetrieveAPIView):
@@ -331,8 +329,7 @@ class EditPostView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.Re
 
         result = serializer.data.copy()
         new_token = custom_refresh_token(request.auth)
-        result["token"] = new_token
-        return Response(result)
+        return Response(result,status=status.HTTP_200_OK,headers={'NewToken':new_token})
 
 
     def put(self, request, *args, **kwargs):
@@ -354,7 +351,8 @@ class EditPostView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.Re
         if (len(url_list)>0):
             delectOSSFile(url_list)
         self.perform_destroy(instance)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        new_token = custom_refresh_token(request.auth)
+        return Response(status=status.HTTP_204_NO_CONTENT,headers={'NewToken':new_token})
 
 
 class ListPostView(generics.ListAPIView):
