@@ -84,7 +84,8 @@ logger = getlogger(__name__)
 class CreateListUploaderView(generics.ListCreateAPIView):
     serializer_class = UploaderCreateSerializer
     parser_classes = (MultiPartParser,)
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
     # TODO:later change to IsAuthenticatedOrReadOnly
     queryset = Uploader.objects()
     def list(self, request, *args, **kwargs):
@@ -137,7 +138,8 @@ class CreateListUploaderView(generics.ListCreateAPIView):
 
 class FilterUploaderbyUserView(generics.ListAPIView):
     serializer_class = UploaderBelongUserSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = None
 
     def get_queryset(self):
@@ -164,7 +166,8 @@ class FilterUploaderbyUserView(generics.ListAPIView):
 
 class RetrieveUploaderView(generics.RetrieveAPIView):
     serializer_class = UploaderSimplelSerializer
-    permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
+    permission_classes = [AllowAny]
+    # permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
     queryset = Uploader.objects()
     # lookup_field = 'name'
 
@@ -173,14 +176,14 @@ class RetrieveUploaderView(generics.RetrieveAPIView):
         serializer = self.get_serializer(instance)
         result = modifyUploaderResponseData(instance, serializer.data)
         new_token = custom_refresh_token(request.auth)
-        result["token"] = new_token
-        return Response(result)
+        return Response(result,status=status.HTTP_200_OK,headers={'NewToken':new_token})
 
 class EditUploaderView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.RetrieveAPIView):
     serializer_class = UploaderEditSerializer
     # TODO: change permission_class
     # parser_classes = (MultiPartParser,)
-    permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
+    permission_classes = [AllowAny]
+    # permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
     queryset = Uploader.objects()
     # lookup_field = 'name'
 
@@ -226,7 +229,8 @@ class EditUploaderView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generic
 class CreateListPostView(generics.ListCreateAPIView):
     serializer_class = PostCreateSerializer
     # parser_classes = (MultiPartParser,)
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
     # TODO:later change to IsAuthenticatedOrReadOnly
     queryset = Post.objects()
 
@@ -263,7 +267,8 @@ class CreateListPostView(generics.ListCreateAPIView):
 
 class RetrievePostView(generics.RetrieveAPIView):
     serializer_class = PostDetailSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Post.objects() # not necessary set the generate queryset here
 
     def get_object(self):
@@ -311,7 +316,8 @@ class EditPostView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.Re
     serializer_class = PostEditSerializer
     # TODO: change permission_class
     # parser_classes = (MultiPartParser,)
-    permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
+    permission_classes = [AllowAny]
+    # permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
     queryset = Post.objects()
     # lookup_field = 'name'
 
@@ -357,7 +363,8 @@ class EditPostView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.Re
 
 class ListPostView(generics.ListAPIView):
     serializer_class = PostListSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
     # TODO:later change to IsAuthenticatedOrReadOnly
     queryset = Post.objects()
 
@@ -389,7 +396,8 @@ class ListPostView(generics.ListAPIView):
 
 class FilterPostbyUploaderView(generics.ListAPIView):
     serializer_class = PostBelongUploaderSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = None
 
     def get_queryset(self):
@@ -415,7 +423,7 @@ class FilterPostbyUploaderView(generics.ListAPIView):
 
 # function based view
 @api_view(['PUT'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def insert_comment_post(request):
     try:
         id = request.data.get('post',None)
@@ -438,7 +446,7 @@ def insert_comment_post(request):
         return Response(status=status.HTTP_417_EXPECTATION_FAILED)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticatedOrReadOnly])
+@permission_classes([AllowAny])
 def uploader_photo_view(request, id,):
     try:
         uploader = Uploader.objects.get(id=id)
@@ -452,7 +460,7 @@ def uploader_photo_view(request, id,):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 # @permission_classes([IsAuthenticated])
 def OSS_signature():
     token = get_token()
@@ -539,7 +547,7 @@ def query_district(request,province_code=None,city_code=None):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def OSSuploadepage(request):
     # View code here...
     return render_to_response('index.html')
