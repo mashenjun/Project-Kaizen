@@ -1,17 +1,18 @@
 import types from '../actions/actionTypes'
 
 
-export const fetchuseruploadersrequest = (uid) => {
+export const fetchuseruploadersrequest = (uid, kaizenToken) => {
   return {
     type: types.USER_UPLOADERS_REQUEST,
-    uid:uid
+    uid:uid,
+    kaizenToken:kaizenToken
   }
 };
 
 
 export const fetchuseruploadersFailure= (payload) => {
   return {
-    type: types.USER_UPLOADERSFAILURE,
+    type: types.USER_UPLOADERS_FAILURE,
     payload:{
       ...payload
     }

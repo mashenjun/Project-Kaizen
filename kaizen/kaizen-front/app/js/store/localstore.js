@@ -9,6 +9,13 @@ export const localstore = {
       throw 'Localstorage is not available';
     }
   },
+  refreshtoken(token){
+    if (window.localStorage) {
+      localStorage.setItem('kaizenToken', token);
+    } else {
+      throw 'Localstorage is not available';
+    }
+  },
   getToken(){
     if (window.localStorage) {
       return {

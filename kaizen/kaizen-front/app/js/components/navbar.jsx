@@ -26,9 +26,9 @@ class NavbarComponent extends Component {
 
   onUploaderClick = () => {
     this.modal.classList.add("is-active");
-    const {uid} = localstore.getToken();
-    if (uid) {
-      this.props.onUploadClick(uid);
+    const {uid,kaizenToken} = localstore.getToken();
+    if (uid && kaizenToken) {
+      this.props.onUploadClick(uid, kaizenToken);
     }
   };
 
@@ -107,7 +107,11 @@ class NavbarComponent extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    this.loading.style.display = 'none'
+    const {isAuthenticated} = localstore.getToken();
+    console.log(isAuthenticated,nextProps);
+    if(isAuthenticated && nextProps.errorMessage === 200){
+      this.loading.style.display = 'none'
+    }
   };
 
   handleChange = (date) => {
@@ -149,7 +153,7 @@ class NavbarComponent extends Component {
           </div>
       )
     }
-    console.log('rererer...rerender');
+
     const {username, isAuthenticated} = localstore.getToken();
     if (uploaderList.length === 0) {
       uploaderList = 'You do not have any uploaders. You should create one'
@@ -174,7 +178,7 @@ class NavbarComponent extends Component {
               </header>
               <section className="modal-card-body">
                 {
-                  isAuthenticated ?
+                  isAuthenticated && this.props.errorMessage === 200?
                       <div>
                         <div ref={(loading) => {
                           this.loading = loading
@@ -191,7 +195,7 @@ class NavbarComponent extends Component {
                 }
               </section>
               <footer className="modal-card-foot">
-                {isAuthenticated ?
+                {isAuthenticated  && this.props.errorMessage === 200?
                     <a className="button is-success" onClick={() => {
                       this.formModal.classList.add("is-active");
                       this.modal.classList.remove("is-active");
@@ -380,15 +384,15 @@ class NavbarComponent extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  const {userUploaders} = state.useractions;
-  return {userUploaders}
+  const {userUploaders,errorMessage} = state.useractions;
+  return {userUploaders,errorMessage}
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    onUploadClick(uid) {
+    onUploadClick(uid,kaizenToken) {
       dispatch(fetchuseruploadersrequest(
-          uid
+          uid, kaizenToken
       ))
     }
   }

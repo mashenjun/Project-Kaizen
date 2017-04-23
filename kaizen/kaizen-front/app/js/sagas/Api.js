@@ -6,7 +6,7 @@ import 'whatwg-fetch'
  * request:{method, requestbody(if post)}
  *
  * */
-const callApi = (endpoint, request) => {
+const callApi = (endpoint, request, token) => {
   if (request && request.body) {
     request.body = JSON.stringify(request.body);
   }
@@ -16,6 +16,10 @@ const callApi = (endpoint, request) => {
     'Content-Type': 'application/json',
   };
 
+  if(token){
+    headers['Authorization'] = 'jwt '+token;
+  }
+
   const requestWithHeaders = {
     ...{headers},
     ...request
@@ -24,12 +28,20 @@ const callApi = (endpoint, request) => {
   return fetch(endpoint, requestWithHeaders)
       .then(response => response.json().then(body => ({response, body})))
       .then(({response, body}) => {
-        return {
-          result: body,
-          status: response.ok
+        if(response.headers.has('newtoken')){
+          return {
+            token : response.headers.get('newtoken'),
+            result: body,
+            status: response.ok
+          }
+        }else{
+          return {
+            result: body,
+            status: response.ok
+          }
         }
-      })
 
+      })
 };
 
 
@@ -66,11 +78,11 @@ export default {
       method: 'GET'
     })
   },
-  getUploaders(uid){
+  getUploaders(uid, token){
     const url = '/upload/filter/uploader/' + uid;
     return callApi(url, {
-      method: 'GET'
-    })
+      method: 'GET',
+    },token)
   }
 
 }

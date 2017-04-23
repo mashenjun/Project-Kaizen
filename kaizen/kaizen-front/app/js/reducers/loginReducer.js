@@ -1,7 +1,7 @@
 import actionTypes from '../actions/actionTypes'
 import {localstore} from '../store/localstore'
 function loginReducer(state = {'isAuthenticated': false, errorMessage:{}}, action) {
-    const {payload} = action
+    const {payload} = action;
     switch (action.type) {
         case actionTypes.USER_LOGIN_SUCCESS:
             localstore.setToken(payload);

@@ -36,7 +36,7 @@ class postContainer extends Component {
                   </div>
                   <div className="media-content">
                     <p className="title is-4"></p>
-                    <p class="subtitle is-6">{postDetail.author_name}</p>
+                    <p className="subtitle is-6">{postDetail.author_name}</p>
                   </div>
                 </div>
               </div>

@@ -8,13 +8,14 @@ import Api from './Api'
 
 export function* fetchUserActionTask(action) {
   try {
-    const {status,result} = yield call(Api.getUploaders,action.uid);
+    const {status,result,token} = yield call(Api.getUploaders,action.uid, action.kaizenToken);
     if(status){
-      yield put(fetchuseruploadersSuccess({result:result}))
+        yield put(fetchuseruploadersSuccess({result:result,token:token}))
     }else{
-      yield put(fetchuseruploadersFailure(result))
+        yield put(fetchuseruploadersFailure(result))
     }
   }catch(err){
+    console.log(err);
     yield put(ServerSideError({serverError:500}))
   }
 }
