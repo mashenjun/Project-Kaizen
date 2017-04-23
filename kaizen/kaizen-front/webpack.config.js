@@ -31,31 +31,31 @@ var config = {
     },
     plugins: [
         new ExtractTextPlugin("styles.css"),
-        // new webpack.optimize.AggressiveMergingPlugin(),
-        // new webpack.optimize.OccurenceOrderPlugin(),
-        // new webpack.DefinePlugin({ // <-- key to reducing React's size
-        //     'process.env': {
-        //         'NODE_ENV': JSON.stringify('production')
-        //     }
-        // }),
-        // new webpack.optimize.DedupePlugin(), //dedupe similar code
-        // new webpack.optimize.UglifyJsPlugin({
-        //     minimize: true,
-        //     compressor: {
-        //         warnings: false
-        //     },
-        //     output: {
-        //         comments: false,
-        //     },
-        // }), //minify everything
-        // new webpack.optimize.AggressiveMergingPlugin(), //Merge chunks,
-        // new CompressionPlugin({
-        //     asset: "[path].gz[query]",
-        //     algorithm: "gzip",
-        //     test: /\.(js|html)$/,
-        //     threshold: 10240,
-        //     minRatio: 0.8
-        // })
+        new webpack.optimize.AggressiveMergingPlugin(),
+        new webpack.optimize.OccurenceOrderPlugin(),
+        new webpack.DefinePlugin({ // <-- key to reducing React's size
+            'process.env': {
+                'NODE_ENV': JSON.stringify('production')
+            }
+        }),
+        new webpack.optimize.DedupePlugin(), //dedupe similar code
+        new webpack.optimize.UglifyJsPlugin({
+            minimize: true,
+            compressor: {
+                warnings: false
+            },
+            output: {
+                comments: false,
+            },
+        }), //minify everything
+        new webpack.optimize.AggressiveMergingPlugin(), //Merge chunks,
+        new CompressionPlugin({
+            asset: "[path].gz[query]",
+            algorithm: "gzip",
+            test: /\.(js|html)$/,
+            threshold: 10240,
+            minRatio: 0.8
+        })
     ],
     performance: { hints: false },
     devServer: {
