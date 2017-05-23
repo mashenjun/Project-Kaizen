@@ -24,7 +24,10 @@ class UserMap extends Component {
                 fillOpacity: 0.2,
                 radius: 8
             }).addTo(map);
-            circle_user.bindPopup("<b>"+user.name+"</b><br><a href=''></a>")
+            circle_user.bindPopup("<div style='width: 80px;'>+<img src="+
+                user.photo_url+"></div>"+"<div style='text-align: center'><b>"+
+                user.name+"</b><br/><span>"+user.home_town
+                +"</span></div>")
         }
     }
 
@@ -42,7 +45,7 @@ class UserMap extends Component {
     render() {
         return (
             <div style={{paddingLeft:"80px",paddingRight:"80px",marginTop:"10px"}}>
-                <div id="mapid" style={{height: "330px"}}></div>
+                <div id="mapid" style={{height: "420px"}}></div>
             </div>
         )
     }
