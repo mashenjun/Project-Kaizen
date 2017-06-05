@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+from enum import Enum
 from mongoengine import *
 from accounts.models import User
 
@@ -14,9 +15,17 @@ CATALOGUE = (('GA',u"民间游戏"),
         ('ST',u"传说/故事"),
         ('SO',u"儿歌/童谣"),
         ('TO',u"玩意/把式"),
-        ('SP',u"地方特色"),)
+        ('SP',u"地方特色"),
+        ('OT',u"其他"),)
 
-TYPR = ()
+CATALOGUE_PRIME_DETAIL = {
+    u'民间游戏':[u'棋牌',u'空间/图形',u'对猜/竞猜',u'个人对抗',u'团体对抗',u'其他'],
+    u'传说/故事':[u'地方传说',u'地名来历',u'床头故事',u'人生阅历',u'其他',],
+    u'儿歌/童谣':[u'童谣',u'谚语',u'顺口溜',u'儿歌',u'摇篮曲',u'其他'],
+    u'玩意/把式':[u'物件',u'工艺',u'其他',],
+    u'地方特色':[u'音乐',u'美术',u'舞蹈',u'饮食',u'建筑景观',u'习俗/传统',u'其他',],
+    u'其他':[u'其他']
+}
 
 
 class Uploader(Document):
@@ -35,6 +44,13 @@ class Uploader(Document):
     def query_user(self,):
         return self.user
 
+class Catalogue(Document):
+    catalogue_primary = StringField(max_length=10,choices=CATALOGUE)
+    catalogue_detail = StringField(max_length=10, choices=CATALOGUE)
+
+    meta = {'allow_inheritance': True}
+
+
 # TODO: think the relationship between Uploaders, Posts and Comments.
 class Comment(EmbeddedDocument):
     content = StringField()
@@ -43,18 +59,22 @@ class Comment(EmbeddedDocument):
 
 class Post(Document):
     title = StringField(max_length=200,required=True)
-    catalogue = StringField(max_length=10,choices=CATALOGUE)
+    catalogue = StringField(max_length=20,regex="[^\.\ \t\n\r]+\.[^\.\ \t\n\r]+")
     # content_type = ListField()
     #     # StringField(max_length=10,)
     author = ReferenceField(Uploader,required=True,dbref=False)
     comment = EmbeddedDocumentListField(document_type=Comment)
     creadted_at = DateTimeField(default=datetime.datetime.utcnow())
     text = StringField()
-    img_url = ListField(URLField(required=False))
-    video_url = ListField(URLField(required=False))
-    audio_url = ListField(URLField(required=False))
+    img_url = ListField(URLField(required=False,null=True))
+    video_url = ListField(URLField(required=False,null=True))
+    audio_url = ListField(URLField(required=False,null=True))
 
-    meta = {'allow_inheritance': True}
+    meta = {'indexes': [
+        {'fields': ['$title', "text"],
+         'weights': {'title': 7, 'content': 3}
+        }
+    ]}
 
     def add_comment(self,comment):
         self.comment.append(comment)

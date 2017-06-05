@@ -1,1 +1,0 @@
-{"options":{},"indexes":[{"v":1,"key":{"_id":1},"name":"_id_","ns":"sample_database.uploader"},{"v":1,"key":{"location":"2dsphere"},"name":"location_2dsphere","ns":"sample_database.uploader","background":false,"2dsphereIndexVersion":3}]}
