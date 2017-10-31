@@ -7,7 +7,6 @@ from time import gmtime, strftime
 from pydenticon import Generator
 import PIL
 
-
 from rest_framework.exceptions import ErrorDetail, ValidationError
 from rest_framework_mongoengine import serializers,fields
 from rest_framework.reverse import reverse
@@ -489,7 +488,7 @@ class UploaderSimplelSerializer(serializers.DocumentSerializer):
     #         return [];
     #     return PostSimpletSerializer(obj.query_posts(),many=True).data
 
-    def get_post_count(obj):
+    def get_post_count(self,obj):
         return obj.query_posts().count()
 
     def get_sex(self, obj):
