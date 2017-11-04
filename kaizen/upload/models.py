@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-from enum import Enum
 from mongoengine import *
 from accounts.models import User
 
