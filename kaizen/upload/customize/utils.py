@@ -124,8 +124,7 @@ def modifyUploaderRequestData(request):
     if hasattr(request.data, '_mutable'):
         request.data._mutable = True
     date_regex = re.compile('^\d{4}-\d{2}-\d{2}$')
-    location_regex = re.compile('^-?\d+,-?\d+$')
-
+    location_regex = re.compile('^-?(\d+|\d+\.\d+),-?(\d+|\d+\.\d+)$')
     if 'location' in request.data and location_regex.match(request.data.get('location')) is not None:
         request.data['location'] = [float(x) for x in request.data.get('location').split(',')]
     if 'birth_day' in request.data and date_regex.match(request.data.get('birth_day')) is not None:
