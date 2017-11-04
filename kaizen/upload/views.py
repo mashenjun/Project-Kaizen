@@ -112,7 +112,6 @@ class CreateListUploaderView(generics.ListCreateAPIView):
 
     def post(self, request, format = None,):
         newrequest = modifyUploaderRequestData(request)
-        print("[DEBUG]:{0}".format(request.data))
         serializer = self.get_serializer(data=newrequest.data)
         if serializer.is_valid(raise_exception=False):
             self.perform_create(serializer)
