@@ -18,13 +18,13 @@ class UserMap extends Component {
 
         for(const user of usermapdata){
             const [x,y] =user.location.coordinates;
-            let circle_user = L.circleMarker([x, y], {
+            let circle_user = L.circleMarker([y, x], {
                 color: this.getRandomColor(),
                 weight: 2,
                 fillOpacity: 0.2,
                 radius: 8
             }).addTo(map);
-            circle_user.bindPopup("<div style='width: 80px;'>+<img src="+
+            circle_user.bindPopup("<div style='width: 80px;'><img src="+
                 user.photo_url+"></div>"+"<div style='text-align: center'><b>"+
                 user.name+"</b><br/><span>"+user.home_town
                 +"</span></div>")

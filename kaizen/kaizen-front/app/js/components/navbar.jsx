@@ -10,6 +10,7 @@ import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'cropperjs/dist/cropper.css';
 import 'whatwg-fetch';
+import * as consts from '../constants/const';
 
 class NavbarComponent extends Component {
   constructor(props) {
@@ -26,7 +27,7 @@ class NavbarComponent extends Component {
 
   onUploaderClick = () => {
     this.modal.classList.add("is-active");
-    const {uid,kaizenToken} = localstore.getToken();
+    const {uid, kaizenToken} = localstore.getToken();
     if (uid && kaizenToken) {
       this.props.onUploadClick(uid, kaizenToken);
     }
@@ -34,7 +35,7 @@ class NavbarComponent extends Component {
 
   onProvinchange = () => {
     this.setState({finalCity: ""});
-    if(this.proveList.value){
+    if (this.proveList.value) {
       fetch('/upload/query/province/' + this.proveList.value).then((response) => response.json()).then((data) => {
         this.setState({citys: data})
       });
@@ -70,7 +71,7 @@ class NavbarComponent extends Component {
 
   onFetchDatahandler = (data) => {
     const postUrl = '/testrestful/OSSpage/';
-    window.location.href = postUrl + "?uploaderid=" + data.id;
+    // window.location.href = postUrl + "?uploaderid=" + data.id;
   };
 
   onFetchErrorHandler = (err) => {
@@ -84,32 +85,40 @@ class NavbarComponent extends Component {
     formData.append('birth_day', this.state.startDate.format('YYYY-MM-DD'));
     formData.append('sex', this.sex.value);
     formData.append('user', uid);
-    formData.append('home_town', 'shanghai');
-    formData.append('location', [11, 22]);
+    formData.append('home_town', this.state.finalCity);
+
     if (!this.state.finalCity) {
       console.log('error');
       this.errorHint.style.display = "inline"
-    }
-    if (!this.cropper.getCroppedCanvas() || typeof this.cropper.getCroppedCanvas() === 'undefined') {
-      fetch('/upload/uploader/', {
-        method: 'POST',
-        body: formData
-      }).then((response) => response.json()).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
-    } else {
-      this.cropper.getCroppedCanvas().toBlob((blob) => {
-        formData.append('photo', blob);
-        fetch('/upload/uploader/', {
-          method: 'POST',
-          body: formData
-        }).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
+    }else{
+      fetch(`http://restapi.amap.com/v3/geocode/geo?address=${this.state.finalCity}&output=json&key=${consts.AK}`).
+      then((response) => response.json()).then((data) => {
+        var geolocation = data.geocodes[0].location.split(',');
+        formData.append('location', [Number(geolocation[0]),Number(geolocation[1])]);
+        if (!this.cropper.getCroppedCanvas() || typeof this.cropper.getCroppedCanvas() === 'undefined') {
+          fetch('/upload/uploader/', {
+            method: 'POST',
+            body: formData
+          }).then((response) => response.json()).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
+        } else {
+          this.cropper.getCroppedCanvas().toBlob((blob) => {
+            formData.append('photo', blob);
+            fetch('/upload/uploader/', {
+              method: 'POST',
+              body: formData
+            }).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
+          });
+        }
       });
+
     }
+
   };
 
   componentWillReceiveProps(nextProps) {
     const {isAuthenticated} = localstore.getToken();
-    console.log(isAuthenticated,nextProps);
-    if(isAuthenticated && nextProps.errorMessage === 200){
+    console.log(isAuthenticated, nextProps);
+    if (isAuthenticated && nextProps.errorMessage === 200) {
       this.loading.style.display = 'none'
     }
   };
@@ -178,7 +187,7 @@ class NavbarComponent extends Component {
               </header>
               <section className="modal-card-body">
                 {
-                  isAuthenticated && this.props.errorMessage === 200?
+                  isAuthenticated && this.props.errorMessage === 200 ?
                       <div>
                         <div ref={(loading) => {
                           this.loading = loading
@@ -195,7 +204,7 @@ class NavbarComponent extends Component {
                 }
               </section>
               <footer className="modal-card-foot">
-                {isAuthenticated  && this.props.errorMessage === 200?
+                {isAuthenticated && this.props.errorMessage === 200 ?
                     <a className="button is-success" onClick={() => {
                       this.formModal.classList.add("is-active");
                       this.modal.classList.remove("is-active");
@@ -359,10 +368,18 @@ class NavbarComponent extends Component {
                           <span></span>
                     </span>
               <div className="nav-right nav-menu">
-                <a ref={(a) => this.hometab = a} onClick={(e)=>{hashHistory.push('/home');e.target.classList.add('is-active');this.aboutab.classList.remove('is-active')}} className="nav-item is-tab is-active">Home</a>
+                <a ref={(a) => this.hometab = a} onClick={(e) => {
+                  hashHistory.push('/home');
+                  e.target.classList.add('is-active');
+                  this.aboutab.classList.remove('is-active')
+                }} className="nav-item is-tab is-active">Home</a>
                 <a className="nav-item is-tab">Map</a>
                 <a className="nav-item is-tab" ref={(upload) => this.uploadtab = upload} onClick={this.onUploaderClick}>Upload</a>
-                <a ref={(a) => this.aboutab = a} onClick={(e)=>{hashHistory.push('/about');e.target.classList.add('is-active');this.hometab.classList.remove('is-active')}}  className="nav-item is-tab">About</a>
+                <a ref={(a) => this.aboutab = a} onClick={(e) => {
+                  hashHistory.push('/about');
+                  e.target.classList.add('is-active');
+                  this.hometab.classList.remove('is-active')
+                }} className="nav-item is-tab">About</a>
                 <span className="nav-item">
                           { isAuthenticated ?
                               <span>profile: Login as {username}</span> :
@@ -384,13 +401,13 @@ class NavbarComponent extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  const {userUploaders,errorMessage} = state.useractions;
-  return {userUploaders,errorMessage}
+  const {userUploaders, errorMessage} = state.useractions;
+  return {userUploaders, errorMessage}
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    onUploadClick(uid,kaizenToken) {
+    onUploadClick(uid, kaizenToken) {
       dispatch(fetchuseruploadersrequest(
           uid, kaizenToken
       ))
