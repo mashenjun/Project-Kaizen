@@ -71,7 +71,7 @@ class NavbarComponent extends Component {
 
   onFetchDatahandler = (data) => {
     const postUrl = '/testrestful/OSSpage/';
-    // window.location.href = postUrl + "?uploaderid=" + data.id;
+    window.location.href = postUrl + "?uploaderid=" + data.id;
   };
 
   onFetchErrorHandler = (err) => {
