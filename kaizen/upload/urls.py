@@ -14,9 +14,12 @@ urlpatterns = [
     url(r'^post/(?P<id>.+)/$',views.RetrievePostView.as_view(),name='post-retrieve'),
     url(r'^post/(?P<id>.+)/edit$',views.EditPostView.as_view(),name='post-edit'),
     url(r'^filter/post/(?P<id>.+)/$', views.FilterPostbyUploaderView.as_view(), name='post-filter-uploader'),
+    url(r'^filter/post_catalogue/(?P<catalogue>.+)/$', views.FilterPostbyCatalogueView.as_view(), name='post-filter-catalogue'),
+    url(r'^search/post/(?P<keyword>.+)/$', views.SearchPostView.as_view(), name='post-search'),
     # url(r'^list-post/$',views.ListPostView.as_view(),name='post-list'),
     url(r'^comment/$',views.insert_comment_post,name='comment-create'),
     url(r'^query/province/$',views.query_province,name='province-query'),
     url(r'^query/province/(?P<province_code>\d+)/$',views.query_city,name='city-query'),
     url(r'^query/province/(?P<province_code>\d+)/(?P<city_code>\d+)/$', views.query_district, name='district-query'),
+    url(r'^query/catalogue/(?P<catalogue>.+)/$',views.query_catalogue,name='catalogue-query'),
 ]

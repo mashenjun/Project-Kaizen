@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from rest_framework_mongoengine import serializers,fields
 import random
+from os import SEEK_END
 from io import BytesIO
 from time import gmtime, strftime
 from pydenticon import Generator
 import PIL
-from os import SEEK_END
 
 from rest_framework.exceptions import ErrorDetail, ValidationError
 from rest_framework_mongoengine import serializers,fields
@@ -18,11 +18,10 @@ from rest_framework.relations import Hyperlink
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 
-from .models import Uploader,SEX,Post,Comment,CATALOGUE
+from .models import Uploader,SEX,Post,Comment
 from .customize.utils import getlogger
+from .customize.customvalidation import check_catalogue
 from accounts.models import User
-import inspect
-from mongoengine.errors import ValidationError as me_ValidationError
 
 logger = getlogger(__name__)
 
@@ -126,6 +125,14 @@ class PostCreateSerializer(serializers.DocumentSerializer):
             # 'comment',
         ]
 
+    def validate_catalogue(self, value):
+        """
+        Check catalogue format.
+        """
+        if not check_catalogue(value):
+            raise ValidationError("Catalogue is invalid")
+        return value
+
 
 class PostSimpletSerializer(serializers.DocumentSerializer):
 
@@ -169,14 +176,15 @@ class PostDetailSerializer(serializers.DocumentSerializer):
         ]
 
     def get_comment_count(self, obj):
-        return len(obj.comment);
+        return len(obj.comment)
 
     def get_author_name(self, obj):
         uploader= obj.query_author()
         return uploader.name
 
     def get_catalogue(self,obj):
-        return obj.get_catalogue_display()
+        return obj.catalogue
+        # return obj.get_catalogue_display()
 
 
 class PostListSerializer(serializers.DocumentSerializer):
@@ -211,7 +219,8 @@ class PostListSerializer(serializers.DocumentSerializer):
         return len(obj.comment);
 
     def get_catalogue(self,obj):
-        return obj.get_catalogue_display()
+        return obj.catalogue
+        # return obj.get_catalogue_display()
 
 class PostUpdateCommentSerializer(serializers.DocumentSerializer):
     comment = CommentCreateSerializer(many = True,required=False)
@@ -252,6 +261,14 @@ class PostEditSerializer(serializers.DocumentSerializer):
             'audio_url',
         ]
 
+    def validate_catalogue(self, value):
+        """
+        Check catalogue format.
+        """
+        if not check_catalogue(value):
+            raise ValidationError("Catalogue is invalid")
+        return value
+
 
 class PostBelongUploaderSerializer(serializers.DocumentSerializer):
     comment_count = serializers.serializers.SerializerMethodField()
@@ -263,6 +280,7 @@ class PostBelongUploaderSerializer(serializers.DocumentSerializer):
         view_name='post-retrieve',
         lookup_field='id',
     )
+
     catalogue = serializers.serializers.SerializerMethodField()
     class Meta:
         model = Post
@@ -274,13 +292,15 @@ class PostBelongUploaderSerializer(serializers.DocumentSerializer):
             "comment_count",
             'edit_url',
             'detail_url',
+            'author'
         ]
 
     def get_comment_count(self, obj):
         return len(obj.comment);
 
     def get_catalogue(self,obj):
-        return obj.get_catalogue_display()
+        return obj.catalogue
+        # return obj.get_catalogue_display()
 
 class UploaderCreateSerializer(serializers.DocumentSerializer):
     name = serializers.serializers.CharField(write_only=True)
@@ -418,7 +438,7 @@ class UploaderDetailSerializer(serializers.DocumentSerializer):
 
     def get_posts(self,obj):
         if obj.query_posts().count() ==0:
-            return [];
+            return []
         return PostSimpletSerializer(obj.query_posts(),many=True).data
 
     def get_post_count(self,obj):

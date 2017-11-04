@@ -110,18 +110,7 @@ class CreateListUploaderView(generics.ListCreateAPIView):
         return Response(result,status=status.HTTP_200_OK)
 
     def post(self, request, format = None,):
-        # serializer = UploadImageSerilizer(data=request.data)
-        # location = [float(x) for x in request.data.get('location').split(',')]
-        # data = request.data.copy()
-        # date_regex = re.compile('^\d{4}-\d{2}-\d{2}$')
-        # location_regex = re.compile('^-?\d+,-?\d+$')
-        # if location_regex.match(data.get('location')) is not None:
-        #     data['location'] = [float(x) for x in request.data.get('location').split(',')]
-        # if date_regex.match(data.get('birth_day')) is not None:
-        #     data['birth_day'] = data['birth_day']+'T00:00:00';
         newrequest = modifyUploaderRequestData(request)
-        # serializer.location = location
-        # print('[DEBUGE]{0}'.format(type(data['photo'])))
         serializer = self.get_serializer(data=newrequest.data)
         if serializer.is_valid(raise_exception=False):
             self.perform_create(serializer)
@@ -233,6 +222,7 @@ class CreateListPostView(generics.ListCreateAPIView):
     # permission_classes = [IsAuthenticatedOrReadOnly]
     # TODO:later change to IsAuthenticatedOrReadOnly
     queryset = Post.objects()
+
 
     def get_serializer_class(self):
         """
@@ -421,6 +411,34 @@ class FilterPostbyUploaderView(generics.ListAPIView):
     #     restult = modifyUploaderResponseData(queryset, serializer.data)
     #     return Response(restult)
 
+class FilterPostbyCatalogueView(generics.ListAPIView):
+    serializer_class = PostBelongUploaderSerializer
+    permission_classes = [AllowAny]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
+    pagination_class = None
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        catalogue = self.kwargs['catalogue']
+        return Post.objects(catalogue__contains=catalogue)
+
+class SearchPostView(generics.ListAPIView):
+    serializer_class = PostBelongUploaderSerializer
+    permission_classes = [AllowAny]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
+    pagination_class = None
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        keyword = self.kwargs['keyword']
+        return Post.objects.search_text(keyword)
+
 # function based view
 @api_view(['PUT'])
 @permission_classes([AllowAny])
@@ -538,6 +556,20 @@ def query_district(request,province_code=None,city_code=None):
                     }
                     result.append(info)
                 break
+        return Response(result, status=status.HTTP_200_OK)
+    except:
+        error_msg = {
+            "error_message": "Something wrong with your request."
+        }
+    return Response(error_msg, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def query_catalogue(request,catalogue=None):
+    from upload.models import CATALOGUE_PRIME_DETAIL
+    try:
+        print('[DEBUG]{0}'.format(catalogue))
+        result = CATALOGUE_PRIME_DETAIL[catalogue]
         return Response(result, status=status.HTTP_200_OK)
     except:
         error_msg = {
