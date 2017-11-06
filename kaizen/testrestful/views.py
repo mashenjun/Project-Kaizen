@@ -20,15 +20,6 @@ from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly
 )
 
-from kaizen.config import (
-    accessKeyId,
-    accessKeySecret,
-    host,
-    expire_time,
-    upload_dir,
-    callback_url,
-)
-
 
 from .serializers import EmployeeSerilizer,UploadFileSerilizer,UploadImageSerilizer
 from testconnect.models import Employee
@@ -123,7 +114,7 @@ def OSStestpage(request):
 @permission_classes([AllowAny])
 def OSSgetsig(request):
     token = get_token()
-    print(token)
+    print("[DEBUG-OSSgetsig]:{0}".format(token))
     return token
 
 @api_view(['POST'])
