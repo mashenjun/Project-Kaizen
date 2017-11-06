@@ -21,5 +21,6 @@ urlpatterns = [
     url(r'^query/province/$',views.query_province,name='province-query'),
     url(r'^query/province/(?P<province_code>\d+)/$',views.query_city,name='city-query'),
     url(r'^query/province/(?P<province_code>\d+)/(?P<city_code>\d+)/$', views.query_district, name='district-query'),
+    url(r'^query/catalogue/$',views.list_catalogue,name='catalogue-list'),
     url(r'^query/catalogue/(?P<catalogue>.+)/$',views.query_catalogue,name='catalogue-query'),
 ]

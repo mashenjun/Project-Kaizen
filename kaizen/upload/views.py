@@ -569,8 +569,20 @@ def query_district(request,province_code=None,city_code=None):
 def query_catalogue(request,catalogue=None):
     from upload.models import CATALOGUE_PRIME_DETAIL
     try:
-        print('[DEBUG]{0}'.format(catalogue))
         result = CATALOGUE_PRIME_DETAIL[catalogue]
+        return Response(result, status=status.HTTP_200_OK)
+    except:
+        error_msg = {
+            "error_message": "Something wrong with your request."
+        }
+    return Response(error_msg, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def list_catalogue(request):
+    from upload.models import CATALOGUE_PRIME_DETAIL
+    try:
+        result = [x for x in CATALOGUE_PRIME_DETAIL.keys()]
         return Response(result, status=status.HTTP_200_OK)
     except:
         error_msg = {
