@@ -114,7 +114,6 @@ def OSStestpage(request):
 @permission_classes([AllowAny])
 def OSSgetsig(request):
     token = get_token()
-    print("[DEBUG-OSSgetsig]:{0}".format(token))
     return token
 
 @api_view(['POST'])

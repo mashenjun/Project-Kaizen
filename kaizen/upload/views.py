@@ -224,7 +224,6 @@ class CreateListPostView(generics.ListCreateAPIView):
     # TODO:later change to IsAuthenticatedOrReadOnly
     queryset = Post.objects()
 
-
     def get_serializer_class(self):
         """
         Return the class to use for the serializer.
@@ -249,6 +248,7 @@ class CreateListPostView(generics.ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        logger.debug(request.data)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         result = serializer.data

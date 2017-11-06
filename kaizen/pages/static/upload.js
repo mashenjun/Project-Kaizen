@@ -26,12 +26,12 @@ document.getElementById("submit").onclick = function () {
 
     if (xmlhttp!=null)
     {
-        var catalogue = '';
-        var text = '';
+
+
         var img_url = [];
         var video_url = [];
         var audio_url = [];
-        var author = '';
+
 	call_back_response_content.forEach(function(element) {
     		console.log(element);
 		if( element["mimeType"].includes("image") ){
@@ -44,10 +44,15 @@ document.getElementById("submit").onclick = function () {
 			audio_url.push( element["OSS_url"] )
 		}
 	});
+
+	    var title = document.getElementById("title").value;
+        var catalogue = document.getElementById("catalogue").value;
+        var text = document.getElementById("description").value;
+        var author = window.location.search.replace( "?", "" ).split('=')[1];
         apiserverUrl = '/upload/post/'
         xmlhttp.open( "POST", apiserverUrl );
         xmlhttp.setRequestHeader("Content-Type", "application/json");
-	xmlhttp.send(JSON.stringify({title:title, catalogue:catalogue, text:text, img_url:img_url, video_url:video_url, audio_url:audio_url, author:author}));
+	    xmlhttp.send(JSON.stringify({title:title, catalogue:catalogue, text:text, img_url:img_url, video_url:video_url, audio_url:audio_url, author:author}));
         return xmlhttp.responseText;
     }
     else
@@ -108,6 +113,7 @@ function get_signature()
         expire = parseInt(obj['expire'])
         callbackbody = obj['callback']
         key = obj['dir']
+        console.log(obj)
         return true;
     }
     return false;
