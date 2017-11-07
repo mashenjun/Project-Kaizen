@@ -27,10 +27,7 @@
                 <a class="nav-item is-tab">Map</a>
                 <a class="nav-item is-tab is-active">Upload</a>
                 <a href="/pages/#/about" class="nav-item is-tab">About</a>
-                <span class="nav-item">          
-                <span>profile: Login as </span>
-                <span>
-                </span>
+                <span class="nav-item">
             </div>
         </div>
     </nav>
@@ -47,13 +44,17 @@
                 <label class="label">Catalogue:</label>
                 <p class="control">
                     <span class="select">
-				      <select id="catalogue">
-				          	<option value="GA" selected>民间游戏</option>
-			                <option value="ST">传说/故事</option>
-			                <option value="TO">儿歌/童谣</option>
-			                <option value="SP">玩意/把式</option>
-				      </select>
-	    			</span>
+                      <select id="catalogue1">
+                            <option value="民间游戏" selected>民间游戏</option>
+                            <option value="传说/故事">传说/故事</option>
+                            <option value="儿歌/童谣">儿歌/童谣</option>
+                            <option value="玩意/把式">玩意/把式</option>
+                      </select>
+                    </span>
+                <span class="select">
+                      <select id="catalogue2">
+                      </select>
+                    </span>
                 </p>
             </div>
             <div class="field">
@@ -72,23 +73,43 @@
                     </label>
                 </p>
             </div>
-        </form>
-        <div class="field" style="margin-top: 20px">
-            <h4>您所选择的文件列表：</h4>
-            <div id="ossfile">你的浏览器不支持flash,Silverlight或者HTML5！</div>
-            <br/>
-            <div id="container">
-                <a id="selectfiles" href="javascript:void(0);" class="button">选择文件</a>
-                <a id="postfiles" href="javascript:void(0);" class="button is-info">开始上传</a>
-                <a id="submit" href="#" class="button is-success">submit</a>
+            </form>
+            <div class="field" style="margin-top: 20px">
+                <h4>您所选择的文件列表：</h4>
+                <div id="ossfile">你的浏览器不支持flash,Silverlight或者HTML5！</div>
+                <br/>
+                <div id="container">
+                    <a id="selectfiles" href="javascript:void(0);" class="button">选择文件</a>
+                    <a id="postfiles" href="javascript:void(0);" class="button is-info">开始上传</a>
+                    <a id="submit" href="#" class="button is-success">submit</a>
+                </div>
+                <br/>
+                <pre id="console"></pre>
+                <p></p>
             </div>
-            <br/>
-            <pre id="console"></pre>
-            <p></p>
         </div>
-    </div>
 </body>
+<script type="text/javascript" src="/static/lib/jquery-3.2.1.min.js"></script>
 <script type="text/javascript" src="/static/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
 <script type="text/javascript" src="/static/upload.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    changeCA2($('#catalogue1').val());
+    $('#catalogue1').change(function(event) {
+        changeCA2($('#catalogue1').val());
+    });
+
+    function changeCA2(val1) {
+        $.ajax("/upload/query/catalogue/" + val1).done(function(data) {
+            $('#catalogue2').empty();
+            $.each(data, function(index, val) {
+                $('#catalogue2').append($("<option></option>")
+                        .attr("value", val)
+                        .text(val));
+            });
+        })
+    }
+});
+</script>
 
 </html>
