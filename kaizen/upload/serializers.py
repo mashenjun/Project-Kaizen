@@ -220,7 +220,7 @@ class PostListSerializer(serializers.DocumentSerializer):
 
     def get_catalogue(self,obj):
         return obj.catalogue
-        # return obj.get_catalogue_display()
+        # return obj.get_catalogue_display() #show the value instead of the key
 
 class PostUpdateCommentSerializer(serializers.DocumentSerializer):
     comment = CommentCreateSerializer(many = True,required=False)
