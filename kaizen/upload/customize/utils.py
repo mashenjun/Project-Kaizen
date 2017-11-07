@@ -133,7 +133,7 @@ def modifyUploaderRequestData(request):
 
 def delectOSSFile(url_list):
     auth = oss2.Auth(accessKeyId, accessKeySecret)
-    bucketname = host.split('.')[0]
+    bucketname = host.strip('http://').split('.')[0]
     endpoint = host.replace(bucketname+'.','')
     bucket = oss2.Bucket(auth,endpoint,bucketname)
     logger = getlogger(__name__)

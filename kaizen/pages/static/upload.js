@@ -26,14 +26,11 @@ document.getElementById("submit").onclick = function () {
 
     if (xmlhttp!=null)
     {
-
-
         var img_url = [];
         var video_url = [];
         var audio_url = [];
 
 	call_back_response_content.forEach(function(element) {
-    		console.log(element);
 		if( element["mimeType"].includes("image") ){
 			img_url.push( element["OSS_url"] )
 		}
@@ -46,13 +43,14 @@ document.getElementById("submit").onclick = function () {
 	});
 
 	    var title = document.getElementById("title").value;
-        var catalogue = document.getElementById("catalogue1").value+'.'+document.getElementById("catalogue2");
+        var catalogue = document.getElementById("catalogue1").value+'.'+document.getElementById("catalogue2").value;
         var text = document.getElementById("description").value;
         var author = window.location.search.replace( "?", "" ).split('=')[1];
         apiserverUrl = '/upload/post/'
         xmlhttp.open( "POST", apiserverUrl );
         xmlhttp.setRequestHeader("Content-Type", "application/json");
 	    xmlhttp.send(JSON.stringify({title:title, catalogue:catalogue, text:text, img_url:img_url, video_url:video_url, audio_url:audio_url, author:author}));
+	    alert(xmlhttp.responseText);
         return xmlhttp.responseText;
     }
     else
