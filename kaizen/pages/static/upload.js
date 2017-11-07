@@ -46,7 +46,7 @@ document.getElementById("submit").onclick = function () {
 	});
 
 	    var title = document.getElementById("title").value;
-        var catalogue = document.getElementById("catalogue").value;
+        var catalogue = document.getElementById("catalogue1").value+'.'+document.getElementById("catalogue2");
         var text = document.getElementById("description").value;
         var author = window.location.search.replace( "?", "" ).split('=')[1];
         apiserverUrl = '/upload/post/'
