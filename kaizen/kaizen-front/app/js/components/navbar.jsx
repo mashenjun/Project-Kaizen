@@ -372,7 +372,6 @@ class NavbarComponent extends Component {
                   e.target.classList.add('is-active');
                   this.aboutab.classList.remove('is-active')
                 }} className="nav-item is-tab is-active">主页</a>
-                <a className="nav-item is-tab">地图</a>
                 <a className="nav-item is-tab" ref={(upload) => this.uploadtab = upload} onClick={this.onUploaderClick}>上传</a>
                 <a ref={(a) => this.aboutab = a} onClick={(e) => {
                   hashHistory.push('/about');

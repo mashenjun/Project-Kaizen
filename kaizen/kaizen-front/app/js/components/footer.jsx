@@ -7,10 +7,11 @@ class Footer extends Component {
             <div className="container">
                 <div className="has-text-centered">
                     <p>
-                        <strong>Bulma</strong> by <a href="http://jgthms.com">Jeremy Thomas</a>. The source code
-                        is licensed
-                        <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
-                        is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC ANS 4.0</a>.
+                         by <a href="https://github.com/steven1227"> Steven </a> and
+
+                            <a href="https://github.com/mashenjun"> Shenjun</a>.
+
+                        <span>Copyright © 2016-2017 <strong>上海郁聚网络科技有限公司</strong></span>
                     </p>
                 </div>
             </div>

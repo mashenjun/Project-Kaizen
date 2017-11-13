@@ -27,7 +27,7 @@ class loginContainer extends Component {
 
     onEnterPress = (event) => {
         this.onLoginButtonClick(event);
-    }
+    };
 
     onLoginButtonClick = (event) => {
         const username = this.userNameInput.input.value;
