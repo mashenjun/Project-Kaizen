@@ -182,7 +182,7 @@ class NavbarComponent extends Component {
             <div className="modal-background"></div>
             <div className="modal-card">
               <header className="modal-card-head">
-                <p className="modal-card-title">Choose a Uploader</p>
+                <p className="modal-card-title">选择一个上传者</p>
                 <button className="delete" onClick={() => this.modal.classList.remove("is-active")}></button>
               </header>
               <section className="modal-card-body">
@@ -208,10 +208,9 @@ class NavbarComponent extends Component {
                     <a className="button is-success" onClick={() => {
                       this.formModal.classList.add("is-active");
                       this.modal.classList.remove("is-active");
-                    }}><i className="fa fa-plus" style={{marginRight: '5px'}}></i>Create
-                      New Uploader</a> :
-                    <a className="button is-success" onClick={() => hashHistory.push('/login')}>Login</a>}
-                <a className="button" onClick={() => this.modal.classList.remove("is-active")}>Cancel</a>
+                    }}><i className="fa fa-plus" style={{marginRight: '5px'}}></i>创建新的上传者</a> :
+                    <a className="button is-success" onClick={() => hashHistory.push('/login')}>登录</a>}
+                <a className="button" onClick={() => this.modal.classList.remove("is-active")}>取消</a>
               </footer>
             </div>
           </div>
@@ -223,14 +222,14 @@ class NavbarComponent extends Component {
               <div className="modal-background"></div>
               <div className="modal-card">
                 <header className="modal-card-head">
-                  <p className="modal-card-title">Create a Uploader</p>
+                  <p className="modal-card-title">创建上传者</p>
                   <button className="delete" onClick={() => this.formModal.classList.remove("is-active")}></button>
                 </header>
                 <section className="modal-card-body">
                   <div className="form">
                     <div className="field is-horizontal">
                       <div className="field-label is-normal">
-                        <label className="label">Name</label>
+                        <label className="label">名字</label>
                       </div>
                       <div className="field-body">
                         <div className="field">
@@ -245,7 +244,7 @@ class NavbarComponent extends Component {
 
                     <div className="field is-horizontal">
                       <div className="field-label is-normal">
-                        <label className="label">Sex</label>
+                        <label className="label">性别</label>
                       </div>
                       <div className="field-body">
                         <div className="field">
@@ -254,8 +253,8 @@ class NavbarComponent extends Component {
                               <select ref={(sex) => {
                                 this.sex = sex
                               }}>
-                                <option value={'M'}>Male</option>
-                                <option value={'F'}>Female</option>
+                                <option value={'M'}>男</option>
+                                <option value={'F'}>女</option>
                               </select>
                             </span>
                           </div>
@@ -265,7 +264,7 @@ class NavbarComponent extends Component {
 
                     <div className="field is-horizontal">
                       <div className="field-label is-normal">
-                        <label className="label">Picture</label>
+                        <label className="label">头像</label>
                       </div>
                       <div className="field-body">
                         <div className="field">
@@ -287,7 +286,7 @@ class NavbarComponent extends Component {
                     </div>
                     <div className="field is-horizontal">
                       <div className="field-label is-normal">
-                        <label className="label">BirthDay</label>
+                        <label className="label">出生日期</label>
                       </div>
                       <div className="field-body">
                         <div className="field">
@@ -307,12 +306,12 @@ class NavbarComponent extends Component {
 
                     <div className="field is-horizontal">
                       <div className="field-label is-normal">
-                        <label className="label">HomeTown</label>
+                        <label className="label">家乡</label>
                       </div>
                       <div className="field-body">
                         <div className="field">
                           <div className="control">
-                            <span style={{marginLeft: '8px', lineHeight: '2.5', marginRight: '8px'}}>Province:</span>
+                            <span style={{marginLeft: '8px', lineHeight: '2.5', marginRight: '8px'}}>省:</span>
                             <span className="select">
                                 <select onChange={this.onProvinchange} ref={(proveList) => {
                                   this.proveList = proveList
@@ -321,7 +320,7 @@ class NavbarComponent extends Component {
                                   {provinceList}
                                 </select>
                                </span>
-                            <span style={{marginLeft: '8px', lineHeight: '2.5', marginRight: '8px'}}>City:</span>
+                            <span style={{marginLeft: '8px', lineHeight: '2.5', marginRight: '8px'}}>市:</span>
                             <span className="select">
                                 <select onChange={this.onCitychange} ref={(cityList) => {
                                   this.cityList = cityList
@@ -334,7 +333,7 @@ class NavbarComponent extends Component {
                           <p ref={(errorHint) => {
                             this.errorHint = errorHint
                           }} style={{display: 'none'}} className="help is-danger">
-                            Both provice and city are required
+                            请选择省和城市！
                           </p>
                         </div>
                       </div>
@@ -345,11 +344,11 @@ class NavbarComponent extends Component {
                 </section>
                 <footer className="modal-card-foot">
                   <a className="button is-success" onClick={this.onCreateHandler}><i className="fa fa-plus"
-                                                                                     style={{marginRight: '5px'}}></i>Create</a>
+                                                                                     style={{marginRight: '5px'}}></i>创建</a>
                   <a className="button" onClick={() => {
                     this.formModal.classList.remove("is-active");
                     window.location.reload();
-                  }}>Cancel</a>
+                  }}>取消</a>
                 </footer>
               </div>
             </div>
@@ -372,22 +371,22 @@ class NavbarComponent extends Component {
                   hashHistory.push('/home');
                   e.target.classList.add('is-active');
                   this.aboutab.classList.remove('is-active')
-                }} className="nav-item is-tab is-active">Home</a>
-                <a className="nav-item is-tab">Map</a>
-                <a className="nav-item is-tab" ref={(upload) => this.uploadtab = upload} onClick={this.onUploaderClick}>Upload</a>
+                }} className="nav-item is-tab is-active">主页</a>
+                <a className="nav-item is-tab">地图</a>
+                <a className="nav-item is-tab" ref={(upload) => this.uploadtab = upload} onClick={this.onUploaderClick}>上传</a>
                 <a ref={(a) => this.aboutab = a} onClick={(e) => {
                   hashHistory.push('/about');
                   e.target.classList.add('is-active');
                   this.hometab.classList.remove('is-active')
-                }} className="nav-item is-tab">About</a>
+                }} className="nav-item is-tab">关于</a>
                 <span className="nav-item">
                           { isAuthenticated ?
-                              <span>profile: Login as {username}</span> :
+                              <span>用户:{username}</span> :
                               (<span><a className="button" onClick={() => hashHistory.push('/login')}>
-                                  Log in
+                                  登录
                               </a>
                               <a className="button is-info" onClick={() => hashHistory.push('/signup')}>
-                                  Sign up
+                                  注册
                               </a></span>)
                           }
                         </span>

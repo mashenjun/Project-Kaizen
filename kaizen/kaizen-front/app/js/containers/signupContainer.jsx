@@ -32,21 +32,21 @@ class signupContainer extends Component {
         const confirmpassword = this.confirmpasswordInput.input.value;
         if (!username || !password || !email || !confirmpassword) {
             if (!username) {
-                this.userNameInput.setState({errorText: "The username can not be empty"})
+                this.userNameInput.setState({errorText: "请输入用户名！"})
             }
             if (!password) {
-                this.passwordInput.setState({errorText: "The password can not be empty"})
+                this.passwordInput.setState({errorText: "请输入密码！"})
             }
             if (!confirmpassword) {
-                this.confirmpasswordInput.setState({errorText: "The password can not be empty"})
+                this.confirmpasswordInput.setState({errorText: "请输入密码！"})
             }
             if (!email) {
-                this.emailInput.setState({errorText: "The email can not be empty"})
+                this.emailInput.setState({errorText: "请输入邮箱！"})
             }
         } else if (!this.validateEmail(email)) {
-            this.emailInput.setState({errorText: "This is not a valid email"})
+            this.emailInput.setState({errorText: "邮箱不正确！"})
         } else if (password != confirmpassword) {
-            this.confirmpasswordInput.setState({errorText: "The password must be same as the last one "})
+            this.confirmpasswordInput.setState({errorText: "确认密码不一致！"})
         } else {
             this.props.onSignupButtonClick(username, email, password);
         }
@@ -59,12 +59,12 @@ class signupContainer extends Component {
         return (
             <div className="loginContainer">
                 <div className="loginContainer-loginblock" style={{height: '400px'}}>
-                    <h1 className="header">Sign UP</h1>
+                    <h1 className="header">注册</h1>
                     <div className="content">
                         <TextField
                             fullWidth={true}
-                            hintText="Username"
-                            floatingLabelText="Username"
+                            hintText="用户名"
+                            floatingLabelText="用户名"
                             onChange={() => {
                                 this.userNameInput.setState({errorText: ""})
                             }}
@@ -76,8 +76,8 @@ class signupContainer extends Component {
                             fullWidth={true}
                             type="email"
                             className="input-field"
-                            hintText="Email"
-                            floatingLabelText="Email"
+                            hintText="邮箱"
+                            floatingLabelText="邮箱"
                             onChange={() => {
                                 this.emailInput.setState({errorText: ""})
                             }}
@@ -89,8 +89,8 @@ class signupContainer extends Component {
                             fullWidth={true}
                             type="password"
                             className="input-field"
-                            hintText="Password"
-                            floatingLabelText="Password"
+                            hintText="创建密码"
+                            floatingLabelText="密码"
                             onChange={() => {
                                 this.passwordInput.setState({errorText: ""})
                             }}
@@ -103,8 +103,8 @@ class signupContainer extends Component {
                             fullWidth={true}
                             type="password"
                             className="input-field"
-                            hintText="Password Confirm"
-                            floatingLabelText="Password Confirm"
+                            hintText="确认密码"
+                            floatingLabelText="确认密码"
                             onChange={() => {
                                 this.confirmpasswordInput.setState({errorText: ""})
                             }}

@@ -71,17 +71,17 @@ class UserList extends React.Component {
             <div className="modal-background"></div>
             <div className="modal-card">
               <header className="modal-card-head">
-                <p className="modal-card-title">Choose a Post to view</p>
+                <p className="modal-card-title">选择要查阅的条目</p>
                 <button className="delete" onClick={() => this.postmodal.classList.remove("is-active")}></button>
               </header>
               <section className="modal-card-body">
                 <table className="table is-striped">
                   <thead>
                   <tr>
-                    <th>Title</th>
-                    <th>Catalogue</th>
-                    <th>Comments</th>
-                    <th>Create Time</th>
+                    <th>标题</th>
+                    <th>类别</th>
+                    <th>评论</th>
+                    <th>创建时间</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -94,7 +94,7 @@ class UserList extends React.Component {
 
           <div className="section">
             <div className="container">
-              <div className="title is-2">Overview</div>
+              <div className="title is-2">总览</div>
               <div className="nav menu" style={{marginBottom: "10px"}}>
                 <div className="container">
                   <div className="nav-left">
@@ -115,10 +115,10 @@ class UserList extends React.Component {
                     </div>
                   </div>
                   <div className="nav-right is-hidden-mobile">
-                    <a className="nav-item is-tab">Name</a>
-                    <a className="nav-item is-tab">Size</a>
-                    <a className="nav-item is-tab">Views</a>
-                    <a className="nav-item"><span className=" button is-success">Uploaded</span></a>
+                    <a className="nav-item is-tab">名字</a>
+                    <a className="nav-item is-tab">大小</a>
+                    <a className="nav-item is-tab">查看</a>
+                    <a className="nav-item"><span className=" button is-success">已上传</span></a>
                   </div>
                 </div>
               </div>
@@ -130,10 +130,10 @@ class UserList extends React.Component {
                 <nav className="pagination is-centered">
                   <a ref={(previous) => {
                     this.previous = previous;
-                  }} onClick={this.onPreClick} className="pagination-previous">Previous</a>
+                  }} onClick={this.onPreClick} className="pagination-previous">上一页</a>
                   <a ref={(nextPage) => {
                     this.nextPage = nextPage;
-                  }} onClick={this.onNextClick} className="pagination-next">Next page</a>
+                  }} onClick={this.onNextClick} className="pagination-next">下一页</a>
                   <ul className="pagination-list">
                     {pagi_list}
                   </ul>

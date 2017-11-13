@@ -19,15 +19,15 @@ class postContainer extends Component {
           <div className="container">
             <div className="columns post-header">
               <div className="column">
-                <h3 className="post-header-title">Title</h3>
+                <h3 className="post-header-title">标题</h3>
                 {postDetail.title}
               </div>
               <div className="column">
-                <h3 className="post-header-title">Catelogue</h3>
+                <h3 className="post-header-title">类别</h3>
                 {postDetail.catalogue}
               </div>
               <div className="column">
-                <h3 className="post-header-title">Author</h3>
+                <h3 className="post-header-title">作者</h3>
                 <div className="media">
                   <div className="media-left">
                     <figure className="image is-48x48">
@@ -46,19 +46,19 @@ class postContainer extends Component {
               <div className="card-content">
                 <div className="content">
 
-                  <h3>Content</h3>
+                  <h3>描述</h3>
                   {postDetail.text}
                   <hr/>
 
 
-                  <h3>Images</h3>
+                  <h3>图片</h3>
                   { postDetail.img_url &&
                     postDetail.img_url.map((url) =>
                       <img width='300px' src={url}/>)
                   }
                   <hr/>
 
-                  <h3>Audios</h3>
+                  <h3>音频</h3>
                   { postDetail.audio_url &&
                   <div>{
                     postDetail.audio_url.map((audio_url) =>
@@ -72,7 +72,7 @@ class postContainer extends Component {
                   }
 
                   <hr/>
-                  <h3>Videos</h3>
+                  <h3>视频</h3>
                   { postDetail.video_url &&
                       <div>
                         {

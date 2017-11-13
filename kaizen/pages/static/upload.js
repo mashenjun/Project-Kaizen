@@ -8,7 +8,7 @@ filename = ''
 key = ''
 expire = 0
 g_object_name = ''
-g_object_name_type = ''
+g_object_name_type = 'random_name';
 call_back_response_content =[]
 
 now = timestamp = Date.parse(new Date()) / 1000;
@@ -95,15 +95,15 @@ function send_request()
 };
 
 function check_object_radio() {
-    var tt = document.getElementsByName('myradio');
-    for (var i = 0; i < tt.length ; i++ )
-    {
-        if(tt[i].checked)
-        {
-            g_object_name_type = tt[i].value;
-            break;
-        }
-    }
+    // var tt = document.getElementsByName('myradio');
+    // for (var i = 0; i < tt.length ; i++ )
+    // {
+    //     if(tt[i].checked)
+    //     {
+    //         g_object_name_type = tt[i].value;
+    //         break;
+    //     }
+    // }
 }
 
 function get_signature()
@@ -121,7 +121,6 @@ function get_signature()
         expire = parseInt(obj['expire'])
         callbackbody = obj['callback']
         key = obj['dir']
-        console.log(obj)
         return true;
     }
     return false;

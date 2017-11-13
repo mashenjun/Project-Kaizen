@@ -25,15 +25,19 @@ class loginContainer extends Component {
         console.log('before', this.props.isAuthenticated, 'after', isAuthenticated)
     }
 
+    onEnterPress = (event) => {
+        this.onLoginButtonClick(event);
+    }
+
     onLoginButtonClick = (event) => {
         const username = this.userNameInput.input.value;
         const password = this.passwordInput.input.value;
         if (!username || !password) {
             if (!username) {
-                this.userNameInput.setState({errorText: "The username can not be empty"})
+                this.userNameInput.setState({errorText: "请输入用户名！"})
             }
             if (!password) {
-                this.passwordInput.setState({errorText: "The password can not be empty"})
+                this.passwordInput.setState({errorText: "请输入密码！"})
             }
         } else {
             this.props.onLoginButtonClick(username, password);
@@ -50,12 +54,12 @@ class loginContainer extends Component {
         return (
             <div className="loginContainer">
                 <div className="loginContainer-loginblock">
-                    <h1 className="header">Kaizen CMS system</h1>
+                    <h1 className="header">有幼游</h1>
                     <div className="content">
                         <TextField
                             fullWidth={true}
-                            hintText="Username"
-                            floatingLabelText="Username"
+                            hintText="用户名"
+                            floatingLabelText="用户名"
                             onChange={() => {
                                 this.userNameInput.setState({errorText: ""})
                             }}
@@ -67,8 +71,8 @@ class loginContainer extends Component {
                             fullWidth={true}
                             type="password"
                             className="input-field"
-                            hintText="Password"
-                            floatingLabelText="Password"
+                            hintText="密码"
+                            floatingLabelText="密码"
                             onChange={() => {
                                 this.passwordInput.setState({errorText: ""})
                             }}
@@ -76,11 +80,11 @@ class loginContainer extends Component {
                                 this.passwordInput = input;
                             }}
                         />
-                        <RaisedButton onClick={this.onLoginButtonClick} className="loginButton" primary={true}
-                                      label="Let me in"
+                        <RaisedButton onClick={this.onLoginButtonClick} onKeyPress={this.onEnterPress} className="loginButton" primary={true}
+                                      label="登入"
                                       fullWidth={true}/>
                         <RaisedButton onClick={this.onSignupButtonClick} className="signupButton"
-                                      label="Sign up"
+                                      label="注册"
                                       secondary={true}
                                       fullWidth={true}/>
                     </div>
