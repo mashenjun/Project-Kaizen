@@ -47,17 +47,27 @@ document.getElementById("submit").onclick = function () {
         var text = document.getElementById("description").value;
         var author = window.location.search.replace( "?", "" ).split('=')[1];
         apiserverUrl = '/upload/post/'
+
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                alert("提交成功！");
+                window.location.href="/#/home";
+            }
+          };
+
         xmlhttp.open( "POST", apiserverUrl );
         xmlhttp.setRequestHeader("Content-Type", "application/json");
 	    xmlhttp.send(JSON.stringify({title:title, catalogue:catalogue, text:text, img_url:img_url, video_url:video_url, audio_url:audio_url, author:author}));
-	    alert(xmlhttp.responseText);
-        return xmlhttp.responseText;
+
+        // window.location.href="#/upload/post/5a097294c022f824201e13e9"
+	    return xmlhttp.responseText;
+
     }
     else
     {
         alert("Your browser does not support XMLHTTP.");
     }
-    alert('hello!');
+
 };
 
 function send_request()

@@ -248,10 +248,9 @@ class CreateListPostView(generics.ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        logger.debug(request.data)
-        self.perform_create(serializer)
+        createdInstance = serializer.save()
         headers = self.get_success_headers(serializer.data)
-        result = serializer.data
+        result = {"id":str(createdInstance.id)}
         new_token = custom_refresh_token(request.auth)
         return Response(result, status=status.HTTP_200_OK,headers={'NewToken':new_token})
 
