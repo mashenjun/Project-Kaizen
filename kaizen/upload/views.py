@@ -216,6 +216,37 @@ class EditUploaderView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generic
         new_token = custom_refresh_token(request.auth)
         return Response(status=status.HTTP_204_NO_CONTENT,headers={'NewToken':new_token})
 
+class FilterUploaderbyPostCatalogueView(generics.ListAPIView):
+    serializer_class = UploaderListSerializer
+    permission_classes = [AllowAny]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        catalogue = self.kwargs['catalogue']
+        posts = Post.objects(catalogue__contains=catalogue)
+        uploaders = list(set([x.author for x in posts]))
+        return uploaders
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        logger.debug(queryset)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            restult = modifyUploaderResponseData(page, serializer.data)
+            return self.get_paginated_response(restult)
+
+        serializer = self.get_serializer(queryset, many=True)
+        result = modifyUploaderResponseData(queryset, serializer.data)
+        new_token = custom_refresh_token(request.auth)
+        return Response(result,status=status.HTTP_200_OK,headers={'NewToken':new_token})
+
+
+
 class CreateListPostView(generics.ListCreateAPIView):
     serializer_class = PostCreateSerializer
     # parser_classes = (MultiPartParser,)
