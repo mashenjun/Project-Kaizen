@@ -9,7 +9,7 @@ urlpatterns = [
     url(r'^uploader/(?P<id>.+)/$',views.RetrieveUploaderView.as_view(),name='uploader-retrieve'),
     url(r'^filter/uploader/(?P<userid>.+)/$', views.FilterUploaderbyUserView.as_view(), name='uploader-filter-user'),
     url(r'^uploader/(?P<id>.+)/edit$', views.EditUploaderView.as_view(), name='uploader-edit'),
-    url(r'^filter/uploaderByPostCatalogue/(?P<catalogue>.+)/$', views.FilterUploaderbyPostCatalogueView.as_view(), name='uploader-filter-postCatalogue'),
+    url(r'^filter/uploader_postCatalogue/(?P<catalogue>.+)/$', views.FilterUploaderbyPostCatalogueView.as_view(), name='uploader-filter-postCatalogue'),
 
     # apis related with posts
     url(r'^post/$', views.CreateListPostView.as_view(), name='post-create-list'),
