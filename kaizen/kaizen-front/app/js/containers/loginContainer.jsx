@@ -54,7 +54,9 @@ class loginContainer extends Component {
         return (
             <div className="loginContainer">
                 <div className="loginContainer-loginblock">
-                    <h1 className="header">有幼游</h1>
+                    <h1 className="header">
+                        <img style={{maxHeight: '3rem'}} src="/static/images/bulma.png" alt="Description"/>
+                    </h1>
                     <div className="content">
                         <TextField
                             fullWidth={true}

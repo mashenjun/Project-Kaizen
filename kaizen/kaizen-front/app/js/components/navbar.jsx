@@ -358,7 +358,7 @@ class NavbarComponent extends Component {
             <div className="container">
               <div className="nav-left">
                 <a className="nav-item" href="/pages/#/home">
-                  <img src="/static/images/bulma.png" alt="Description"/>
+                  <img style={{maxHeight: '2.5rem'}} src="/static/images/bulma.png" alt="Description"/>
                 </a>
               </div>
               <span className="nav-toggle">
