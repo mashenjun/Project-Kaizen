@@ -25,6 +25,11 @@ class signupContainer extends Component {
         return re.test(email);
     };
 
+
+    backloginButtonClick = (event)=>{
+      hashHistory.push('/login');
+    };
+
     onconfirmButtonClick = (event) => {
         const username = this.userNameInput.input.value;
         const password = this.passwordInput.input.value;
@@ -59,7 +64,7 @@ class signupContainer extends Component {
         return (
             <div className="loginContainer">
                 <div className="loginContainer-loginblock" style={{height: '400px'}}>
-                    <h1 className="header">注册</h1>
+                    <h1 style={{fontSize:'1.3em'}}>新用户注册</h1>
                     <div className="content">
                         <TextField
                             fullWidth={true}
@@ -115,7 +120,11 @@ class signupContainer extends Component {
 
                         <RaisedButton onClick={this.onconfirmButtonClick} className="confirmButton"
                                       backgroundColor="rgb(164, 198, 57)"
-                                      label="Submit" labelColor="ffffff"
+                                      label="提交" labelColor="ffffff"
+                                      fullWidth={true}/>
+                        <RaisedButton onClick={this.backloginButtonClick} className="backButton"
+                                      backgroundColor="3b5998"
+                                      label="返回" labelColor="ffffff"
                                       fullWidth={true}/>
                     </div>
                 </div>

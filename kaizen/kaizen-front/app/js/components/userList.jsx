@@ -110,9 +110,6 @@ class UserList extends React.Component {
                                             <i className="fa fa-trash"></i>
                                           </span>
                     </a>
-                    <div className="nav-item is-tab">
-                      <strong>testing</strong>
-                    </div>
                   </div>
                   <div className="nav-right is-hidden-mobile">
                     <a className="nav-item is-tab">名字</a>
