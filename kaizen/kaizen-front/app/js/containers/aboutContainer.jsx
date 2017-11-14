@@ -32,9 +32,9 @@ class  aboutContainer extends Component{
                           <div className="columns">
                             <div className="column">
                               <div className="profile">
-                                <img className="img-circle" src="http://placehold.it/200x200"></img>
+                                <img className="img-circle" src="/static/images/admin0.png"></img>
                                 <div>
-                                  name
+                                  梁宇佳
                                 </div>
                               </div>
                             </div>
@@ -48,17 +48,17 @@ class  aboutContainer extends Component{
                           <div className="columns">
                             <div className="column">
                               <div className="profile">
-                                <img className="img-circle" src="http://placehold.it/200x200"></img>
+                                <img className="img-circle" src="/static/images/boy2.png"></img>
                                 <div>
-                                  name
+                                  Steven
                                 </div>
                               </div>
                             </div>
                             <div className="column">
                               <div className="profile">
-                                <img className="img-circle" src="http://placehold.it/200x200"></img>
+                                <img className="img-circle" src="/static/images/boy1.png"></img>
                                 <div>
-                                  name
+                                  Shenjun
                                 </div>
                               </div>
                             </div>
@@ -72,25 +72,33 @@ class  aboutContainer extends Component{
                           <div className="columns">
                             <div className="column">
                               <div className="profile">
-                                <img className="img-circle" src="http://placehold.it/200x200"></img>
+                                <img className="img-circle" src="/static/images/admin1.png"></img>
                                 <div>
-                                  name
+                                  Zoe
                                 </div>
                               </div>
                             </div>
                             <div className="column">
                               <div className="profile">
-                                <img className="img-circle" src="http://placehold.it/200x200"></img>
+                                <img className="img-circle" src="/static/images/admin2.png"></img>
                                 <div>
-                                  name
+                                  Stella
                                 </div>
                               </div>
                             </div>
                             <div className="column">
                               <div className="profile">
-                                <img className="img-circle" src="http://placehold.it/200x200"></img>
+                                <img className="img-circle" src="/static/images/admin4.png"></img>
                                 <div>
-                                  name
+                                  Alex
+                                </div>
+                              </div>
+                            </div>
+                            <div className="column">
+                              <div className="profile">
+                                <img className="img-circle" src="/static/images/admin3.png"></img>
+                                <div>
+                                  Green
                                 </div>
                               </div>
                             </div>
