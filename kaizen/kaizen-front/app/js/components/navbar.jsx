@@ -200,7 +200,7 @@ class NavbarComponent extends Component {
                         </div>
                         {uploaderList}
                       </div> :
-                      "In order to upload a post, You have to Log in First"
+                      "请先登录！"
                 }
               </section>
               <footer className="modal-card-foot">
