@@ -6,6 +6,8 @@ class UserMap extends Component {
         super(props);
     }
 
+
+
     componentWillReceiveProps(nextProps) {
         const  {usermapdata }= nextProps;
         console.log('map component render');
@@ -16,7 +18,7 @@ class UserMap extends Component {
             attributionControl: false
         }).addTo(map);
 
-        for(const user of usermapdata){
+      for(const user of usermapdata){
             const [x,y] =user.location.coordinates;
             let circle_user = L.circleMarker([y, x], {
                 color: this.getRandomColor(),
@@ -24,8 +26,8 @@ class UserMap extends Component {
                 fillOpacity: 0.2,
                 radius: 8
             }).addTo(map);
-            circle_user.bindPopup("<div style='width: 80px;'><img src="+
-                user.photo_url+"></div>"+"<div style='text-align: center'><b>"+
+            circle_user.bindPopup("<divstyle='width: 80px;'><a href=#/upload/uploader/"+user.id+"><img src="+
+                user.photo_url+"></a></div>"+"<div style='text-align: center'><b>"+
                 user.name+"</b><br/><span>"+user.home_town
                 +"</span></div>")
         }

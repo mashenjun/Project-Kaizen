@@ -15,7 +15,7 @@ class postContainer extends Component {
     const {postDetail} = this.props;
     console.log(postDetail);
     return (
-        <div>
+        <div className="postContainer">
           <div className="container">
             <div className="columns post-header">
               <div className="column">
@@ -95,9 +95,9 @@ class postContainer extends Component {
             </div>
             <div style={{padding: '24px'}} className="card">
               <div className="card-content">
-                <div className="content">
-                  <h3>Comments</h3>
-                </div>
+                {/*<div className="content">*/}
+                  {/*<h3>Comments</h3>*/}
+                {/*</div>*/}
               </div>
             </div>
           </div>
