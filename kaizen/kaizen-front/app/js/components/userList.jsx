@@ -35,11 +35,13 @@ class UserList extends React.Component {
     const {currentPage} = this.props;
     const pagi_list = [];
     const upload_currentPage = [];
+
     for (let i = 1; i <= maxPage && this.props.usermapdata.length > 0; i++) {
       pagi_list.push(<li key={i}><a onClick={() => this.props.uploaderPageNavigate(i)}
                                     className={"pagination-link " + (this.props.currentPage == i ? "is-current" : "")}>{i}</a>
       </li>);
     }
+
     for (let j = (currentPage - 1) * consts.PAGE_SIZE; j < (currentPage) * consts.PAGE_SIZE && this.props.usermapdata.length; j++) {
       if (j < this.props.totalCount) {
         upload_currentPage.push(
