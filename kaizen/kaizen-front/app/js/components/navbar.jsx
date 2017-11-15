@@ -10,6 +10,7 @@ import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'cropperjs/dist/cropper.css';
 import 'whatwg-fetch';
+import {Map, Marker} from 'react-amap';
 import * as consts from '../constants/const';
 
 class NavbarComponent extends Component {
@@ -21,7 +22,12 @@ class NavbarComponent extends Component {
       cropResult: "",
       provinces: [],
       citys: [],
-      finalCity: ""
+      finalCity: "",
+      markerVisible: false,
+      markerPosition: {
+        longitude: 116,
+        latitude: 39
+      }
     };
   }
 
@@ -69,6 +75,24 @@ class NavbarComponent extends Component {
     reader.readAsDataURL(files[0]);
   };
 
+  mapEvents = {
+    click: (e) => {
+      console.log('You clicked map', {longitude: e.lnglat.lng, latitude: e.lnglat.lat});
+      fetch(`http://restapi.amap.com/v3/geocode/regeo?output=json&key=${consts.AK}&location=${[e.lnglat.lng,e.lnglat.lat]}`)
+      .then((response) => response.json())
+      .then((data) =>{
+        const address = data.regeocode.addressComponent;
+        this.setState({
+          finalCity:address.city&&address.city.length?address.city:address.province
+        })
+      });
+      this.setState({
+        markerVisible: true,
+        markerPosition: {longitude: e.lnglat.lng, latitude: e.lnglat.lat},
+      })
+    }
+  };
+
   onFetchDatahandler = (data) => {
     const postUrl = '/testrestful/OSSpage/';
     window.location.href = postUrl + "?uploaderid=" + data.id;
@@ -86,15 +110,11 @@ class NavbarComponent extends Component {
     formData.append('sex', this.sex.value);
     formData.append('user', uid);
     formData.append('home_town', this.state.finalCity);
-
     if (!this.state.finalCity) {
       console.log('error');
       this.errorHint.style.display = "inline"
-    }else{
-      fetch(`http://restapi.amap.com/v3/geocode/geo?address=${this.state.finalCity}&output=json&key=${consts.AK}`).
-      then((response) => response.json()).then((data) => {
-        var geolocation = data.geocodes[0].location.split(',');
-        formData.append('location', [Number(geolocation[0]),Number(geolocation[1])]);
+    } else {
+        formData.append('location', [this.state.markerPosition.longitude, this.state.markerPosition.latitude]);
         if (!this.cropper.getCroppedCanvas() || typeof this.cropper.getCroppedCanvas() === 'undefined') {
           fetch('/upload/uploader/', {
             method: 'POST',
@@ -109,10 +129,7 @@ class NavbarComponent extends Component {
             }).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
           });
         }
-      });
-
     }
-
   };
 
   componentWillReceiveProps(nextProps) {
@@ -137,6 +154,7 @@ class NavbarComponent extends Component {
       borderColor: '#eee',
       minHeight: '35px'
     };
+
     let uploaderList = [];
     const postUrl = '/testrestful/OSSpage/';
     for (let up of this.props.userUploaders) {
@@ -308,33 +326,46 @@ class NavbarComponent extends Component {
                       <div className="field-label is-normal">
                         <label className="label">家乡</label>
                       </div>
+                      {/*<div className="field-body">*/}
+                      {/*<div className="field">*/}
+                      {/*<div className="control">*/}
+                      {/*<span style={{marginLeft: '8px', lineHeight: '2.5', marginRight: '8px'}}>省(直辖市):</span>*/}
+                      {/*<span className="select">*/}
+                      {/*<select onChange={this.onProvinchange} ref={(proveList) => {*/}
+                      {/*this.proveList = proveList*/}
+                      {/*}}>*/}
+                      {/*<option>---</option>*/}
+                      {/*{provinceList}*/}
+                      {/*</select>*/}
+                      {/*</span>*/}
+                      {/*<span style={{marginLeft: '8px', lineHeight: '2.5', marginRight: '8px'}}>市(区):</span>*/}
+                      {/*<span className="select">*/}
+                      {/*<select onChange={this.onCitychange} ref={(cityList) => {*/}
+                      {/*this.cityList = cityList*/}
+                      {/*}}>*/}
+                      {/*<option>---</option>*/}
+                      {/*{cityList}*/}
+                      {/*</select>*/}
+                      {/*</span>*/}
+                      {/*</div>*/}
+                      {/*<p ref={(errorHint) => {*/}
+                      {/*this.errorHint = errorHint*/}
+                      {/*}} style={{display: 'none'}} className="help is-danger">*/}
+                      {/*请选择省和城市！*/}
+                      {/*</p>*/}
+                      {/*</div>*/}
+                      {/*</div>*/}
                       <div className="field-body">
-                        <div className="field">
-                          <div className="control">
-                            <span style={{marginLeft: '8px', lineHeight: '2.5', marginRight: '8px'}}>省:</span>
-                            <span className="select">
-                                <select onChange={this.onProvinchange} ref={(proveList) => {
-                                  this.proveList = proveList
-                                }}>
-                                  <option>---</option>
-                                  {provinceList}
-                                </select>
-                               </span>
-                            <span style={{marginLeft: '8px', lineHeight: '2.5', marginRight: '8px'}}>市:</span>
-                            <span className="select">
-                                <select onChange={this.onCitychange} ref={(cityList) => {
-                                  this.cityList = cityList
-                                }}>
-                                  <option>---</option>
-                                  {cityList}
-                                </select>
-                               </span>
+                        <div style={{paddingTop: '8px'}}>
+                          <div style={{marginBottom: '10px'}}>
+                            <span>当前选择城市：{this.state.finalCity}</span>
                           </div>
-                          <p ref={(errorHint) => {
-                            this.errorHint = errorHint
-                          }} style={{display: 'none'}} className="help is-danger">
-                            请选择省和城市！
-                          </p>
+                          <div style={{width: '500px', height: '300px'}}>
+                            <Map amapkey={consts.AmapKey}  plugins={['ToolBar']} zoom={4} center={this.state.markerPosition}
+                                 events={this.mapEvents}>
+                              <Marker position={this.state.markerPosition} visible={this.state.markerVisible}/>
+                            </Map>
+                          </div>
                         </div>
                       </div>
                     </div>
