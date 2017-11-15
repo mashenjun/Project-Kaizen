@@ -50,6 +50,7 @@
     "moment": "^2.18.1",
     "plupload_2.1.9": "0.0.1",
     "react": "^15.4.1",
+    "react-amap": "^1.1.1",
     "react-cropper": "^0.10.1",
     "react-datepicker": "^0.43.0",
     "react-dom": "^15.4.1",
