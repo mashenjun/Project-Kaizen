@@ -111,6 +111,7 @@ class CreateListUploaderView(generics.ListCreateAPIView):
         return Response(result,status=status.HTTP_200_OK)
 
     def post(self, request, format = None,):
+        logger.debug(request.data)
         newrequest = modifyUploaderRequestData(request)
         serializer = self.get_serializer(data=newrequest.data)
         if serializer.is_valid(raise_exception=False):
@@ -442,6 +443,23 @@ class FilterPostbyUploaderView(generics.ListAPIView):
     #     restult = modifyUploaderResponseData(queryset, serializer.data)
     #     return Response(restult)
 
+class CreateCommentView(generics.CreateAPIView):
+    serializer_class = CommentCreateSerializer
+    # parser_classes = (MultiPartParser,)
+    permission_classes = [AllowAny]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
+    # TODO:later change to IsAuthenticatedOrReadOnly
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        createdInstance = serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        result = {"id":str(createdInstance.id)}
+        new_token = custom_refresh_token(request.auth)
+        return Response(result, status=status.HTTP_200_OK,headers={'NewToken':new_token})
+
+
 class FilterPostbyCatalogueView(generics.ListAPIView):
     serializer_class = PostBelongUploaderSerializer
     permission_classes = [AllowAny]
@@ -475,8 +493,8 @@ class SearchPostView(generics.ListAPIView):
 @permission_classes([AllowAny])
 def insert_comment_post(request):
     try:
-        id = request.data.get('post',None)
         data = request.data.copy()
+        id = request.data.get('post',None)
         content = request.data.get('content',None)
         owner = request.data.get('owner',None)
         del data['post']
@@ -486,7 +504,7 @@ def insert_comment_post(request):
         if serializer.is_valid():
             serializer.save()
             return Response(status=status.HTTP_200_OK)
-        return  Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         print("Exception in user code:")
         print("-"*60)

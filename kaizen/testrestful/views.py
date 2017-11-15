@@ -20,10 +20,10 @@ from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly
 )
 
-
 from .serializers import EmployeeSerilizer,UploadFileSerilizer,UploadImageSerilizer
 from testconnect.models import Employee
 from .utils import get_token
+from accounts.utils import custom_refresh_token
 from kaizen.config import (
     accessKeyId,
     accessKeySecret,
@@ -101,7 +101,14 @@ class UploadImageView(views.APIView):
 def hello_world(request,name):
     if request.method == 'POST':
         return Response({"message": "Got some data!", "data": request.data})
+
+    elif request.method == 'GET':
+        jwtToken = name
+        newToken = custom_refresh_token(jwtToken)
+        return Response({"message": "Got some data!", "data": newToken})
     return Response({"message": "Hello, world!"+str(name)})
+
+
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -123,3 +130,4 @@ def checkrequest(request):
     result['OSS_url'] = os.path.join(host, request.data['filename'])
     print(result)
     return Response(result,status=status.HTTP_200_OK)
+
