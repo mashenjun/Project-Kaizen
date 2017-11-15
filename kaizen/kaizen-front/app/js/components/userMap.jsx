@@ -12,7 +12,7 @@ class UserMap extends Component {
         const  {usermapdata }= nextProps;
         console.log('map component render');
         const map =  L.map('mapid', {searchControl: {}}).setView([34, 112], 4);
-        L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_nolabels/{z}/{x}/{y}.png', {
             minZoom: 3,
             maxZoom: 10,
             attributionControl: false
