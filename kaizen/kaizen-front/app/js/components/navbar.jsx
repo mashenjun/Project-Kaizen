@@ -77,7 +77,6 @@ class NavbarComponent extends Component {
 
   mapEvents = {
     click: (e) => {
-      console.log('You clicked map', {longitude: e.lnglat.lng, latitude: e.lnglat.lat});
       fetch(`http://restapi.amap.com/v3/geocode/regeo?output=json&key=${consts.AK}&location=${[e.lnglat.lng,e.lnglat.lat]}`)
       .then((response) => response.json())
       .then((data) =>{

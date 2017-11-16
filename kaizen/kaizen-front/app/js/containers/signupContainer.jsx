@@ -63,7 +63,7 @@ class signupContainer extends Component {
         const {errorMessage} = this.props;
         return (
             <div className="loginContainer">
-                <div className="loginContainer-loginblock" style={{height: '400px'}}>
+                <div className="loginContainer-loginblock" style={{height: '450px'}}>
                     <h1 style={{fontSize:'1.3em'}}>新用户注册</h1>
                     <div className="content">
                         <TextField
@@ -117,7 +117,7 @@ class signupContainer extends Component {
                                 this.confirmpasswordInput = input;
                             }}
                         />
-
+                        <span style={{fontSize: '0.9rem'}}>注册时默认已阅读 <a> 本网站隐私政策</a></span>
                         <RaisedButton onClick={this.onconfirmButtonClick} className="confirmButton"
                                       backgroundColor="rgb(164, 198, 57)"
                                       label="提交" labelColor="ffffff"
