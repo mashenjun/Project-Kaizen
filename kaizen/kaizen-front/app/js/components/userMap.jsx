@@ -62,6 +62,7 @@ class UserMap extends Component {
 
 
   render() {
+    moment.locale('zh-cn');
     const postList = [];
     for (let p of this.props.posts) {
       postList.push(<tr onClick={() => {
@@ -70,7 +71,7 @@ class UserMap extends Component {
         <td>{p.title}</td>
         <td>{p.catalogue}</td>
         <td>{p.comment_count}</td>
-        <td>{moment(p.creadted_at).format('MMMM Do YYYY, h:mm:ss a')}</td>
+        <td>{moment(p.creadted_at).format('lll')}</td>
       </tr>);
     }
     return (

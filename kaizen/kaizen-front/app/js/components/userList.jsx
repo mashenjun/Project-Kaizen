@@ -27,9 +27,10 @@ class UserList extends React.Component {
   };
 
   render() {
+    moment.locale('zh-cn');
     const postList = [];
     for(let p of this.props.posts){
-      postList.push(<tr onClick={()=>{window.location.href = '#/upload/post/' + p.id}} key={p.id} style={{cursor:'pointer',fontSize: '1.1rem'}}><td>{p.title}</td><td>{p.catalogue}</td><td>{p.comment_count}</td><td>{moment(p.creadted_at).format('MMMM Do YYYY, h:mm:ss a')}</td></tr>);
+      postList.push(<tr onClick={()=>{window.location.href = '#/upload/post/' + p.id}} key={p.id} style={{cursor:'pointer',fontSize: '1.1rem'}}><td>{p.title}</td><td>{p.catalogue}</td><td>{p.comment_count}</td><td>{moment(p.creadted_at).format('lll')}</td></tr>);
     }
     const maxPage = Math.floor(this.props.totalCount / consts.PAGE_SIZE) + 1;
     const {currentPage} = this.props;
