@@ -22,6 +22,7 @@ urlpatterns = [
     # url(r'^list-post/$',views.ListPostView.as_view(),name='post-list'),
 
     # apis related with comments (TODO)
+    url(r'^create-comment/$',views.CreateCommentView.as_view(),name='comment-create-view'),
     url(r'^comment/$',views.insert_comment_post,name='comment-create'),
 
     # utils apis for the purpose of creating uploader and post

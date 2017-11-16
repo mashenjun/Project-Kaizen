@@ -172,7 +172,7 @@ class NavbarComponent extends Component {
                     <span style={{marginRight: '1rem'}}><strong>{up.name}</strong> <small>@{up.home_town}</small></span>
                   </div>
                   <div className="column is-half">
-                    <span>Already has <strong>{up.post_count}</strong> post </span>
+                    <span>已有 <strong>{up.post_count}</strong> 条目 </span>
                   </div>
                 </div>
               </div>
@@ -254,7 +254,7 @@ class NavbarComponent extends Component {
                           <div className="control">
                             <input className="input" ref={(name) => {
                               this.name = name
-                            }} type="text" placeholder="Name"/>
+                            }} type="text" placeholder="请输入名字！"/>
                           </div>
                         </div>
                       </div>
@@ -326,35 +326,6 @@ class NavbarComponent extends Component {
                       <div className="field-label is-normal">
                         <label className="label">家乡</label>
                       </div>
-                      {/*<div className="field-body">*/}
-                      {/*<div className="field">*/}
-                      {/*<div className="control">*/}
-                      {/*<span style={{marginLeft: '8px', lineHeight: '2.5', marginRight: '8px'}}>省(直辖市):</span>*/}
-                      {/*<span className="select">*/}
-                      {/*<select onChange={this.onProvinchange} ref={(proveList) => {*/}
-                      {/*this.proveList = proveList*/}
-                      {/*}}>*/}
-                      {/*<option>---</option>*/}
-                      {/*{provinceList}*/}
-                      {/*</select>*/}
-                      {/*</span>*/}
-                      {/*<span style={{marginLeft: '8px', lineHeight: '2.5', marginRight: '8px'}}>市(区):</span>*/}
-                      {/*<span className="select">*/}
-                      {/*<select onChange={this.onCitychange} ref={(cityList) => {*/}
-                      {/*this.cityList = cityList*/}
-                      {/*}}>*/}
-                      {/*<option>---</option>*/}
-                      {/*{cityList}*/}
-                      {/*</select>*/}
-                      {/*</span>*/}
-                      {/*</div>*/}
-                      {/*<p ref={(errorHint) => {*/}
-                      {/*this.errorHint = errorHint*/}
-                      {/*}} style={{display: 'none'}} className="help is-danger">*/}
-                      {/*请选择省和城市！*/}
-                      {/*</p>*/}
-                      {/*</div>*/}
-                      {/*</div>*/}
                       <div className="field-body">
                         <div style={{paddingTop: '8px'}}>
                           <div style={{marginBottom: '10px'}}>

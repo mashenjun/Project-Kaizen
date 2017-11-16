@@ -450,14 +450,6 @@ class CreateCommentView(generics.CreateAPIView):
     # permission_classes = [IsAuthenticatedOrReadOnly]
     # TODO:later change to IsAuthenticatedOrReadOnly
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        createdInstance = serializer.save()
-        headers = self.get_success_headers(serializer.data)
-        result = {"id":str(createdInstance.id)}
-        new_token = custom_refresh_token(request.auth)
-        return Response(result, status=status.HTTP_200_OK,headers={'NewToken':new_token})
 
 
 class FilterPostbyCatalogueView(generics.ListAPIView):
