@@ -27,7 +27,8 @@ class UserMap extends Component {
     L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_nolabels/{z}/{x}/{y}.png', {
       minZoom: 3,
       maxZoom: 10,
-      attributionControl: false
+      attributionControl: false,
+      scrollWheelZoom: false
     }).addTo(this.map);
 
     for (const user of usermapdata) {
