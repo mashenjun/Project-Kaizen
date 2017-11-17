@@ -36,4 +36,5 @@ class User(Document):
     def query_uploaders(self):
         return Uploader.objects(user=self)
 
+
 from upload.models import Uploader

@@ -83,25 +83,62 @@ class UploaderAvatarHyperlinkField(serializers.serializers.HyperlinkedIdentityFi
         return self.reverse(view_name, kwargs=kwargs, request=request, format=format)
 
 
-class CommentCreateSerializer(serializers.EmbeddedDocumentSerializer):
-    # post = fields.ReferenceField(model=Post,required=True)
+class CommentCreateSerializer(serializers.DocumentSerializer):
+    post = fields.ReferenceField(model=Post,required=True, write_only=True)
     owner = fields.ReferenceField(model=User,required=True)
     content = serializers.serializers.CharField()
     class Meta:
         model = Comment
         fields = [
+            'post',
             'content',
             'owner',
         ]
+        extra_kwargs = {'post'}
 
-    def create(self, post,validated_data):
+    def create(self,validated_data):
         owner = User.objects.get(id = validated_data['owner'].id)
+        post = Post.objects.get(id=validated_data['post'].id)
+        logger.debug(post._data)
         content = validated_data['content']
         newcomment = Comment(owner= owner,content=content)
         post.add_comment(newcomment)
         return newcomment
+
     def insert(self,post):
         post.add_comment(self)
+
+class CommentListSerializer(serializers.EmbeddedDocumentSerializer):
+
+    owner = fields.ReferenceField(model=User,required=True)
+    content = serializers.serializers.CharField()
+    edit_url = serializers.serializers.HyperlinkedIdentityField(
+        view_name='comment-edit',
+        lookup_field='id',
+    )
+    class Meta:
+        model = Comment
+        fields = [
+            'id',
+            'content',
+            'owner',
+            'edit_url',
+        ]
+
+class CommentEditSerializer(serializers.DocumentSerializer):
+    content = serializers.serializers.CharField()
+    # user = serializers.serializers.CharField(source='user.username')
+
+    class Meta:
+        model = Comment
+        fields = [
+            'content',
+            'creadted_at',
+            'owner',
+        ]
+        read_only_fields = ('creadted_at','owner',)
+
+
 
 
 class PostCreateSerializer(serializers.DocumentSerializer):
@@ -323,7 +360,6 @@ class UploaderCreateSerializer(serializers.DocumentSerializer):
             'location',
             'user',
         ]
-
 
 
 class UploaderListSerializer(serializers.DocumentSerializer):

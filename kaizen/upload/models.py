@@ -3,6 +3,7 @@
 import datetime
 from mongoengine import *
 from accounts.models import User
+from bson.objectid import ObjectId
 
 
 # Create your models here.
@@ -52,6 +53,7 @@ class Catalogue(Document):
 
 # TODO: think the relationship between Uploaders, Posts and Comments.
 class Comment(EmbeddedDocument):
+    id = ObjectIdField(required=True, default=ObjectId, unique=True, primary_key=True)
     content = StringField()
     owner = ReferenceField(User,required=True,dbref=False)
     creadted_at = DateTimeField(default=datetime.datetime.utcnow())
@@ -70,12 +72,15 @@ class Post(Document):
     audio_url = ListField(URLField(required=False,null=True))
 
     meta = {'indexes': [
-        {'fields': ['$title', "text"],
-         'weights': {'title': 7, 'content': 3}
+        'title',
+        'text',
+        {'fields': ['$title','$text'],
+         'weights': {'title': 7, 'text': 3}
         }
     ]}
 
     def add_comment(self,comment):
+        # self.update(push__comment=comment)
         self.comment.append(comment)
         self.save()
 
@@ -84,6 +89,18 @@ class Post(Document):
         # return Uploader.objects(id = self.author.id).first()
     def query_user(self,):
         return self.author.user
+
+    def query_commentByUser(self,user):
+        return [x for x in self.comment if x.user == user]
+
+    def query_commentById(self,id):
+        objId = ObjectId(id)
+        for x in self.comment:
+            if x.id == objId:
+                return x
+        else:
+            return None
+
 
 # class TextPost(Post):
 #     content = StringField()

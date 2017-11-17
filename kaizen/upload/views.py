@@ -29,6 +29,7 @@ from .serializers import (
     PostCreateSerializer,
     PostListSerializer,
     CommentCreateSerializer,
+    CommentEditSerializer,
     PostUpdateCommentSerializer,
     PostBelongUploaderSerializer,
     UploaderEditSerializer,
@@ -75,6 +76,7 @@ from accounts.utils import (
     custom_refresh_token
 )
 from rest_framework.renderers import JSONRenderer
+from mongoengine.queryset.visitor import Q
 
 # Create your views here.
 
@@ -450,6 +452,73 @@ class CreateCommentView(generics.CreateAPIView):
     # permission_classes = [IsAuthenticatedOrReadOnly]
     # TODO:later change to IsAuthenticatedOrReadOnly
 
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        createdInstance = serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        result = {"id":str(createdInstance.id)}
+        new_token = custom_refresh_token(request.auth)
+        return Response(result, status=status.HTTP_200_OK,headers={'NewToken':new_token})
+
+class EditCommentView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generics.RetrieveAPIView):
+    serializer_class = CommentEditSerializer
+    # TODO: change permission_class
+    # parser_classes = (MultiPartParser,)
+    permission_classes = [AllowAny]
+    # permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
+
+    def get_queryset(self):
+        from django.db.models.query import QuerySet
+        commentId = self.kwargs['id']
+        # queryset = Post.objects.filter(comment__match={"id":commentId}).first().query_commentById(commentId)
+        queryset = Post.objects.filter(comment__match={"id":commentId}) # get post
+        if isinstance(queryset, QuerySet):
+            # Ensure queryset is re-evaluated on each request.
+            queryset = queryset.all()
+        return queryset
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_queryset().first().query_commentById(kwargs['id'])
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_queryset().first().query_commentById(kwargs['id'])
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        new_token = custom_refresh_token(request.auth)
+        return Response(serializer.data,status=status.HTTP_200_OK,headers={'NewToken':new_token})
+
+
+    def put(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        '''
+        change the default destroy function. delete the file stored on OSS at the same time.
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        '''
+        post = self.get_queryset()
+        # comment = post.query_commentById(kwargs['id'])
+        post.update_one(pull__comment__id=Comment(id=kwargs['id']).id)
+        new_token = custom_refresh_token(request.auth)
+        return Response(status=status.HTTP_204_NO_CONTENT,headers={'NewToken':new_token})
+
 
 
 class FilterPostbyCatalogueView(generics.ListAPIView):
@@ -467,7 +536,7 @@ class FilterPostbyCatalogueView(generics.ListAPIView):
         return Post.objects(catalogue__contains=catalogue)
 
 class SearchPostView(generics.ListAPIView):
-    serializer_class = PostBelongUploaderSerializer
+    serializer_class = PostListSerializer
     permission_classes = [AllowAny]
     # permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = None
@@ -478,7 +547,11 @@ class SearchPostView(generics.ListAPIView):
         by filtering against a `username` query parameter in the URL.
         """
         keyword = self.kwargs['keyword']
-        return Post.objects.search_text(keyword)
+        searchRlt = Post.objects(Q(title__icontains=keyword)|Q(text__icontains=keyword))
+        # searchRlt = Post.objects.search_text(keyword)
+        # logger.debug(searchRlt)
+        # print("[DEBUG]:{0}".format(titleRlt))
+        return searchRlt
 
 # function based view
 @api_view(['PUT'])

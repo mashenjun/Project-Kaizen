@@ -24,6 +24,7 @@ urlpatterns = [
     # apis related with comments (TODO)
     url(r'^create-comment/$',views.CreateCommentView.as_view(),name='comment-create-view'),
     url(r'^comment/$',views.insert_comment_post,name='comment-create'),
+    url(r'^comment/(?P<id>.+)/edit$',views.EditCommentView.as_view(),name='comment-edit'),
 
     # utils apis for the purpose of creating uploader and post
     url(r'^getphoto/(?P<id>.+)/$',views.uploader_photo_view,name='get-photo'),
