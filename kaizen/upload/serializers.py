@@ -99,7 +99,6 @@ class CommentCreateSerializer(serializers.DocumentSerializer):
     def create(self,validated_data):
         owner = User.objects.get(id = validated_data['owner'].id)
         post = Post.objects.get(id=validated_data['post'].id)
-        logger.debug(post._data)
         content = validated_data['content']
         newcomment = Comment(owner= owner,content=content)
         post.add_comment(newcomment)
@@ -127,16 +126,17 @@ class CommentListSerializer(serializers.EmbeddedDocumentSerializer):
 
 class CommentEditSerializer(serializers.DocumentSerializer):
     content = serializers.serializers.CharField()
+    created_at = serializers.serializers.DateTimeField(format="%Y-%m-%d %H:%M")
     # user = serializers.serializers.CharField(source='user.username')
 
     class Meta:
         model = Comment
         fields = [
             'content',
-            'creadted_at',
+            'created_at',
             'owner',
         ]
-        read_only_fields = ('creadted_at','owner',)
+        read_only_fields = ('created_at','owner',)
 
 
 
@@ -152,6 +152,7 @@ class PostCreateSerializer(serializers.DocumentSerializer):
     class Meta:
         model = Post
         fields = [
+            'id',
             'title',
             'catalogue',
             'text',
@@ -183,6 +184,7 @@ class PostSimpletSerializer(serializers.DocumentSerializer):
         ]
 
 class PostDetailSerializer(serializers.DocumentSerializer):
+
     comment_count = serializers.serializers.SerializerMethodField()
     edit_url = serializers.serializers.HyperlinkedIdentityField(
         view_name='post-edit',
@@ -341,7 +343,7 @@ class PostBelongUploaderSerializer(serializers.DocumentSerializer):
 
 class UploaderCreateSerializer(serializers.DocumentSerializer):
     name = serializers.serializers.CharField(write_only=True)
-    birth_day = serializers.serializers.DateTimeField(write_only=True)
+    birth_day = serializers.serializers.DateTimeField(write_only=True,input_formats=["%Y-%m-%d"])
     sex = serializers.serializers.ChoiceField(choices=SEX,write_only=True)
     photo = fields.ImageField(default=get_default_image(),use_url=True,validators=[validate_photo_size,],write_only=True)
     home_town = serializers.serializers.CharField(write_only=True)
@@ -364,10 +366,10 @@ class UploaderCreateSerializer(serializers.DocumentSerializer):
 
 class UploaderListSerializer(serializers.DocumentSerializer):
     name = serializers.serializers.CharField()
-    birth_day = serializers.serializers.DateTimeField()
+    birth_day = serializers.serializers.DateTimeField(format="%Y-%m-%d")
     sex = serializers.serializers.SerializerMethodField()
     home_town = serializers.serializers.CharField()
-    location = fields.GeoPointField()
+    location = fields.GeoJSONField(geo_type='Point')
     user = fields.ReferenceField(model=User)
     photo_url = serializers.serializers.HyperlinkedIdentityField(
         view_name='get-photo',
@@ -401,10 +403,10 @@ class UploaderListSerializer(serializers.DocumentSerializer):
 
 class UploaderBelongUserSerializer(serializers.DocumentSerializer):
     name = serializers.serializers.CharField()
-    birth_day = serializers.serializers.DateTimeField()
+    birth_day = serializers.serializers.DateTimeField(format="%Y-%m-%d")
     sex = serializers.serializers.SerializerMethodField()
     home_town = serializers.serializers.CharField()
-    location = fields.GeoPointField()
+    location = fields.GeoJSONField(geo_type='Point')
     post_count = serializers.serializers.SerializerMethodField()
     photo_url = serializers.serializers.HyperlinkedIdentityField(
         view_name='get-photo',
@@ -441,10 +443,10 @@ class UploaderBelongUserSerializer(serializers.DocumentSerializer):
 
 class UploaderDetailSerializer(serializers.DocumentSerializer):
     name = serializers.serializers.CharField()
-    birth_day = serializers.serializers.DateTimeField()
+    birth_day = serializers.serializers.DateTimeField(format="%Y-%m-%d")
     sex = serializers.serializers.SerializerMethodField()
     home_town = serializers.serializers.CharField()
-    location = fields.GeoPointField()
+    location = fields.GeoJSONField(geo_type='Point')
     user = fields.ReferenceField(model=User)
     posts = serializers.serializers.SerializerMethodField()
     post_count = serializers.serializers.SerializerMethodField()
@@ -485,10 +487,10 @@ class UploaderDetailSerializer(serializers.DocumentSerializer):
 
 class UploaderSimplelSerializer(serializers.DocumentSerializer):
     name = serializers.serializers.CharField()
-    birth_day = serializers.serializers.DateTimeField()
+    birth_day = serializers.serializers.DateTimeField(format="%Y-%m-%d")
     sex = serializers.serializers.SerializerMethodField()
     home_town = serializers.serializers.CharField()
-    location = fields.GeoPointField()
+    location = fields.GeoJSONField(geo_type='Point')
     user = fields.ReferenceField(model=User)
     post_count = serializers.serializers.SerializerMethodField()
     posts_url = serializers.serializers.HyperlinkedIdentityField(
@@ -533,10 +535,10 @@ class UploaderSimplelSerializer(serializers.DocumentSerializer):
 
 class UploaderEditSerializer(serializers.DocumentSerializer):
     name = serializers.serializers.CharField()
-    birth_day = serializers.serializers.DateTimeField()
+    birth_day = serializers.serializers.DateTimeField(format="%Y-%m-%d",input_formats=["%Y-%m-%d"])
     sex = serializers.serializers.ChoiceField(choices=SEX)
     home_town = serializers.serializers.CharField()
-    location = fields.GeoPointField(required=False)
+    location = fields.GeoJSONField(geo_type='Point')
     photo = fields.ImageField(use_url=True,validators=[validate_photo_size],required=False)
     detail_url = serializers.serializers.HyperlinkedIdentityField(
         view_name='uploader-retrieve',
@@ -556,6 +558,5 @@ class UploaderEditSerializer(serializers.DocumentSerializer):
             # 'user'
         ]
         depth = 2
-
 
 

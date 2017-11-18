@@ -114,11 +114,13 @@ class NavbarComponent extends Component {
       this.errorHint.style.display = "inline"
     } else {
         formData.append('location', [this.state.markerPosition.longitude, this.state.markerPosition.latitude]);
+
         if (!this.cropper.getCroppedCanvas() || typeof this.cropper.getCroppedCanvas() === 'undefined') {
           fetch('/upload/uploader/', {
             method: 'POST',
             body: formData
           }).then((response) => response.json()).then(this.onFetchDatahandler).catch(this.onFetchErrorHandler);
+          console.log(formData)
         } else {
           this.cropper.getCroppedCanvas().toBlob((blob) => {
             formData.append('photo', blob);
