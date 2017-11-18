@@ -8,8 +8,8 @@ from bson.objectid import ObjectId
 
 # Create your models here.
 
-SEX = (('M', 'Male'),
-        ('F', 'Female'),)
+SEX = (('M', '男'),
+        ('F', '女'),)
 
 CATALOGUE = (('GA',u"民间游戏"),
         ('ST',u"传说/故事"),
@@ -56,7 +56,7 @@ class Comment(EmbeddedDocument):
     id = ObjectIdField(required=True, default=ObjectId, unique=True, primary_key=True)
     content = StringField()
     owner = ReferenceField(User,required=True,dbref=False)
-    creadted_at = DateTimeField(default=datetime.datetime.utcnow())
+    created_at = DateTimeField(default=datetime.datetime.utcnow())
 
 class Post(Document):
     title = StringField(max_length=200,required=True)
