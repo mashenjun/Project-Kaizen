@@ -129,34 +129,6 @@ class CreateListUploaderView(generics.ListCreateAPIView):
             }
             return Response(response_data_fail,status=status.HTTP_400_BAD_REQUEST)
 
-class FilterUploaderbyUserView(generics.ListAPIView):
-    serializer_class = UploaderBelongUserSerializer
-    permission_classes = [AllowAny]
-    # permission_classes = [IsAuthenticatedOrReadOnly]
-    pagination_class = None
-
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        user = self.kwargs['userid']
-        return Uploader.objects.filter(user=user)
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            restult = modifyUploaderResponseData(page, serializer.data)
-            return self.get_paginated_response(restult)
-
-        serializer = self.get_serializer(queryset, many=True)
-        result = modifyUploaderResponseData(queryset, serializer.data)
-        new_token = custom_refresh_token(request.auth)
-        return Response(result,status=status.HTTP_200_OK,headers={'NewToken':new_token})
-
 class RetrieveUploaderView(generics.RetrieveAPIView):
     serializer_class = UploaderSimplelSerializer
     permission_classes = [AllowAny]
@@ -219,8 +191,36 @@ class EditUploaderView(mixins.DestroyModelMixin,mixins.UpdateModelMixin, generic
         new_token = custom_refresh_token(request.auth)
         return Response(status=status.HTTP_204_NO_CONTENT,headers={'NewToken':new_token})
 
+class FilterUploaderbyUserView(generics.ListAPIView):
+    serializer_class = UploaderBelongUserSerializer
+    permission_classes = [AllowAny]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
+    pagination_class = None
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        user = self.kwargs['userid']
+        return Uploader.objects.filter(user=user)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            restult = modifyUploaderResponseData(page, serializer.data)
+            return self.get_paginated_response(restult)
+
+        serializer = self.get_serializer(queryset, many=True)
+        result = modifyUploaderResponseData(queryset, serializer.data)
+        new_token = custom_refresh_token(request.auth)
+        return Response(result,status=status.HTTP_200_OK,headers={'NewToken':new_token})
+
 class FilterUploaderbyPostCatalogueView(generics.ListAPIView):
-    serializer_class = UploaderListSerializer
+    serializer_class = UploaderSimplelSerializer
     permission_classes = [AllowAny]
     # permission_classes = [IsAuthenticatedOrReadOnly]
 
@@ -236,7 +236,6 @@ class FilterUploaderbyPostCatalogueView(generics.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        logger.debug(queryset)
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -248,6 +247,28 @@ class FilterUploaderbyPostCatalogueView(generics.ListAPIView):
         new_token = custom_refresh_token(request.auth)
         return Response(result,status=status.HTTP_200_OK,headers={'NewToken':new_token})
 
+class SearchUploaderbyPostKeywordView(generics.ListAPIView):
+    serializer_class = UploaderSimplelSerializer
+    permission_classes = [AllowAny]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
+    pagination_class = None
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        keyword = self.kwargs['keyword']
+        searchRlt = Post.objects(Q(title__icontains=keyword)|Q(text__icontains=keyword))
+        uploaders = list(set([x.author for x in searchRlt]))
+        return uploaders
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        result = modifyUploaderResponseData(queryset, serializer.data)
+        new_token = custom_refresh_token(request.auth)
+        return Response(result,status=status.HTTP_200_OK,headers={'NewToken':new_token})
 
 
 class CreateListPostView(generics.ListCreateAPIView):
@@ -298,33 +319,19 @@ class RetrievePostView(generics.RetrieveAPIView):
     def get_object(self):
         ""
         queryset = self.filter_queryset(self.get_queryset())
-
-        # Perform the lookup filtering.
-        # lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
-
-        # assert lookup_url_kwarg in self.kwargs, (
-        #     'Expected view %s to be called with a URL keyword argument '
-        #     'named "%s". Fix your URL conf, or set the `.lookup_field` '
-        #     'attribute on the view correctly.' %
-        #     (self.__class__.__name__, lookup_url_kwarg)
-        # )
-
-        # filter_kwargs = {self.lookup_field: self.kwargs[lookup_url_kwarg]}
-
         obj = get_object_or_404(queryset)
         self.check_object_permissions(self.request, obj)
         return obj
 
     def get_queryset(self):
-        result = Post.objects()
+        id = self.kwargs['id']
+        result = Post.objects(id = id)
         assert self.queryset is not None, (
             "'%s' should either include a `queryset` attribute, "
             "or override the `get_queryset()` method."
             % self.__class__.__name__
         )
-        id = self.kwargs['id']
-        if id is not None:
-            result = Post.objects(id = id)
+
         return result
 
     def retrieve(self, request, *args, **kwargs):
@@ -535,23 +542,6 @@ class FilterPostbyCatalogueView(generics.ListAPIView):
         catalogue = self.kwargs['catalogue']
         return Post.objects(catalogue__contains=catalogue)
 
-class SearchPostView(generics.ListAPIView):
-    serializer_class = PostListSerializer
-    permission_classes = [AllowAny]
-    # permission_classes = [IsAuthenticatedOrReadOnly]
-    pagination_class = None
-
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        keyword = self.kwargs['keyword']
-        searchRlt = Post.objects(Q(title__icontains=keyword)|Q(text__icontains=keyword))
-        # searchRlt = Post.objects.search_text(keyword)
-        # logger.debug(searchRlt)
-        # print("[DEBUG]:{0}".format(titleRlt))
-        return searchRlt
 
 # function based view
 @api_view(['PUT'])

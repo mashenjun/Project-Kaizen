@@ -7,9 +7,10 @@ urlpatterns = [
     # apis related with uploaders
     url(r'^uploader/$', views.CreateListUploaderView.as_view(), name='uploader-create-list'),
     url(r'^uploader/(?P<id>.+)/$',views.RetrieveUploaderView.as_view(),name='uploader-retrieve'),
-    url(r'^filter/uploader/(?P<userid>.+)/$', views.FilterUploaderbyUserView.as_view(), name='uploader-filter-user'),
     url(r'^uploader/(?P<id>.+)/edit$', views.EditUploaderView.as_view(), name='uploader-edit'),
+    url(r'^filter/uploader/(?P<userid>.+)/$', views.FilterUploaderbyUserView.as_view(), name='uploader-filter-user'),
     url(r'^filter/uploader_postCatalogue/(?P<catalogue>.+)/$', views.FilterUploaderbyPostCatalogueView.as_view(), name='uploader-filter-postCatalogue'),
+    url(r'^search/uploader_postKeyword/(?P<keyword>.+)/$', views.SearchUploaderbyPostKeywordView.as_view(), name='uploader-search-postKeyword'),
 
     # apis related with posts
     url(r'^post/$', views.CreateListPostView.as_view(), name='post-create-list'),
@@ -18,8 +19,7 @@ urlpatterns = [
     url(r'^post/(?P<id>.+)/edit$',views.EditPostView.as_view(),name='post-edit'),
     url(r'^filter/post/(?P<id>.+)/$', views.FilterPostbyUploaderView.as_view(), name='post-filter-uploader'),
     url(r'^filter/post_catalogue/(?P<catalogue>.+)/$', views.FilterPostbyCatalogueView.as_view(), name='post-filter-catalogue'),
-    url(r'^search/post/(?P<keyword>.+)/$', views.SearchPostView.as_view(), name='post-search'),
-    # url(r'^list-post/$',views.ListPostView.as_view(),name='post-list'),
+    # url(r'^search/post/(?P<keyword>.+)/$', views.SearchPostView.as_view(), name='post-search-keyword'),
 
     # apis related with comments (TODO)
     url(r'^create-comment/$',views.CreateCommentView.as_view(),name='comment-create-view'),
