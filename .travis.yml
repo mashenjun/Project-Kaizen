@@ -30,8 +30,8 @@ script:
 - python $TRAVIS_BUILD_DIR/kaizen/manage.py migrate
 
 after_success:
-- scp -o stricthostkeychecking=no -i ~/.ssh/kdt_rsa -r $TRAVIS_BUILD_DIR/kaizen/account root@106.14.134.47:~/
 - ssh root@106.14.134.47 "~/Project-Kaizen/kaizen/prepareBackend.sh"
+- scp -o stricthostkeychecking=no -i ~/.ssh/kdt_rsa -r $TRAVIS_BUILD_DIR/kaizen/account root@106.14.134.47:~/
 - echo "build and deploy successfully!"
 branches:
   only:
