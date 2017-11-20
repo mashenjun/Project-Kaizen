@@ -3,8 +3,7 @@ import {hashHistory} from 'react-router';
 import {connect} from 'react-redux';
 import {uploaderPageNavigate} from '../actions/navigationAction';
 import {fetchUploaderPostsRequest} from '../actions/uploaderAction';
-import {searchUploaderDataRequest} from '../actions/dataActions';
-import {fetchUploaderDataRequest} from '../actions/dataActions'
+import {searchUploaderDataRequest,fetchUploaderDataRequest,filterUploaderDataRequest} from '../actions/dataActions';
 import * as consts from '../constants/const';
 import '../../less/userList.less'
 import moment from 'moment';
@@ -26,6 +25,11 @@ class UserList extends React.Component {
     if (this.props.currentPage < maxPage) {
       this.props.uploaderPageNavigate(this.props.currentPage + 1);
     }
+  };
+
+  filterItemClick = (e)=>{
+    this.catagory.innerText = e.target.innerText;
+    this.props.filterUploaders(e.target.innerText);
   };
 
   render() {
@@ -113,10 +117,31 @@ class UserList extends React.Component {
                       </div>
                   </div>
                   <div className="nav-right">
-                    <a className="nav-item is-tab">名字</a>
-                    <a className="nav-item is-tab">大小</a>
-                    <a className="nav-item is-tab">查看</a>
-                    <a className="nav-item"><span className=" button is-success">已上传</span></a>
+                    <div className="navbar-item has-dropdown is-hoverable">
+                      <a className="navbar-link" ref={(cat)=>(this.catagory = cat)}>
+                        类别
+                      </a>
+                      <div className="navbar-dropdown">
+                        <a className="navbar-item" onClick={this.filterItemClick}>
+                          民间游戏
+                        </a>
+                        <a className="navbar-item" onClick={this.filterItemClick}>
+                          传说/故事
+                        </a>
+                        <a className="navbar-item" onClick={this.filterItemClick}>
+                          儿歌/童谣
+                        </a>
+                        <a className="navbar-item" onClick={this.filterItemClick}>
+                          玩意/把式
+                        </a>
+                        <a className="navbar-item" onClick={this.filterItemClick}>
+                          地方特色
+                        </a>
+                        <a className="navbar-item" onClick={this.filterItemClick}>
+                          其他
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -173,6 +198,9 @@ function mapDispatchToProps(dispatch) {
       }else{
         dispatch(fetchUploaderDataRequest());
       }
+    },
+    filterUploaders(filter){
+      dispatch(filterUploaderDataRequest(filter));
     }
   }
 }

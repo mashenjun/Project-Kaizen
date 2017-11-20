@@ -22,6 +22,16 @@ function uploaderReducer(state = {usermapdata: [], totalCount: 0, currentPage: 1
       return Object.assign({}, state, {
         errorMessage: payload['errormessage']
       });
+    case actionTypes.UPLOADER_FILTER_SUCCESS:
+      console.log(payload);
+      return Object.assign({}, state, {
+        usermapdata: payload.results,
+        totalCount: payload.count
+      });
+    case actionTypes.UPLOADER_FILTER_FAILURE:
+      return Object.assign({}, state, {
+        errorMessage: payload['errormessage']
+      });
     case actionTypes.UPLOADER_PAGE_CHANGE:
       return Object.assign({}, state, {
         currentPage: action.page

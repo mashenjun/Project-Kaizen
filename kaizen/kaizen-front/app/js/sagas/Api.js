@@ -89,5 +89,11 @@ export default {
     return callApi(url, {
       method: 'GET',
     })
+  },
+  filterUploaders(filter){
+    const url = '/upload/filter/uploader_postCatalogue/' + filter;
+    return callApi(url, {
+      method: 'GET',
+    })
   }
 }

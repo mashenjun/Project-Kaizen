@@ -50,6 +50,32 @@ export const searchUploaderDataSuccess = (payload) => {
   }
 };
 
+export const filterUploaderDataRequest = (filter) => {
+  return {
+    type: types.UPLOADER_FILTER_REQUEST,
+    filter:filter
+  }
+};
+
+
+export const filterUploaderDataFailure= (payload) => {
+  return {
+    type: types.UPLOADER_FILTER_FAILURE,
+    payload:{
+      ...payload
+    }
+  }
+};
+
+export const filterUploaderDataSuccess = (payload) => {
+  return {
+    type: types.UPLOADER_FILTER_SUCCESS,
+    payload:{
+      ...payload
+    }
+  }
+};
+
 export const ServerSideError = (payload) => {
     return {
         type: types.INTERNAL_SERVER_ERROR,
