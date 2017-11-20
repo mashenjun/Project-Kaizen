@@ -1,0 +1,30 @@
+language: python # => 1
+
+python: # => 2
+- "3.5"
+
+node_js:
+- "7"
+
+services: # => 3
+- mongodb
+
+env: # => 4
+- DJANGO=1.8
+
+before_install:
+- pip install -U pip
+
+install: # => 5
+- pip install -r requirements.txt
+
+before_script: # => 6
+#- mysql -e 'create database test;' -u root
+- python manage.py migrate
+
+script: # => 7
+- python ./kaizen/manage.py migrate
+
+branches:
+  only:
+    - master

@@ -8,8 +8,8 @@ from django.shortcuts import render_to_response
 from rest_framework import views,status,mixins
 
 from rest_framework.parsers import FileUploadParser,MultiPartParser,FormParser,JSONParser
-from rest_framework.settings import api_settings
-from rest_framework.reverse import reverse
+# from rest_framework.settings import api_settings
+# from rest_framework.reverse import reverse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import (
@@ -18,8 +18,8 @@ from rest_framework.permissions import (
     IsAdminUser,
     IsAuthenticatedOrReadOnly
 )
-from .customize.custompermission import WhitelistPermission
-from .customize.custompagination import StandardResultsSetPagination
+# from .customize.custompermission import WhitelistPermission
+# from .customize.custompagination import StandardResultsSetPagination
 from rest_framework_mongoengine import generics
 from rest_framework_mongoengine.generics import get_object_or_404
 
@@ -33,7 +33,7 @@ from .serializers import (
     PostUpdateCommentSerializer,
     PostBelongUploaderSerializer,
     UploaderEditSerializer,
-    UploaderDetailSerializer,
+    # UploaderDetailSerializer,
     UploaderBelongUserSerializer,
     UploaderSimplelSerializer,
     PostEditSerializer,
@@ -53,17 +53,16 @@ from .models import (
     Comment,
 )
 from kaizen.config import (
-    accessKeyId,
-    accessKeySecret,
+    # accessKeyId,
+    # accessKeySecret,
     host,
-    expire_time,
-    upload_dir,
-    callback_url,
+    # expire_time,
+    # upload_dir,
+    # callback_url,
 )
 from .customize.utils import (
     get_token,
     getlogger,
-    modifyUploaderResponseData,
     modifyUploaderRequestData,
     delectOSSFile,
 )
@@ -75,7 +74,6 @@ from .customize.custompermission import (
 from accounts.utils import (
     custom_refresh_token
 )
-from rest_framework.renderers import JSONRenderer
 from mongoengine.queryset.visitor import Q
 
 # Create your views here.

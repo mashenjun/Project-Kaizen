@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from rest_framework_mongoengine import serializers,fields
+
 import random
 from os import SEEK_END
 from io import BytesIO
@@ -7,16 +7,15 @@ from time import gmtime, strftime
 from pydenticon import Generator
 import PIL
 
-from rest_framework.exceptions import ErrorDetail, ValidationError
+from rest_framework.exceptions import ValidationError
 from rest_framework_mongoengine import serializers,fields
-from rest_framework.reverse import reverse
-from rest_framework.compat import (
-    NoReverseMatch, Resolver404, get_script_prefix, resolve
-)
-from rest_framework.relations import Hyperlink
+# from rest_framework.reverse import reverse
+# from rest_framework.compat import (
+#     NoReverseMatch, Resolver404, get_script_prefix, resolve
+# )
+# from rest_framework.relations import Hyperlink
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 
 from .models import Uploader,SEX,Post,Comment
 from .customize.utils import getlogger
@@ -51,7 +50,6 @@ def get_default_image():
     # SimpleUploadedFile is essentially instantiated similarly to what is shown here
     image_InMemoryUploadedFile = InMemoryUploadedFile(image_io, None, 'avatar.png', 'image/png', image_io.seek(0, SEEK_END),
                                  None)  # give your file to InMemoryUploadedFile to create django imagefield object
-    # print('[get_default_image]{0}'.format(image_InMemoryUploadedFile))
     return image_InMemoryUploadedFile
 
 def validate_photo_size(value):
@@ -97,8 +95,8 @@ class CommentCreateSerializer(serializers.DocumentSerializer):
         extra_kwargs = {'post'}
 
     def create(self,validated_data):
-        owner = User.objects.get(id = validated_data['owner'].id)
-        post = Post.objects.get(id=validated_data['post'].id)
+        owner = User.objects().get(id = validated_data['owner'].id)
+        post = Post.objects().get(id=validated_data['post'].id)
         content = validated_data['content']
         newcomment = Comment(owner= owner,content=content)
         post.add_comment(newcomment)
@@ -255,7 +253,7 @@ class PostListSerializer(serializers.DocumentSerializer):
         ]
 
     def get_comment_count(self, obj):
-        return len(obj.comment);
+        return len(obj.comment)
 
     def get_catalogue(self,obj):
         return obj.catalogue
@@ -335,7 +333,7 @@ class PostBelongUploaderSerializer(serializers.DocumentSerializer):
         ]
 
     def get_comment_count(self, obj):
-        return len(obj.comment);
+        return len(obj.comment)
 
     def get_catalogue(self,obj):
         return obj.catalogue
