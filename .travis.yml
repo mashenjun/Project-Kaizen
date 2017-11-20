@@ -11,6 +11,13 @@ services: # => 3
 
 env: # => 4
 - DJANGO=1.8
+- PYTHON=python3.5
+
+cache:
+  directories:
+    - $HOME/.cache/pip
+    - $VIRTUAL_ENV/lib/$PYTHON/site-packages
+    - node_modules
 
 before_install:
 - pip install -U pip
@@ -25,6 +32,7 @@ before_script: # => 6
 
 script: # => 7
 - npm run build
+- echo $HOME
 - python ~/Project-Kaizen/kaizen/manage.py migrate
 
 branches:
