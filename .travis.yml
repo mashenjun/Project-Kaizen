@@ -16,9 +16,9 @@ cache:
   - "$TRAVIS_BUILD_DIR/kaizen/kaizen-front/node_modules"
 before_install:
 - openssl aes-256-cbc -K $encrypted_8c4ba12eb40a_key -iv $encrypted_8c4ba12eb40a_iv
-  -in config.py.enc -out $TRAVIS_BUILD_DIR/kaizen/kaizen/config.py -d
-- openssl aes-256-cbc -K $encrypted_8c4ba12eb40a_key -iv $encrypted_8c4ba12eb40a_iv
   -in kdt_rsa.enc -out ~/.ssh/kdt_rsa -d
+- openssl aes-256-cbc -K $encrypted_8c4ba12eb40a_key -iv $encrypted_8c4ba12eb40a_iv
+  -in config.py.enc -out $TRAVIS_BUILD_DIR/kaizen/kaizen/config.py -d
 - chmod 600 ~/.ssh/kdt_rsa
 - pip install -U pip
 install:
