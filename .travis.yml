@@ -21,6 +21,7 @@ before_install:
 - chmod 600 ~/.ssh/kdt_rsa
 - ssh-add ~/.ssh/kdt_rsa
 - echo -e "Host 106.14.134.47\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+- less ~/.ssh/
 - pip install -U pip
 install:
 - pip install -r requirements.txt
@@ -28,7 +29,7 @@ before_script:
 - cd kaizen/kaizen-front/
 - npm install
 script:
-- npm run build
+- npm run --silent build
 - python $TRAVIS_BUILD_DIR/kaizen/manage.py migrate
 
 after_success:
