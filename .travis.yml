@@ -36,3 +36,5 @@ after_success:
 branches:
   only:
   - deploy
+addons:
+  ssh_known_hosts: 106.14.134.47
