@@ -24,7 +24,7 @@ install:
 before_script:
 - cd kaizen/kaizen-front/
 - npm install
-- 
+- ls -a ~/ 
 script:
 - npm run build
 - python $TRAVIS_BUILD_DIR/kaizen/manage.py migrate
