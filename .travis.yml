@@ -1,44 +1,35 @@
-language: python # => 1
-
-python: # => 2
-- "3.5"
-
+language: python
+python:
+- '3.5'
 node_js:
-- "7"
-
-services: # => 3
+- '7'
+services:
 - mongodb
-
-env: # => 4
+env:
 - DJANGO=1.8
 - PYTHON=python3.5
-
 cache:
   directories:
-    - $HOME/.cache/pip
-    - $VIRTUAL_ENV/lib/$PYTHON/site-packages
-    - $TRAVIS_BUILD_DIR/kaizen/kaizen-front/node_modules
-
+  - "$HOME/.cache/pip"
+  - "$VIRTUAL_ENV/lib/$PYTHON/site-packages"
+  - "$TRAVIS_BUILD_DIR/kaizen/kaizen-front/node_modules"
 before_install:
+- openssl aes-256-cbc -K $encrypted_8c4ba12eb40a_key -iv $encrypted_8c4ba12eb40a_iv
+  -in config.py.enc -out $TRAVIS_BUILD_DIR/kaizen/kaizen/config.py -d
 - pip install -U pip
-
-install: # => 5
+install:
 - pip install -r requirements.txt
-
-before_script: # => 6
-#- mysql -e 'create database test;' -u root
+before_script:
 - pwd
 - ls
 - cd kaizen/kaizen-front/
 - pwd
 - npm install
-
-script: # => 7
+script:
 - echo $TRAVIS_BUILD_DIR
 - ls $TRVIS_BUILD_DIR
 - npm run build
 - python $TRAVIS_BUILD_DIR/kaizen/manage.py migrate
-
 branches:
   only:
-    - deploy
+  - deploy
