@@ -33,7 +33,8 @@ before_script: # => 6
 script: # => 7
 - npm run build
 - echo $HOME
-- python ~/Project-Kaizen/kaizen/manage.py migrate
+- ls
+- python $HOME/Project-Kaizen/kaizen/manage.py migrate
 
 branches:
   only:
