@@ -17,7 +17,7 @@ cache:
   directories:
     - $HOME/.cache/pip
     - $VIRTUAL_ENV/lib/$PYTHON/site-packages
-    - node_modules
+    - $TRAVIS_BUILD_DIR/kaizen/kaizen-front/node_modules
 
 before_install:
 - pip install -U pip
@@ -30,13 +30,14 @@ before_script: # => 6
 - pwd
 - ls
 - cd kaizen/kaizen-front/
+- pwd
 - npm install
 
 script: # => 7
-- npm run build
 - echo $TRAVIS_BUILD_DIR
 - ls $TRVIS_BUILD_DIR
-- python $HOME/Project-Kaizen/kaizen/manage.py migrate
+- npm run build
+- python $TRAVIS_BUILD_DIR/kaizen/manage.py migrate
 
 branches:
   only:
