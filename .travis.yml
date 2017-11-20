@@ -27,6 +27,8 @@ install: # => 5
 
 before_script: # => 6
 #- mysql -e 'create database test;' -u root
+- pwd
+- ls
 - cd kaizen/kaizen-front/
 - npm install
 
