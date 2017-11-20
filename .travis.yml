@@ -33,7 +33,7 @@ before_script: # => 6
 script: # => 7
 - npm run build
 - echo $TRAVIS_BUILD_DIR
-- cd $TRVIS_BUILD_DIR && ls
+- ls $TRVIS_BUILD_DIR
 - python $HOME/Project-Kaizen/kaizen/manage.py migrate
 
 branches:
