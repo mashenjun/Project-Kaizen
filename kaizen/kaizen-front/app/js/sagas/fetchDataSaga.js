@@ -4,7 +4,7 @@
 import { takeEvery,takeLatest } from 'redux-saga';
 import { select, take, takem, call, put } from 'redux-saga/effects';
 import types from '../actions/actionTypes'
-import {ServerSideError,fetchUploaderDataSuccess,fetchUploaderDataFailure} from '../actions/dataActions'
+import {ServerSideError,fetchUploaderDataSuccess,fetchUploaderDataFailure, searchUploaderDataSuccess,searchUploaderDataFailure} from '../actions/dataActions'
 import Api from './Api'
 
 
@@ -21,14 +21,33 @@ export function* fetchUploaderDataTask() {
     }
 }
 
+export function* searchUploaderDataTask(action) {
+  try {
+    const {status,result} = yield call(Api.searchUploaders, action.keyword);
+    if(status){
+      console.log(result);
+      yield put(searchUploaderDataSuccess(result));
+    }else{
+      yield put(searchUploaderDataFailure(result));
+    }
+  }catch(err){
+    yield put(ServerSideError({serverError:500}))
+  }
+}
+
 
 export function*  watchFetchUploaderData() {
     yield* takeLatest(types.UPLOADER_FETCHDATA_REQUEST, fetchUploaderDataTask);
+}
+
+export function*  watchsearchUploaderData() {
+  yield* takeLatest(types.UPLOADER_SEARCH_REQUEST, searchUploaderDataTask);
 }
 
 
 export default function* fetchDataSaga() {
     yield [
         watchFetchUploaderData(),
+        watchsearchUploaderData(),
     ];
 }

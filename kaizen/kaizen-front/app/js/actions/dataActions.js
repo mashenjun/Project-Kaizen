@@ -26,6 +26,30 @@ export const fetchUploaderDataSuccess = (payload) => {
     }
 };
 
+export const searchUploaderDataRequest = (keyword) => {
+  return {
+    type: types.UPLOADER_SEARCH_REQUEST,
+    keyword:keyword
+  }
+};
+
+
+export const searchUploaderDataFailure= (payload) => {
+  return {
+    type: types.UPLOADER_SEARCH_FAILURE,
+    payload:{
+      ...payload
+    }
+  }
+};
+
+export const searchUploaderDataSuccess = (payload) => {
+  return {
+    type: types.UPLOADER_SEARCH_SUCCESS,
+    payload:payload
+  }
+};
+
 export const ServerSideError = (payload) => {
     return {
         type: types.INTERNAL_SERVER_ERROR,

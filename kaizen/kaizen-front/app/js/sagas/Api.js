@@ -83,6 +83,11 @@ export default {
     return callApi(url, {
       method: 'GET',
     },token)
+  },
+  searchUploaders(keyword){
+    const url = '/upload/search/uploader_postKeyword/' + keyword;
+    return callApi(url, {
+      method: 'GET',
+    })
   }
-
 }
