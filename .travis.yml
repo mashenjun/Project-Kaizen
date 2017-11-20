@@ -21,7 +21,7 @@ before_install:
 - chmod 600 ~/.ssh/kdt_rsa
 - ssh-add ~/.ssh/kdt_rsa
 - echo -e "Host 106.14.134.47\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-- less ~/.ssh/
+- less ~/.ssh/config
 - pip install -U pip
 install:
 - pip install -r requirements.txt
