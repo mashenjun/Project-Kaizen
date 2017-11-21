@@ -126,6 +126,7 @@ class CommentEditSerializer(serializers.DocumentSerializer):
     content = serializers.serializers.CharField()
     created_at = serializers.serializers.DateTimeField(format="%Y-%m-%d %H:%M")
     # user = serializers.serializers.CharField(source='user.username')
+    created_at = serializers.serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
@@ -136,6 +137,8 @@ class CommentEditSerializer(serializers.DocumentSerializer):
         ]
         read_only_fields = ('created_at','owner',)
 
+    def get_created_at(self,obj):
+        return obj.created_at.strftime('%Y-%m-%d %H:%M')
 
 
 
@@ -398,6 +401,9 @@ class UploaderListSerializer(serializers.DocumentSerializer):
 
     def get_sex(self,obj):
         return obj.get_sex_display()
+    def get_birth_day(self,obj):
+        logger.debug(type(obj.birth_day))
+        return obj.birth_day.date()
 
 class UploaderBelongUserSerializer(serializers.DocumentSerializer):
     name = serializers.serializers.CharField()

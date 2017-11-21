@@ -381,9 +381,19 @@ class NavbarComponent extends Component {
                   e.target.classList.add('is-active');
                   this.hometab.classList.remove('is-active')
                 }} className="nav-item is-tab">关于</a>
-                <span className="nav-item">
+                <span className="navbar-item">
                           { isAuthenticated ?
-                              <span>用户:{username}</span> :
+                          <div className="navbar-item has-dropdown is-hoverable">
+                            <a className="navbar-link">
+                              {username}
+                            </a>
+                            <div className="navbar-dropdown">
+                              <div className="navbar-item">
+                                Logout
+                              </div>
+                            </div>
+                          </div>
+                               :
                               (<span><a className="button" onClick={() => hashHistory.push('/login')}>
                                   登录
                               </a>
