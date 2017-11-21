@@ -20,7 +20,7 @@ before_install:
 - eval "$(ssh-agent -s)"
 - chmod 700 ~/.ssh/ ~/.ssh/kdt_rsa
 - ssh-add ~/.ssh/kdt_rsa
-- echo -e "Host 106.14.134.47\n\tStrictHostKeyChecking no\n\tPasswordAuthentication no\n\tPubKeyAuthentication yes\n\tHostKeyAlgorithms=+ssh-dss" >> ~/.ssh/config
+- echo -e "Host 106.14.134.47\n\tStrictHostKeyChecking no\n\tPasswordAuthentication no\n\tPubKeyAuthentication yes" >> ~/.ssh/config
 - less ~/.ssh/config
 - pip install -U pip
 install:
@@ -34,8 +34,7 @@ script:
 
 after_success:
 - cd $TRAVIS_BUILD_DIR/kaizen/
-- scp -q -r account/ testresful/ pages/ upload/ root@106.14.134.47:~/Project-Kaizen/kaizen/
-- ssh root@106.14.134.47 "~/Project-Kaizen/kaizen/prepareBackend.sh"
+- ssh -vvv root@106.14.134.47 "~/Project-Kaizen/kaizen/prepareBackend.sh"
 - echo "build and deploy successfully!"
 branches:
   only:
