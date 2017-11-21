@@ -25,35 +25,35 @@ npm run dev
 ------
 ### TODO list
 #### Funtions
-- [ ] React as Front FrameWork  
-- [ ] BootStrap and Matrial as CSS FrameWork
-- [ ] Django as End FrameWork. 
+- [x] React as Front FrameWork  
+- [x] BootStrap and Matrial as CSS FrameWork
+- [x] Django as End FrameWork.
 - [x] MongoDB as database.  
-- [ ] DigitalOcean as cloud server. Setup a node
+- [x] DigitalOcean as cloud server. Setup a node
 - [ ] divio/django-cms for CMS
-- [x] Restful API 
-- [ ] Define Requirements
-#### API 
-- [ ] Login API
-- [ ] Register API 
-- [ ] Email validation
-- [ ] Image upload API
-- [ ] List uploaded content
-- [ ] Drop ping on map
-- [ ] Define geo data
+- [x] Restful API
+- [x] Define Requirements
+#### API
+- [x] Login API
+- [x] Register API
+- [x] Email validation
+- [x] Image upload API
+- [x] List uploaded content
+- [x] Drop ping on map
+- [x] Define geo data
 
 #### Pages
-- [ ] 主页
-- [ ] 浏览页(年后)
-- [ ] 关于本站页
-- [ ] 显示页
+- [x] 主页
+- [x] 浏览页(年后)
+- [x] 关于本站页
+- [x] 显示页
 - [x] 登陆页
-- [ ] 注册页
-- [ ] 注册成功页
-- [ ] 上传选择页
-- [ ] 新增记录者页
-- [ ] 记录页（即上传音、视频、图片、文字页）
-- [ ] 更新修改页
+- [x] 注册页
+- [x] 注册成功页
+- [x] 上传选择页
+- [x] 新增记录者页
+- [x] 记录页（即上传音、视频、图片、文字页）
+- [x] 更新修改页
 
 
 
@@ -91,76 +91,76 @@ whitelist = [
 ]
 
 ### API endpoints
-[x] /acounts/api/login/
+- [x] /acounts/api/login/
 	Input:
 
     Return:
-[x] /acounts/api/register/
+- [x] /acounts/api/register/
 	Input:
 
     Return:
-[x] /acounts/user/(?P<id>.+)/
+- [x] /acounts/user/(?P<id>.+)/
 	Input:
 
     Return:
-[x] /acounts/user/(?P<id>.+)/edit/
+- [x] /acounts/user/(?P<id>.+)/edit/
 	Input:
 
     Return:
-[x] /acounts/api/captcha/
-	Input:
-
-    Return:
-
-[x] /upload/uploader/
+- [x] /acounts/api/captcha/
 	Input:
 
     Return:
 
-[x] /upload/uploader/(?P<id>.+)/
+- [x] /upload/uploader/
 	Input:
 
     Return:
 
-[x] /upload/filter/uploader/(?P<userid>.+)/
+- [x] /upload/uploader/(?P<id>.+)/
 	Input:
 
     Return:
 
-[x] /upload/uploader/(?P<id>.+)/edit/
+- [x] /upload/filter/uploader/(?P<userid>.+)/
 	Input:
 
     Return:
 
-[x] /upload/getphoto/(?P<id>.+)/
+- [x] /upload/uploader/(?P<id>.+)/edit/
 	Input:
 
     Return:
 
-[x] /upload/post/
+- [x] /upload/getphoto/(?P<id>.+)/
 	Input:
-		GET to 
 
     Return:
 
-[x] /upload/post/(?P<id>.+)/
+- [x] /upload/post/
 	Input:
-		GET to /upload/post/<_id for a post>/
+		GET to
+
+    Return:
+
+- [x] /upload/post/(?P<id>.+)/
+	Input:
+		GET to /upload/post/<\_id for a post>/
     Return:
     	detail info of the given post
 
-[ ] /upload/post/(?P<id>.+)/edit
+- [x] /upload/post/(?P<id>.+)/edit
 	Input:
 
     Return:
 
-[x] /upload/filter/post/(?P<authorid>.+)/
+- [x] /upload/filter/post/(?P<authorid>.+)/
 	Input:
-		GET to /upload/filter/post/<_id for uploader>/
+		GET to /upload/filter/post/<\_id for uploader>/
     Return:
     	list of posts created by the given uploader
 
-[x] /upload/comment/
+- [x] /upload/comment/
 	Input:
 		PUT to /upload/comment/
 		Input request should has the following data in the request.data payload,
@@ -170,5 +170,3 @@ whitelist = [
 
     Return:
     	success or failure message.
-
-
