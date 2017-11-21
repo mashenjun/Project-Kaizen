@@ -1,4 +1,4 @@
-# Project-Kaizen
+# Project-Kaizen [![Build Status](https://travis-ci.org/mashenjun/Project-Kaizen.svg?branch=deploy)](https://travis-ci.org/mashenjun/Project-Kaizen)
 CMS system as service.
 
 ------
