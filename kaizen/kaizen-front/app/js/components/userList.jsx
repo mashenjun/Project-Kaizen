@@ -2,7 +2,8 @@ import React from 'react';
 import {hashHistory} from 'react-router';
 import {connect} from 'react-redux';
 import {uploaderPageNavigate} from '../actions/navigationAction';
-import {fetchUploaderPostsRequest} from '../actions/uploaderAction'
+import {fetchUploaderPostsRequest} from '../actions/uploaderAction';
+import {searchUploaderDataRequest,fetchUploaderDataRequest,filterUploaderDataRequest} from '../actions/dataActions';
 import * as consts from '../constants/const';
 import '../../less/userList.less'
 import moment from 'moment';
@@ -24,6 +25,11 @@ class UserList extends React.Component {
     if (this.props.currentPage < maxPage) {
       this.props.uploaderPageNavigate(this.props.currentPage + 1);
     }
+  };
+
+  filterItemClick = (e)=>{
+    this.catagory.innerText = e.target.innerText;
+    this.props.filterUploaders(e.target.innerText);
   };
 
   render() {
@@ -101,30 +107,47 @@ class UserList extends React.Component {
               <div className="nav menu" style={{marginBottom: "10px"}}>
                 <div className="container">
                   <div className="nav-left">
-                    <a className="nav-item is-tab is-active"><span className="icon-btn"><i
-                        className="fa fa-plus"></i></span></a>
-                    <a className="nav-item is-tab">
-                                          <span className="icon-btn thin">
-                                            <i className="fa fa-lock"></i>
-                                          </span>
-                    </a>
-                    <a className="nav-item is-tab">
-                                          <span className="icon-btn">
-                                            <i className="fa fa-trash"></i>
-                                          </span>
-                    </a>
+                      <div className="field is-grouped">
+                        <p className="control is-expanded">
+                          <input className="input" ref={(keyword)=>{this.keyword = keyword}} onKeyPress={(e)=>{if(e.key==='Enter'){this.props.searchUploaders(this.keyword.value)}}}type="text" placeholder="关键词"></input>
+                        </p>
+                        <p className="control">
+                          <button className="button is-info" onClick={()=>{this.props.searchUploaders(this.keyword.value)}}>Search</button>
+                        </p>
+                      </div>
                   </div>
-                  <div className="nav-right is-hidden-mobile">
-                    <a className="nav-item is-tab">名字</a>
-                    <a className="nav-item is-tab">大小</a>
-                    <a className="nav-item is-tab">查看</a>
-                    <a className="nav-item"><span className=" button is-success">已上传</span></a>
+                  <div className="nav-right">
+                    <div className="navbar-item has-dropdown is-hoverable">
+                      <a className="navbar-link" ref={(cat)=>(this.catagory = cat)}>
+                        类别
+                      </a>
+                      <div className="navbar-dropdown">
+                        <a className="navbar-item" onClick={this.filterItemClick}>
+                          民间游戏
+                        </a>
+                        <a className="navbar-item" onClick={this.filterItemClick}>
+                          传说/故事
+                        </a>
+                        <a className="navbar-item" onClick={this.filterItemClick}>
+                          儿歌/童谣
+                        </a>
+                        <a className="navbar-item" onClick={this.filterItemClick}>
+                          玩意/把式
+                        </a>
+                        <a className="navbar-item" onClick={this.filterItemClick}>
+                          地方特色
+                        </a>
+                        <a className="navbar-item" onClick={this.filterItemClick}>
+                          其他
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
               <div className="columns is-multiline">
-                {upload_currentPage}
+                {this.props.totalCount==0?<div className="no-result-span">没有符合条件的记录</div>:upload_currentPage}
               </div>
               <div className="container">
                 <nav className="pagination is-centered">
@@ -168,6 +191,16 @@ function mapDispatchToProps(dispatch) {
     },
     fetchPostList(uploaderid){
       dispatch(fetchUploaderPostsRequest(uploaderid));
+    },
+    searchUploaders(keyword){
+      if(keyword){
+        dispatch(searchUploaderDataRequest(keyword));
+      }else{
+        dispatch(fetchUploaderDataRequest());
+      }
+    },
+    filterUploaders(filter){
+      dispatch(filterUploaderDataRequest(filter));
     }
   }
 }

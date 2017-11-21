@@ -8,8 +8,8 @@ from bson.objectid import ObjectId
 
 # Create your models here.
 
-SEX = (('M', '男'),
-        ('F', '女'),)
+SEX = (('M', u'男'),
+        ('F', u'女'),)
 
 CATALOGUE = (('GA',u"民间游戏"),
         ('ST',u"传说/故事"),
