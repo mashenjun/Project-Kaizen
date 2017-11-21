@@ -3,4 +3,3 @@
 source ~/Project-Kaizen/env/bin/activate
 rm -rf ~/Project-Kaizen/kaizen/static/
 exec ~/Project-Kaizen/kaizen/manage.py collectstatic --noinput
-echo "collect statics finish!"
