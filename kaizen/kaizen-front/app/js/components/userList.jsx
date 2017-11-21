@@ -5,7 +5,7 @@ import {uploaderPageNavigate} from '../actions/navigationAction';
 import {fetchUploaderPostsRequest} from '../actions/uploaderAction';
 import {searchUploaderDataRequest,fetchUploaderDataRequest,filterUploaderDataRequest} from '../actions/dataActions';
 import * as consts from '../constants/const';
-import '../../less/userList.less'
+import '../../less/userList.less';
 import moment from 'moment';
 
 class UserList extends React.Component {
@@ -108,7 +108,7 @@ class UserList extends React.Component {
                 <div className="container">
                   <div className="nav-left">
                       <div className="field is-grouped">
-                        <p className="control is-expanded">
+                        <p className="control is-expanded" style={{minWidth: '230px'}}>
                           <input className="input" ref={(keyword)=>{this.keyword = keyword}} onKeyPress={(e)=>{if(e.key==='Enter'){this.props.searchUploaders(this.keyword.value)}}}type="text" placeholder="关键词"></input>
                         </p>
                         <p className="control">
