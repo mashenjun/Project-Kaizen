@@ -397,7 +397,7 @@ class NavbarComponent extends Component {
                               (<span><a className="button" onClick={() => hashHistory.push('/login')}>
                                   登录
                               </a>
-                              <a className="button is-info" onClick={() => hashHistory.push('/signup')}>
+                              <a className="button is-info" style={{marginLeft: '10px'}}  onClick={() => hashHistory.push('/signup')}>
                                   注册
                               </a></span>)
                           }
