@@ -39,6 +39,11 @@ class NavbarComponent extends Component {
     }
   };
 
+  logoutFn = ()=>{
+    localstore.deleteToken();
+    hashHistory.push('/login');
+  };
+
   onProvinchange = () => {
     this.setState({finalCity: ""});
     if (this.proveList.value) {
@@ -388,7 +393,7 @@ class NavbarComponent extends Component {
                               {username}
                             </a>
                             <div className="navbar-dropdown">
-                              <div className="navbar-item">
+                              <div className="navbar-item logout-btn" onClick={this.logoutFn}>
                                 Logout
                               </div>
                             </div>

@@ -16,6 +16,16 @@ export const localstore = {
       throw 'Localstorage is not available';
     }
   },
+  deleteToken(){
+    if (window.localStorage) {
+      localStorage.removeItem('kaizenToken');
+      localStorage.removeItem('username');
+      localStorage.removeItem('uid');
+      localStorage.removeItem('isAuthenticated');
+    } else {
+      throw 'Localstorage is not available';
+    }
+  },
   getToken(){
     if (window.localStorage) {
       return {

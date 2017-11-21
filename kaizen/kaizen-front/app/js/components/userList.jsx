@@ -5,7 +5,7 @@ import {uploaderPageNavigate} from '../actions/navigationAction';
 import {fetchUploaderPostsRequest} from '../actions/uploaderAction';
 import {searchUploaderDataRequest,fetchUploaderDataRequest,filterUploaderDataRequest} from '../actions/dataActions';
 import * as consts from '../constants/const';
-import '../../less/userList.less'
+import '../../less/userList.less';
 import moment from 'moment';
 
 class UserList extends React.Component {
