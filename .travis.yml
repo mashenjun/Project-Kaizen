@@ -17,9 +17,7 @@ cache:
 before_install:
 - openssl aes-256-cbc -K $encrypted_9bd931470e1c_key -iv $encrypted_9bd931470e1c_iv -in kdt_rsa.enc -out ~/.ssh/kdt_rsa -d
 - openssl aes-256-cbc -K $encrypted_8c4ba12eb40a_key -iv $encrypted_8c4ba12eb40a_iv -in config.py.enc -out $TRAVIS_BUILD_DIR/kaizen/kaizen/config.py -d
-- eval "$(ssh-agent -s)"
 - chmod 700 ~/.ssh/ ~/.ssh/kdt_rsa
-- ssh-add ~/.ssh/kdt_rsa
 - echo -e "Host 106.14.134.47\n\tStrictHostKeyChecking no\n\tPasswordAuthentication no\n\tPubKeyAuthentication yes" >> ~/.ssh/config
 - less ~/.ssh/config
 - pip install -U pip
@@ -34,7 +32,7 @@ script:
 
 after_success:
 - cd $TRAVIS_BUILD_DIR/kaizen/
-- ssh -vvv root@106.14.134.47 "~/Project-Kaizen/kaizen/prepareBackend.sh"
+- ssh -vvv -i ~/.ssh/kdt_rsa root@106.14.134.47 "~/Project-Kaizen/kaizen/prepareBackend.sh"
 - echo "build and deploy successfully!"
 branches:
   only:
