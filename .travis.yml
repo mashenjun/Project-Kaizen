@@ -15,6 +15,8 @@ cache:
   - "$VIRTUAL_ENV/lib/$PYTHON/site-packages"
   - "$TRAVIS_BUILD_DIR/kaizen/kaizen-front/node_modules"
 before_install:
+- sudo apt-get update
+- sudo apt-get install -y openssh-server
 - openssl aes-256-cbc -K $encrypted_9bd931470e1c_key -iv $encrypted_9bd931470e1c_iv -in kdt_rsa.enc -out ~/.ssh/kdt_rsa -d
 - openssl aes-256-cbc -K $encrypted_8c4ba12eb40a_key -iv $encrypted_8c4ba12eb40a_iv -in config.py.enc -out $TRAVIS_BUILD_DIR/kaizen/kaizen/config.py -d
 - ssh -V
