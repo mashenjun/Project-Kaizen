@@ -1,30 +1,50 @@
-language: python # => 1
-
-python: # => 2
-- "3.5"
-
+language: python
+python:
+- '3.5'
 node_js:
-- "7"
-
-services: # => 3
+- '7'
+services:
 - mongodb
-
-env: # => 4
-- DJANGO=1.8
-
+env:
+  global:
+  - DJANGO=1.8
+  - PYTHON=python3.5
+cache:
+  directories:
+  - "$HOME/.cache/pip"
+  - "$VIRTUAL_ENV/lib/$PYTHON/site-packages"
+  - "$TRAVIS_BUILD_DIR/kaizen/kaizen-front/node_modules"
 before_install:
+#- sudo apt-add-repository 'deb http://archive.ubuntu.com/ubuntu yakkety main universe multiverse'
+#- sudo apt-get update
+#- sudo apt-get install -y openssh-server=1:7.3p1-1
+#- sudo apt-add-repository --remove 'deb http://archive.ubuntu.com/ubuntu yakkety main universe multiverse' 
+- openssl aes-256-cbc -K $encrypted_9bd931470e1c_key -iv $encrypted_9bd931470e1c_iv -in kdt_rsa.enc -out ~/.ssh/kdt_rsa -d
+- openssl aes-256-cbc -K $encrypted_8c4ba12eb40a_key -iv $encrypted_8c4ba12eb40a_iv -in config.py.enc -out $TRAVIS_BUILD_DIR/kaizen/kaizen/config.py -d
+- ssh -V
+- chmod 700 ~/.ssh/ 
+- chmod 600 ~/.ssh/kdt_rsa
+#- echo -e "Host 106.14.134.47\n\tStrictHostKeyChecking no\n\tPasswordAuthentication no\n\tPubKeyAuthentication yes\n\tHostkeyAlgorithms=+ssh-dss" >> ~/.ssh/config
+- echo -e "Host 106.14.134.47\n\tIdentityFile ~/.ssh/kdt_rsa" >> ~/.ssh/config
+- less ~/.ssh/config
 - pip install -U pip
-
-install: # => 5
+install:
 - pip install -r requirements.txt
+before_script:
+- cd kaizen/kaizen-front/
+- npm install
+script:
+- npm run --silent build
+- python $TRAVIS_BUILD_DIR/kaizen/manage.py migrate
 
-before_script: # => 6
-#- mysql -e 'create database test;' -u root
-- python manage.py migrate
-
-script: # => 7
-- python ./kaizen/manage.py migrate
-
+after_success:
+- ssh root@106.14.134.47 "cd ~/Project-Kaizen/ && git pull"
+- cd $TRAVIS_BUILD_DIR/kaizen/
+- scp pages/static/dist/bundle.js pages/static/dist/bundle.js.gz root@106.14.134.47:~/Project-Kaizen/kaizen/pages/static/dist/
+- ssh root@106.14.134.47 "~/Project-Kaizen/kaizen/prepareBackend.sh"
+- echo "build and deploy successfully!"
 branches:
   only:
-    - master
+  - deploy
+addons:
+  ssh_known_hosts: 106.14.134.47
