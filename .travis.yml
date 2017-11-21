@@ -38,10 +38,7 @@ script:
 - python $TRAVIS_BUILD_DIR/kaizen/manage.py migrate
 
 after_success:
-- cd $TRAVIS_BUILD_DIR/
-- pwd
-- ls -a
-- ssh root@106.14.134.47 "git pull"
+- ssh root@106.14.134.47 "cd ~/Project-Kaizen/ && git pull"
 - cd $TRAVIS_BUILD_DIR/kaizen/
 - scp pages/static/dist/bundle.js pages/static/dist/bundle.js.gz root@106.14.134.47:~/Project-Kaizen/kaizen/pages/static/dist/
 - ssh root@106.14.134.47 "~/Project-Kaizen/kaizen/prepareBackend.sh"
