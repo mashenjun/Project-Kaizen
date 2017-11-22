@@ -106,13 +106,13 @@ class UserList extends React.Component {
               <div className="title is-2">总览</div>
               <div className="nav menu" style={{marginBottom: "10px"}}>
                 <div className="container">
-                  <div className="nav-left">
+                  <div className="nav-left" style={{minWidth: '350px'}}>
                       <div className="field is-grouped">
                         <p className="control is-expanded" style={{minWidth: '230px'}}>
                           <input className="input" ref={(keyword)=>{this.keyword = keyword}} onKeyPress={(e)=>{if(e.key==='Enter'){this.props.searchUploaders(this.keyword.value)}}}type="text" placeholder="关键词"></input>
                         </p>
                         <p className="control">
-                          <button className="button is-info" onClick={()=>{this.props.searchUploaders(this.keyword.value)}}>Search</button>
+                          <button className="button is-info" onClick={()=>{this.props.searchUploaders(this.keyword.value)}}>搜索</button>
                         </p>
                       </div>
                   </div>
