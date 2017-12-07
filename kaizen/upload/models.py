@@ -29,7 +29,7 @@ CATALOGUE_PRIME_DETAIL = {
 
 
 class Uploader(Document):
-    user = ReferenceField(User,required=True,dbref=False)
+    user = ReferenceField(User,required=True,dbref=False,reverse_delete_rule=CASCADE)
     name = StringField()
     birth_day = DateTimeField()
     sex = StringField(max_length=1, choices=SEX)
@@ -63,7 +63,7 @@ class Post(Document):
     catalogue = StringField(max_length=20,regex="[^\.\ \t\n\r]+\.[^\.\ \t\n\r]+")
     # content_type = ListField()
     #     # StringField(max_length=10,)
-    author = ReferenceField(Uploader,required=True,dbref=False)
+    author = ReferenceField(Uploader,required=True,dbref=False,reverse_delete_rule=CASCADE)
     comment = EmbeddedDocumentListField(document_type=Comment)
     creadted_at = DateTimeField(default=datetime.datetime.utcnow())
     text = StringField()
